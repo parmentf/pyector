@@ -35,22 +35,22 @@ class ConceptNetworkTest(unittest.TestCase):
         node1 = Node("Salut",NodeType("token"))
         cn.addNode(node1)
         self.assertEqual(node1, cn.getNode("Salut"))
-        
+
     def testConceptNetworkGetUnkownNode(self):
         "Test whether an unknown node raises an exception"
         cn = ConceptNetwork()
         self.assertRaises(ConceptNetworkUnknownNode,cn.getNode,"Nimp")
-    
+
     def testConceptNetworkAddBadTypeNode(self):
         "Add something else than a Node with addNode()"
         cn = ConceptNetwork()
         self.assertRaises(ConceptNetworkBadType,cn.addNode,"Nimp")
-        
+
     def testConceptNetworkGetBadLink(self):
         "A link has at least 2 nodes"
         cn = ConceptNetwork()
         self.assertRaises(ConceptNetworkIncompleteLink,cn.getLink,None,None)
-        
+
     def testConceptNetworkAddNodeTwice(self):
         "One node added twice implies an incremented occ"
         cn   = ConceptNetwork()
@@ -58,7 +58,7 @@ class ConceptNetworkTest(unittest.TestCase):
         cn.addNode(node)
         cn.addNode(node)
         self.assertEqual(2,node.getOcc())
-        
+
     def testConceptNetworkGetLinksFrom(self):
         "Get links from a node"
         cn = ConceptNetwork()
@@ -72,7 +72,7 @@ class ConceptNetworkTest(unittest.TestCase):
         cn.addLink(nodeFrom, nodeTo3, nodeLabel)
         links = cn.getLinksFrom(nodeFrom)
         self.assertEqual(3,len(links))
-        
+
     def testConceptNetworkGetLinksLabeled(self):
         "Get links with a label"
         cn = ConceptNetwork()
@@ -86,7 +86,7 @@ class ConceptNetworkTest(unittest.TestCase):
         cn.addLink(nodeFrom, nodeTo3, nodeLabel)
         links = cn.getLinksLabeled(nodeLabel)
         self.assertEqual(2,len(links))
-        
+
     def testConceptNetworkGetLinksLabeledOrTo(self):
         "Get links with a label or to that label"
         cn = ConceptNetwork()
@@ -124,21 +124,21 @@ class ConceptNetworkTest(unittest.TestCase):
         state.setNodeActivationValue("From",100)
         conceptNetwork.propagateActivations(state,1)
         self.assertEqual(True,state.getNodeActivationValue("To1") > 50)
-        
+
 
 class LinkTest(unittest.TestCase):
     "Test the Link class"
     def testCreateBadLink(self):
         "A link has at least 2 nodes"
         self.assertRaises(ConceptNetworkIncompleteLink,Link,None,None)
-        
+
 class StateTest(unittest.TestCase):
     "Test the State class"
     def testCreateState(self):
         "A state can be created anytime, without arg"
         state = State(1)
         self.assertEqual(1,state.id)
-        
+
     def testLinkWeight(self):
         "Test the weight of a link"
         cn    = ConceptNetwork()
@@ -148,7 +148,7 @@ class StateTest(unittest.TestCase):
         nodeTo   = Node("To",  NodeType("token"))
         link = cn.addLink(nodeFrom,nodeTo)
         self.assertEqual(1,link.getWeight())
-    
+
     def testLinkLabeledWeight(self):
         "Test the weight of a labeled link"
         cn    = ConceptNetwork()
