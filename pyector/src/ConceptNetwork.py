@@ -144,11 +144,11 @@ class ConceptNetwork:
             self.__hasType(nodeState,"NodeState")
             nodeState.ageActivationValues()
 
-        for node in self.node:
+        for symbol, node in self.node.iteritems():
             influence   = 0
             nbIncomings = 0
             newAv       = 0
-            symbol      = node.getSymbol()
+#            symbol      = node.getSymbol()
             nodeState   = state.getNodeStateBySymbol(symbol)
             oldAV       = nodeState.getOldActivationValue()
             age         = nodeState.getAge()
@@ -187,13 +187,13 @@ class ConceptNetwork:
         memoryPerf: memory performance (the higher, the better)"""
         influenceValues = {}
         influenceNb     = {}
-        for nodeState in state.nodeState:
+        for symbol, nodeState in state.nodeState.iteritems():
             nodeState.ageActivationValues()
 
         ## Fill influence table ##
         # Get the nodes influenced by others
-        for node in self.node:
-            symbol  = node.getSymbol()
+        for symbol, node in self.node.iteritems():
+#            symbol  = node.getSymbol()
             if symbol:
                 ov  = state.getNodeOldActivationValue(symbol)
                 links = self.getLinksFrom(node)
@@ -470,7 +470,7 @@ class State:
     def getAverageActivationValue(self):
         "Get the average activation value"
         activationValues = [nodeState.getActivationValue()
-                            for nodeState in self.nodeState]
+                            for symbol, nodeState in self.nodeState.iteritems()]
         nb  = len(activationValues)
         sum = sum(activationValues)
         if nb:  return sum / nb
@@ -482,7 +482,7 @@ class State:
         typeNames: names of the types to take into account
         cn:        Concept Network containing the nodes"""
         activationValues = [nodeState.getActivationValue()
-                            for nodeState in self.nodeState
+                            for symbol, nodeState in self.nodeState.iteritems()
                             if ConceptNetwork.getNode(nodeState.getSymbol()).getType().getName() in typeNames]
         return max(activationValues)
 
@@ -494,7 +494,7 @@ class State:
 
         Return a list of tuples (node,activation value)"""
         nodes = []
-        for node in cn.node:
+        for symbol, node in cn.node.iteritems() :
             symbol  = node.getSymbol()
             av      = self.getNodeActivationValue(symbol)
             if av > threshold:
