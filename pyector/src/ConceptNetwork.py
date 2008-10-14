@@ -34,21 +34,21 @@ class ConceptNetwork:
         self.node  = {}             # symbol            -> node
         self.link  = {}             # (from,to,label)   -> link
         self.state = {}             # state id          -> state
-        
+
     def __hasType(self,obj,strType):
         "Verify strType of the obj"
         if not obj:
             raise ConceptNetworkLackingParameter,"There lacks a "+strType+"!"
         if obj.__class__.__name__ != strType:
             raise ConceptNetworkBadType,"Not a "+strType+"!"
-    
+
     def getNode(self,symbol):
         "Get the node from the concept network whose symbol is given"
         try:
             return self.node[symbol]
         except:
             raise ConceptNetworkUnknownNode,"Unknown node: \"" + symbol + "\""
-        
+
     def addNode(self,node):
         "Add a Node to the Concept Network"
         self.__hasType(node,"Node")
@@ -56,7 +56,7 @@ class ConceptNetwork:
             self.node[node.getSymbol()].incrementOcc()
         else:
             self.node[node.getSymbol()] = node
-        
+
     def getLink(self,nodeFrom,nodeTo,nodeLabel=None):
         "Get the link going from nodeFrom to nodeTo, through nodeLabel (if it exists)"
         if not nodeFrom or not nodeTo:
@@ -66,29 +66,29 @@ class ConceptNetwork:
         if nodeLabel:
             self.__hasType(nodeLabel,"Node")
         return self.link[(nodeFrom,nodeTo,nodeLabel)]
-    
+
     def getLinksFrom(self,nodeFrom):
         "Get links that go from nodeFrom"
         self.__hasType(nodeFrom,"Node")
         return [link for link in self.link if link[0] == nodeFrom]
-    
+
     def getLinksLabeled(self,nodeLabel):
         "Get links that go through nodeLabel, or from this node"
         self.__hasType(nodeLabel,"Node")
         return [link for link in self.link if link[2] == nodeLabel]
-    
+
     def getLinksLabeledOrTo(self,nodeLabel):
         "Get links that go through nodeLabel, or to this node."
         self.__hasType(nodeLabel,"Node")
         return [link for link in self.link
                 if link[2] == nodeLabel or link[1] == nodeLabel]
-    
+
     def getLinksTo(self,nodeTo):
         """Get links clone that go to @a nodeTo.
            Don't get the !part_of! links."""
         self.__hasType(nodeTo,"Node")
         return [link for link in self.link if link[1] == nodeTo]
-        
+
     def addLink(self,nodeFrom, nodeTo, nodeLabel=None):
         """Add a directional link to the ConceptNetwork.
 
@@ -106,7 +106,7 @@ class ConceptNetwork:
         else:
             self.link[newLink] = Link(nodeFrom,nodeTo,nodeLabel)
         return self.link[newLink]
-    
+
     def addBidirectionalLink(self,node1, node2, nodeLabel=None):
         """Add a directional link to the ConceptNetwork.
 
@@ -115,7 +115,7 @@ class ConceptNetwork:
         If there is no label node, NULL should be passed as labelNode."""
         self.addLink(node1,node2,nodeLabel)
         self.addLink(node2,node1,nodeLabel)
-    
+
     def addState(self,state):
         """Add a state to the Concept Network"""
         self.__hasType(state,"State")
@@ -124,15 +124,15 @@ class ConceptNetwork:
             raise ConceptNetworkDuplicateState, \
                   "The state ("+stateId+") already exists!"
         self.state[stateId] = state
-        
+
     def getState(self,stateId):
         return self.state[stateId]
-    
+
     def propagateActivations(self,state,
                              normalNumberComingLinks,
                              memoryPerf = 80):
         """Propagates activation values within the state
-        
+
         state: in which activation values are found and changed
         normalNumberComingLinks "normal" number of links for the
                             whole influence to be taken into account
@@ -140,10 +140,10 @@ class ConceptNetwork:
         self.__hasType(state,"State")
         # Set the old activation values as the current ones
         # Increment age of the nodes
-        for nodeState in state.nodeState:
+        for symbol, nodeState in state.nodeState.iteritems():
             self.__hasType(nodeState,"NodeState")
             nodeState.ageActivationValues()
-        
+
         for node in self.node:
             influence   = 0
             nbIncomings = 0
@@ -172,15 +172,15 @@ class ConceptNetwork:
             if newAV > 100: newAV = 100
             if newAV < 0:   newAV = 0
             nodeState.setActivationValue(newAV)
-    
+
     def fastPropagateActivations(self,state,
                                  normalNumberComingLinks,
                                  memoryPerf = 80):
         """Propagates activation values within state.
-        
+
         Propagates activation values within state (faster than
         propagateActivations).
-        
+
         state: in which activation values are found and changed
         normalNumberComingLinks "normal" number of links for the
                             whole influence to be taken into account
@@ -189,7 +189,7 @@ class ConceptNetwork:
         influenceNb     = {}
         for nodeState in state.nodeState:
             nodeState.ageActivationValues()
-        
+
         ## Fill influence table ##
         # Get the nodes influenced by others
         for node in self.node:
@@ -205,7 +205,7 @@ class ConceptNetwork:
                     infl   += 0.5 + ov * weight
                     influenceValues[nodeTo.getSymbol()] = infl
                     influenceNb[nodeTo.getSymbol()] += 1
-        
+
         ## For all influenced nodes ##
         for symbol in influenceValues.keys():
             nodeState   = state.getNodeStateBySymbol(symbol)
@@ -217,21 +217,21 @@ class ConceptNetwork:
             newAV       = 0
             oldAV       = state.getNodeOldActivationValue(symbol)
             age         = nodeState.getAge()
-            
+
             influence  /= log(normalNumberComingLinks + nbIncomings)\
                           / log(normalNumberComingLinks)
             minusAge    = 200 / (1 + exp(-age / memoryPerf)) - 100
-            
+
             newAV       = oldAV - decay * oldAV / 100 + influence \
                           - minusAge
             if newAV > 100: newAV = 100
             if newAV < 0:   newAV = 0
             nodeState.setActivationValue(newAV)
-            
-        
+
+
 
 class Node:
-    """A ConceptNetworkNode is 
+    """A ConceptNetworkNode is
 
     <n occ="13"     Occurrence
       t="token"    Type
@@ -247,22 +247,22 @@ class Node:
         self.symbol = symbol
         self.setType(nodeType)
         self.occ = occ
-    
+
     def incrementOcc(self):
         self.occ = self.occ + 1
-    
+
     def getType(self):
         return self.type
-    
+
     def setType(self,nodeType):
         if nodeType.__class__.__name__ != 'NodeType':
             raise ConceptNetworkNodeTypeError, "Type is not a type!"
         self.type = nodeType
-    
+
     def getSymbol(self):
         "Get the symbol of the node"
         return self.symbol
-        
+
     def getOcc(self):
         return self.occ
 
@@ -281,11 +281,11 @@ class NodeType:
     <t desac="50">file</t>
     </types>
     @endcode
-    
+
     - @a desac is the decay rate.
     - @a depth is the depth of type
     - @a contents is the name of the type.
-    
+
     The different types:
     - sentence (something said by someone, delimited by
       E_SENTENCE_SEPARATORS)
@@ -297,7 +297,7 @@ class NodeType:
     - label (something linking two tokens or expressions). Changes the
       influence from one to another.
     - file (an URI, a file read).
-    
+
     @see XmlNode ConceptNetworkCreate ConceptNetworkTypeGetDepth"""
     possibleTypes = {"sentence"   : 50,
                      "token"      : 40,
@@ -314,14 +314,14 @@ class NodeType:
             self.decay = self.__class__.possibleTypes[name]
         else:
             raise ConceptNetworkNodeTypeError, "Unknown node type:\"" + name + "\""
-    
+
     def getDepth(self):
         return self.depth
-        
+
     def getDecay(self):
         "Get the decay rate of the type"
         return self.decay
-    
+
     def getName(self):
         "Get the name of that type"
         return self.name
@@ -347,17 +347,17 @@ class Link:
         self.fro   = nodeFrom       # from is a reserved keyword
         self.to    = nodeTo
         self.label = nodeLabel
-    
+
     def incrementCoOcc(self):
         "Increment the co-occurrence of the link by 1"
         self.coOcc = self.coOcc  + 1
-        
+
     def getCoOcc(self):
         return self.coOcc
 
     def getWeight(self, state=None):
         """Compute the weight of the link, and return it
-        
+
         state: state of the concept network used to compute the weight"""
         labelAV = None
         occ     = self.fro.getOcc()
@@ -367,13 +367,13 @@ class Link:
             labelAV = state.getNodeActivationValue(symbol)
             weight += (1 - weight) * labelAV / 100
         return weight
-    
+
     def getNodeFrom(self):
         return self.fro
-    
+
     def getNodeTo(self):
         return self.to
-    
+
     def getNodeLabel(self):
         return self.label
 
@@ -415,23 +415,23 @@ class State:
     def __init__(self,stateId):
         self.id        = stateId
         self.nodeState = {}         # node symbol -> node state
-    
+
     def getNodeStateBySymbol(self,symbol):
         """Get the the state of the node which symbol is given.
-        
+
         If the state did not exist, it is created with default arguments."""
         print "****** getNodeStateBySymbol(%s)" % symbol
         print "nodeState[].keys:"
         for k in self.nodeState.keys():
             print "\t%s" % k
-            
+
         if symbol not in self.nodeState:
             print "\tNot in nodeState[]"
             self.nodeState[symbol] = NodeState()
             print repr(self.nodeState[symbol].activationValue)
         self.checkNodes()
         return self.nodeState[symbol]
-    
+
     def setNodeActivationValue(self,symbol, activationValue):
         """Set the activationValue to the node which symbol is given in Concept Network State."""
         nodeState = self.getNodeStateBySymbol(symbol)
@@ -443,7 +443,7 @@ class State:
             age = nodeState.age
             if age > 50:
                 self.nodeState.pop(symbol)
-    
+
     def getNodeActivationValue(self,symbol):
         """Get the activationValue of the node which symbol is given from Concept Network State."""
         nodeState = self.getNodeStateBySymbol(symbol)
@@ -451,12 +451,12 @@ class State:
             raise ConceptNetworkStateBadType, \
                 "The state of \""+symbol+"\" is not a NodeState!"
         return nodeState.getActivationValue()
-    
+
     def getNodeOldActivationValue(self,symbol):
         """Get the old activationValue of the node which symbol is given from Concept Network State."""
         nodeState = self.getNodeStateBySymbol(symbol)
         return nodeState.getOldActivatonValue()
-        
+
     def setInfluence(self,symbol, influence):
         """Set the influence to the node which symbol is @a nodSymbol in cns."""
         nodeState = self.getNodeStateBySymbol(symbol)
@@ -466,7 +466,7 @@ class State:
         """Set the influence to the node which symbol is @a nodSymbol in cns."""
         nodeState = self.getNodeStateBySymbol(symbol)
         return nodeState.getInfluence()
-    
+
     def getAverageActivationValue(self):
         "Get the average activation value"
         activationValues = [nodeState.getActivationValue()
@@ -475,23 +475,23 @@ class State:
         sum = sum(activationValues)
         if nb:  return sum / nb
         else:   return 0
-    
+
     def getMaximumActivationValue(self, cn, typeNames):
         """Get the maximum activation value of the state, within nodes of types given by typeNames
-        
+
         typeNames: names of the types to take into account
         cn:        Concept Network containing the nodes"""
         activationValues = [nodeState.getActivationValue()
                             for nodeState in self.nodeState
                             if ConceptNetwork.getNode(nodeState.getSymbol()).getType().getName() in typeNames]
         return max(activationValues)
-    
+
     def getActivatedTypedNodes(self, cn, typeNames, threshold=90):
         """Get the activated nodes of cn.
-        
+
         The returned nodes must be in the list of typeNames, and
         have an activation value greater than threshold
-        
+
         Return a list of tuples (node,activation value)"""
         nodes = []
         for node in cn.node:
@@ -501,7 +501,7 @@ class State:
                 if node.getType().getName() in typeNames:
                     nodes = nodes + [(node,av)]
         return nodes
-    
+
     def __hasType(self,obj,strType):
         "Check that object has the typeName"
         if not obj:
@@ -510,7 +510,7 @@ class State:
             raise ConceptNetworkBadType,"Not a "+strType+"!"
 
     def checkNodes(self):
-        for nodeState in self.nodeState:
+        for symbol, nodeState in self.nodeState.iteritems():
             self.__hasType(nodeState,"NodeState")
 
 class NodeState:
@@ -520,7 +520,7 @@ class NodeState:
         self.activationValue    = activationValue
         self.age                = age
         self.influence          = None
-    
+
     def setActivationValue(self,activationValue):
         if activationValue < 0:
             raise ConceptNetworkNodeStateBadValue, \
@@ -530,7 +530,7 @@ class NodeState:
                 "An activation value of "+activationValue+" is not allowed! Must be in [0,100]"
         self.oldActivationValue = self.activationValue
         self.activationValue    = activationValue
-    
+
     def getActivationValue(self):
         if self.activationValue < 0:
             raise ConceptNetworkNodeStateBadValue, \
@@ -539,7 +539,7 @@ class NodeState:
             raise ConceptNetworkNodeStateBadValue, \
                 "An activation value of "+self.activationValue+" is not allowed! Must be in [0,100]"
         return self.activationValue
-    
+
     def ageActivationValues(self):
         "Set the old activation value to the activation value, and increment age"
         self.incrementAge()
@@ -547,23 +547,23 @@ class NodeState:
 
     def getOldActivationValue(self):
         return self.oldActivationValue
-    
+
     def resetAge(self):
         self.age = 0
-        
+
     def incrementAge(self):
         self.age += 1
-        
+
     def getAge(self):
         return self.age
-    
+
     def setInfluence(self,influence):
         """Set the influence to the node.
-        
+
         Influence represents the sum of the activation values coming
         in the node"""
         self.influence = influence
-    
+
     def getInfluence(self):
         return self.influence
 
@@ -571,32 +571,32 @@ class Temperature:
     "Class for chosing among weighted items according to a temperature"
     def __init__(self,temperature,influence=2):
         """Initialize the temperature value
-        
+
         The higher, the more deterministic the choices
         (0<= temperature <= 100)"""
         if temperature < 0 or temperature > 100:
             raise TemperatureBadValue, "Bad temperature! (must be in [0,100])"
         self.value      = temperature
         self.influence  = influence
-        
+
     def randomize(self):
         t = time.time()
         random.seed(t)
-    
+
     def setValue(self,value):
         self.value = value
-        
+
     def getValue(self):
         return self.value
-    
+
     def chooseWeightedItem(self,items):
         """Choose and return one node among the weighted items given,
         according to the temperature value
-        
+
         items: list of tuples (item, weight)
-        
+
         Each item must have a getSymbol() method, which returns a string.
-        
+
         returns the chosen item"""
         nb  = len(items)
         T   = (self.value - 50) / 50.0
@@ -604,24 +604,24 @@ class Temperature:
         total = sum([weight for (item, weight) in items])
         avg = total / float(nb)
         ur  = {}
-        
+
         urgencySum = 0
         for (item, weight) in items:
             urgency = weight + T * self.influence * (avg - weight)
             if urgency < 0: urgency = 0
             urgencySum += urgency
             ur[item.getSymbol()] = urgencySum
-        
+
         if urgencySum < 1: urgencySum = 1
         choice = random.randint(0,urgencySum)
-        
+
         for (item, weight) in items:
             symbol  = item.getSymbol()
             urgency = ur[symbol]
             if choice <= urgency:
                 return item
         return item[0]
-    
+
 if __name__ == "__main__":
     # Default encoding for UTF-8
     import sys
@@ -648,9 +648,9 @@ if __name__ == "__main__":
     cn.addLink(node1,node2)
     print "getLinksFrom(\"Salut\")"
     print cn.getLinksFrom(node1)
-    
+
     l = [(node1,59),(node2,41)]
     temperature = Temperature(55)
     temperature.randomize()
-    
+
     print temperature.chooseWeightedItem(l).getSymbol()
