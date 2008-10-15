@@ -122,7 +122,7 @@ class ConceptNetworkTest(unittest.TestCase):
         state = State(1)
         conceptNetwork.addState(state)
         state.setNodeActivationValue("From",100)
-        conceptNetwork.propagateActivations(state,1)
+        conceptNetwork.propagateActivations(state,2)
         self.assertEqual(True,state.getNodeActivationValue("To1") > 50)
 
 
