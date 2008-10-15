@@ -21,6 +21,7 @@ class ConceptNetworkUnknownNode(ConceptNetworkError): pass
 class ConceptNetworkBadType(ConceptNetworkError): pass
 class ConceptNetworkIncompleteLink(ConceptNetworkError): pass
 class ConceptNetworkLackingParameter(ConceptNetworkError): pass
+class ConceptNetworkBadParameter(ConceptNetworkError): pass
 class ConceptNetworkNodeStateBadValue(ConceptNetworkError): pass
 class ConceptNetworkStateBadType(ConceptNetworkError): pass
 class TemperatureNoItems(ConceptNetworkError): pass
@@ -70,24 +71,24 @@ class ConceptNetwork:
     def getLinksFrom(self,nodeFrom):
         "Get links that go from nodeFrom"
         self.__hasType(nodeFrom,"Node")
-        return [link for link in self.link if link[0] == nodeFrom]
+        return [self.link[link] for link in self.link if link[0] == nodeFrom]
 
     def getLinksLabeled(self,nodeLabel):
         "Get links that go through nodeLabel, or from this node"
         self.__hasType(nodeLabel,"Node")
-        return [link for link in self.link if link[2] == nodeLabel]
+        return [self.link[link] for link in self.link if link[2] == nodeLabel]
 
     def getLinksLabeledOrTo(self,nodeLabel):
         "Get links that go through nodeLabel, or to this node."
         self.__hasType(nodeLabel,"Node")
-        return [link for link in self.link
+        return [self.link[link] for link in self.link
                 if link[2] == nodeLabel or link[1] == nodeLabel]
 
     def getLinksTo(self,nodeTo):
         """Get links clone that go to @a nodeTo.
            Don't get the !part_of! links."""
         self.__hasType(nodeTo,"Node")
-        return [link for link in self.link if link[1] == nodeTo]
+        return [self.link[link] for link in self.link if link[1] == nodeTo]
 
     def addLink(self,nodeFrom, nodeTo, nodeLabel=None):
         """Add a directional link to the ConceptNetwork.
@@ -138,6 +139,8 @@ class ConceptNetwork:
                             whole influence to be taken into account
         memoryPerf: memory performance (the higher, the better)"""
         self.__hasType(state,"State")
+        if normalNumberComingLinks <= 1:
+            raise ConceptNetworkBadParameter, "normalNumberComingLinks must be > 1"
         # Set the old activation values as the current ones
         # Increment age of the nodes
         for symbol, nodeState in state.nodeState.iteritems():
@@ -148,7 +151,6 @@ class ConceptNetwork:
             influence   = 0
             nbIncomings = 0
             newAv       = 0
-#            symbol      = node.getSymbol()
             nodeState   = state.getNodeStateBySymbol(symbol)
             oldAV       = nodeState.getOldActivationValue()
             age         = nodeState.getAge()
@@ -157,7 +159,7 @@ class ConceptNetwork:
             links       = self.getLinksTo(node)
             # Compute the influence coming to the node
             for link in links:
-                fromSymbol  = link.getFromNode()
+                fromSymbol  = link.getNodeFrom()
                 fromState   = state.getNodeStateBySymbol(fromSymbol)
                 fromAV      = fromState.getOldActivationValue()
                 weight      = link.getWeight(state)
@@ -420,15 +422,15 @@ class State:
         """Get the the state of the node which symbol is given.
 
         If the state did not exist, it is created with default arguments."""
-        print "****** getNodeStateBySymbol(%s)" % symbol
-        print "nodeState[].keys:"
-        for k in self.nodeState.keys():
-            print "\t%s" % k
+#        print "****** getNodeStateBySymbol(%s)" % symbol
+#        print "nodeState[].keys:"
+#        for k in self.nodeState.keys():
+#            print "\t%s" % k
 
         if symbol not in self.nodeState:
-            print "\tNot in nodeState[]"
+#            print "\tNot in nodeState[]"
             self.nodeState[symbol] = NodeState()
-            print repr(self.nodeState[symbol].activationValue)
+#            print repr(self.nodeState[symbol].activationValue)
         self.checkNodes()
         return self.nodeState[symbol]
 
@@ -510,16 +512,18 @@ class State:
             raise ConceptNetworkBadType,"Not a "+strType+"!"
 
     def checkNodes(self):
+        print "checkNodes"
         for symbol, nodeState in self.nodeState.iteritems():
             self.__hasType(nodeState,"NodeState")
+            print "state(%s): %s" % (symbol, nodeState.getOldActivationValue())
 
 class NodeState:
     """The state of a node (activation value, old activation value, age)"""
     def __init__(self, activationValue=0, age=0):
-        self.oldActivationValue = None
+        self.oldActivationValue = 0
         self.activationValue    = activationValue
         self.age                = age
-        self.influence          = None
+        self.influence          = 0
 
     def setActivationValue(self,activationValue):
         if activationValue < 0:
@@ -630,13 +634,15 @@ if __name__ == "__main__":
     conceptNetwork = ConceptNetwork()
     nodeFrom = Node("From",NodeType("token"))
     nodeTo1  = Node("To1", NodeType("token"))
+    conceptNetwork.addNode(nodeFrom)
+    conceptNetwork.addNode(nodeTo1)
     conceptNetwork.addLink(nodeFrom, nodeTo1)
     state = State(1)
     conceptNetwork.addState(state)
     state.checkNodes()
     state.setNodeActivationValue("From",100)
     state.checkNodes()
-    conceptNetwork.propagateActivations(state,1)
+    conceptNetwork.propagateActivations(state,2)
     state.checkNodes()
     print state.getNodeActivationValue("To1")
 
