@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+# See http://pyector.googlecode.com/
+
 __author__    = "François Pamrentier (parmentierf@users.sourceforge.net)"
 __version__   = "$Revision$"
 __date__      = "$Date$"
@@ -25,4 +27,4 @@ if __name__ == "__main__":
     print "Options = %s" % options
     print "botname = %s" % options.botname.capitalize()
     print "verbose = %s" %options.verbose
-    
+
