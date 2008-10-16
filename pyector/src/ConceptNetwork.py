@@ -137,6 +137,7 @@ class ConceptNetwork:
         state: in which activation values are found and changed
         normalNumberComingLinks "normal" number of links for the
                             whole influence to be taken into account
+                            (must be > 1)
         memoryPerf: memory performance (the higher, the better)"""
         self.__hasType(state,"State")
         if normalNumberComingLinks <= 1:
