@@ -523,6 +523,16 @@ class State:
             self.__hasType(nodeState,"NodeState")
 #            print "state(%s): %s" % (symbol, nodeState.getOldActivationValue())
 
+    def showNodes(self):
+        "Print the node states"
+        print "Symbol\t\toldav\tav\tage"
+        for symbol in self.nodeState:
+            nodeState = self.nodeState[symbol]
+            print "state(%s):\t%s\t%d\t%d" % (symbol,
+                                              nodeState.getOldActivationValue(),
+                                              nodeState.getActivationValue(),
+                                              nodeState.getAge())
+
 class NodeState:
     """The state of a node (activation value, old activation value, age)"""
     def __init__(self, activationValue=0, age=0):
@@ -648,8 +658,8 @@ if __name__ == "__main__":
     state.checkNodes()
     state.setNodeActivationValue("From",100)
     state.checkNodes()
-    conceptNetwork.propagateActivations(state,2)
-    state.checkNodes()
+    conceptNetwork.fastPropagateActivations(state,2)
+    state.showNodes()
     print "To1: %d" % state.getNodeActivationValue("To1")
 
     sys.exit(0)
