@@ -127,6 +127,20 @@ class ConceptNetworkTest(unittest.TestCase):
         conceptNetwork.propagateActivations(state,2)
         self.assertEqual(True,state.getNodeActivationValue("To1") > 50)
 
+    def testFastPropagation(self):
+        "Test the propagation"
+        conceptNetwork = ConceptNetwork()
+        nodeFrom = Node("From",NodeType("token"))
+        nodeTo1  = Node("To1", NodeType("token"))
+        conceptNetwork.addNode(nodeFrom)
+        conceptNetwork.addNode(nodeTo1)
+        conceptNetwork.addLink(nodeFrom, nodeTo1)
+        state = State(1)
+        conceptNetwork.addState(state)
+        state.setNodeActivationValue("From",100)
+        conceptNetwork.fastPropagateActivations(state,2)
+        self.assertEqual(True,state.getNodeActivationValue("To1") > 50)
+
 
 class LinkTest(unittest.TestCase):
     "Test the Link class"

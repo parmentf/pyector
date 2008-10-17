@@ -201,13 +201,18 @@ class ConceptNetwork:
                 ov  = state.getNodeOldActivationValue(symbol)
                 links = self.getLinksFrom(node)
                 for link in links:
-                    weight  = link.getWeight(state)
-                    nodeTo  = link.getNodeTo()
-                    inflNb  = influenceNb[nodeTo.getSymbol()]
-                    infl    = influenceValues[nodeTo.getSymbol()]
-                    infl   += 0.5 + ov * weight
-                    influenceValues[nodeTo.getSymbol()] = infl
-                    influenceNb[nodeTo.getSymbol()] += 1
+                    weight     = link.getWeight(state)
+                    nodeTo     = link.getNodeTo()
+                    linkSymbol = nodeTo.getSymbol()
+                    inflNb     = linkSymbol in influenceNb and \
+                                 influenceNb[linkSymbol] or 0
+                    infl       = linkSymbol in influenceValues and \
+                                 influenceValues[linkSymbol] or 0
+                    infl      += 0.5 + ov * weight
+                    influenceValues[linkSymbol] = infl
+                    influenceNb[linkSymbol]     = (linkSymbol in influenceNb and
+                                                   influenceNb[linkSymbol] or 0) \
+                                                   + 1
 
         ## For all influenced nodes ##
         for symbol in influenceValues.keys():
@@ -255,12 +260,12 @@ class Node:
         self.occ = self.occ + 1
 
     def getType(self):
-        return self.type
+        return self.__type
 
     def setType(self,nodeType):
         if nodeType.__class__.__name__ != 'NodeType':
             raise ConceptNetworkNodeTypeError, "Type is not a type!"
-        self.type = nodeType
+        self.__type = nodeType
 
     def getSymbol(self):
         "Get the symbol of the node"
@@ -458,7 +463,7 @@ class State:
     def getNodeOldActivationValue(self,symbol):
         """Get the old activationValue of the node which symbol is given from Concept Network State."""
         nodeState = self.getNodeStateBySymbol(symbol)
-        return nodeState.getOldActivatonValue()
+        return nodeState.getOldActivationValue()
 
     def setInfluence(self,symbol, influence):
         """Set the influence to the node which symbol is @a nodSymbol in cns."""
