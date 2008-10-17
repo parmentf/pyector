@@ -118,6 +118,8 @@ class ConceptNetworkTest(unittest.TestCase):
         conceptNetwork = ConceptNetwork()
         nodeFrom = Node("From",NodeType("token"))
         nodeTo1  = Node("To1", NodeType("token"))
+        conceptNetwork.addNode(nodeFrom)
+        conceptNetwork.addNode(nodeTo1)
         conceptNetwork.addLink(nodeFrom, nodeTo1)
         state = State(1)
         conceptNetwork.addState(state)

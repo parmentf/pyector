@@ -160,7 +160,7 @@ class ConceptNetwork:
             links       = self.getLinksTo(node)
             # Compute the influence coming to the node
             for link in links:
-                fromSymbol  = link.getNodeFrom()
+                fromSymbol  = link.getNodeFrom().getSymbol()
                 fromState   = state.getNodeStateBySymbol(fromSymbol)
                 fromAV      = fromState.getOldActivationValue()
                 weight      = link.getWeight(state)
@@ -513,10 +513,10 @@ class State:
             raise ConceptNetworkBadType,"Not a "+strType+"!"
 
     def checkNodes(self):
-        print "checkNodes"
+#        print "checkNodes"
         for symbol, nodeState in self.nodeState.iteritems():
             self.__hasType(nodeState,"NodeState")
-            print "state(%s): %s" % (symbol, nodeState.getOldActivationValue())
+#            print "state(%s): %s" % (symbol, nodeState.getOldActivationValue())
 
 class NodeState:
     """The state of a node (activation value, old activation value, age)"""
@@ -645,7 +645,7 @@ if __name__ == "__main__":
     state.checkNodes()
     conceptNetwork.propagateActivations(state,2)
     state.checkNodes()
-    print state.getNodeActivationValue("To1")
+    print "To1: %d" % state.getNodeActivationValue("To1")
 
     sys.exit(0)
     cn    = ConceptNetwork()
