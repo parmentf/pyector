@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # coding: utf-8
+# $Id$
 """Definitions of the Concept Network classes.
 
 A ConceptNetwork is a graph of nodes and links.
 Each node gets a type.
 """
-__author__    = "François Pamrentier (parmentierf@users.sourceforge.net)"
+__author__    = "François Parmentier (parmentierf@users.sourceforge.net)"
 __version__   = "$Revision$"
 __date__      = "$Date$"
 __copyright__ = "Copyright (c) 2008 François Parmentier"

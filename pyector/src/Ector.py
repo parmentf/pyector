@@ -2,8 +2,9 @@
 # coding: utf-8
 
 # See http://pyector.googlecode.com/
+# $Id$
 
-__author__    = "François Pamrentier (parmentierf@users.sourceforge.net)"
+__author__    = "François Parmentier (parmentierf@users.sourceforge.net)"
 __version__   = "$Revision$"
 __date__      = "$Date$"
 __copyright__ = "Copyright (c) 2008 François Parmentier"
