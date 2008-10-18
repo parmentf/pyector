@@ -518,10 +518,9 @@ class State:
             raise ConceptNetworkBadType,"Not a "+strType+"!"
 
     def checkNodes(self):
-#        print "checkNodes"
+        "Check that the nodes are NodeState s"
         for symbol, nodeState in self.nodeState.iteritems():
             self.__hasType(nodeState,"NodeState")
-#            print "state(%s): %s" % (symbol, nodeState.getOldActivationValue())
 
     def showNodes(self):
         "Print the node states"
