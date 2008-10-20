@@ -142,6 +142,38 @@ class ConceptNetworkTest(unittest.TestCase):
         conceptNetwork.fastPropagateActivations(state,2)
         self.assertEqual(True,state.getNodeActivationValue("To1") > 50)
 
+    def testDumpLoad(self):
+        "Test the saving of the Concept Network"
+        conceptNetwork = ConceptNetwork()
+        nodeFrom = Node("From",NodeType("token"))
+        nodeTo1  = Node("To1", NodeType("token"))
+        conceptNetwork.addNode(nodeFrom)
+        conceptNetwork.addNode(nodeTo1)
+        conceptNetwork.addLink(nodeFrom, nodeTo1)
+        state = State(1)
+        conceptNetwork.addState(state)
+        state.setNodeActivationValue("From",100)
+        conceptNetwork.fastPropagateActivations(state,2)
+        av = state.getNodeActivationValue("To1")
+
+        f = open("cntest.data","w")
+        try:
+            conceptNetwork.dump(f,0)
+        finally:
+            f.close()
+
+        f = open("cntest.data")
+        try:
+            cnLoaded = pickle.load(f)
+        finally:
+            f.close()
+
+        import os
+        os.remove("cntest.data")
+
+        stateLoaded = conceptNetwork.getState(1)
+        avLoaded = stateLoaded.getNodeActivationValue("To1")
+        self.assertEqual(av, avLoaded)
 
 class LinkTest(unittest.TestCase):
     "Test the Link class"

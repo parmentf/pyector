@@ -15,6 +15,7 @@ __license__   = "GPL"
 from math import *
 import random
 import time
+import pickle
 
 class ConceptNetworkError(Exception): pass
 class ConceptNetworkNodeTypeError(ConceptNetworkError): pass
@@ -237,7 +238,11 @@ class ConceptNetwork:
             if newAV < 0:   newAV = 0
             nodeState.setActivationValue(newAV)
 
+    def dump(self,file,protocol=2):
+        """Dump the Concept Network in the file
 
+        File must be opened. File is not closed by the method."""
+        pickle.dump(self,file,protocol)
 
 class Node:
     """A ConceptNetworkNode is
@@ -661,6 +666,9 @@ if __name__ == "__main__":
     conceptNetwork.fastPropagateActivations(state,2)
     state.showNodes()
     print "To1: %d" % state.getNodeActivationValue("To1")
+
+    f = open("cn.data","w")
+    conceptNetwork.dump(f,0)
 
     sys.exit(0)
     cn    = ConceptNetwork()
