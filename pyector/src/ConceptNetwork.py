@@ -198,7 +198,6 @@ class ConceptNetwork:
         ## Fill influence table ##
         # Get the nodes influenced by others
         for symbol, node in self.node.iteritems():
-#            symbol  = node.getSymbol()
             if symbol:
                 ov  = state.getNodeOldActivationValue(symbol)
                 links = self.getLinksFrom(node)
@@ -434,15 +433,8 @@ class State:
         """Get the the state of the node which symbol is given.
 
         If the state did not exist, it is created with default arguments."""
-#        print "****** getNodeStateBySymbol(%s)" % symbol
-#        print "nodeState[].keys:"
-#        for k in self.nodeState.keys():
-#            print "\t%s" % k
-
         if symbol not in self.nodeState:
-#            print "\tNot in nodeState[]"
             self.nodeState[symbol] = NodeState()
-#            print repr(self.nodeState[symbol].activationValue)
         self.checkNodes()
         return self.nodeState[symbol]
 
