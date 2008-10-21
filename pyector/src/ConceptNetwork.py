@@ -243,6 +243,20 @@ class ConceptNetwork:
         File must be opened. File is not closed by the method."""
         pickle.dump(self,file,protocol)
 
+    def removeAllStates(self):
+        "Remove all states from the ConceptNetwork"
+        self.state.clear()
+
+    def removeStatesExcept(self,stateId):
+        """Remove all states from the ConceptNetwork except the one which
+        id is given.
+
+        id: id of the State the keep.
+        """
+        stateToKeep = self.getState(stateId)
+        self.removeAllStates()
+        self.state[stateId] = stateToKeep
+
 class Node:
     """A ConceptNetworkNode is
 

@@ -175,6 +175,16 @@ class ConceptNetworkTest(unittest.TestCase):
         avLoaded = stateLoaded.getNodeActivationValue("To1")
         self.assertEqual(av, avLoaded)
 
+    def testRemoveState(self):
+        "Test ConceptNetwork.removeStatesExcept()"
+        conceptNetwork = ConceptNetwork()
+        state1         = State(1)
+        state2         = State(2)
+        conceptNetwork.addState(state1)
+        conceptNetwork.addState(state2)
+        conceptNetwork.removeStatesExcept(2)
+        self.assertEqual(state2, conceptNetwork.getState(2))
+
 class LinkTest(unittest.TestCase):
     "Test the Link class"
     def testCreateBadLink(self):
