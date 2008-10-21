@@ -171,9 +171,11 @@ class ConceptNetworkTest(unittest.TestCase):
         import os
         os.remove("cntest.data")
 
-        stateLoaded = conceptNetwork.getState(1)
-        avLoaded = stateLoaded.getNodeActivationValue("To1")
-        self.assertEqual(av, avLoaded)
+        # No state is dumped!
+        self.assertRaises(KeyError,cnLoaded.getState,1)
+
+        nodeLoaded = cnLoaded.node["To1"]
+        self.assertTrue(nodeLoaded)
 
     def testRemoveState(self):
         "Test ConceptNetwork.removeStatesExcept()"

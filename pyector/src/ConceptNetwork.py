@@ -240,8 +240,12 @@ class ConceptNetwork:
     def dump(self,file,protocol=2):
         """Dump the Concept Network in the file
 
-        File must be opened. File is not closed by the method."""
+        File must be opened. File is not closed by the method.
+        Only nodes and links are saved, no state."""
+        states = self.state.copy()
+        self.removeAllStates()
         pickle.dump(self,file,protocol)
+        self.state = states
 
     def removeAllStates(self):
         "Remove all states from the ConceptNetwork"
