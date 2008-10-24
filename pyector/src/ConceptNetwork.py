@@ -520,8 +520,8 @@ class State:
         typeNames: names of the types to take into account
         cn:        Concept Network containing the nodes"""
         activationValues = [nodeState.getActivationValue()
-                            for symbol, nodeState in self.nodeState.iteritems()
-                            if ConceptNetwork.getNode(nodeState.getSymbol()).getType().getName() in typeNames]
+                            for (symbol,typeName), nodeState in self.nodeState.iteritems()
+                            if typeName in typeNames]
         return max(activationValues)
 
     def getActivatedTypedNodes(self, cn, typeNames, threshold=90):
@@ -532,11 +532,11 @@ class State:
 
         Return a list of tuples (node,activation value)"""
         nodes = []
-        for symbol, node in cn.node.iteritems() :
-            symbol  = node.getSymbol()
-            av      = self.getNodeActivationValue(symbol)
+        for nodeId, node in cn.node.iteritems() :
+            (symbol, typeName) = nodeId
+            av      = self.getNodeActivationValue(symbol,typeName)
             if av > threshold:
-                if node.getType().getName() in typeNames:
+                if typeName in typeNames:
                     nodes = nodes + [(node,av)]
         return nodes
 
@@ -549,7 +549,7 @@ class State:
 
     def checkNodes(self):
         "Check that the nodes are NodeState s"
-        for symbol, nodeState in self.nodeState.iteritems():
+        for nodeId, nodeState in self.nodeState.iteritems():
             self.__hasType(nodeState,"NodeState")
 
     def showNodes(self):
