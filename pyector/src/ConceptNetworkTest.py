@@ -35,7 +35,14 @@ class ConceptNetworkTest(unittest.TestCase):
         cn    = ConceptNetwork()
         node1 = Node("Salut",NodeType("token"))
         cn.addNode(node1)
-        self.assertEqual(node1, cn.getNode("Salut"))
+        self.assertEqual(node1, cn.getNode("Salut","token"))
+
+    def testConceptNetworkGetNodeTyped(self):
+        "Test getting a node with a type"
+        cn    = ConceptNetwork()
+        node1 = Node("Salut.",NodeType("sentence"))
+        cn.addNode(node1)
+        self.assertEqual(node1, cn.getNode("Salut.","sentence"))
 
     def testConceptNetworkGetUnkownNode(self):
         "Test whether an unknown node raises an exception"
@@ -124,9 +131,9 @@ class ConceptNetworkTest(unittest.TestCase):
         conceptNetwork.addLink(nodeFrom, nodeTo1)
         state = State(1)
         conceptNetwork.addState(state)
-        state.setNodeActivationValue("From",100)
+        state.setNodeActivationValue(100,"From","token")
         conceptNetwork.propagateActivations(state,2)
-        self.assertEqual(True,state.getNodeActivationValue("To1") > 50)
+        self.assertEqual(True,state.getNodeActivationValue("To1","token") > 50)
 
     def testFastPropagation(self):
         "Test the propagation"
@@ -138,9 +145,9 @@ class ConceptNetworkTest(unittest.TestCase):
         conceptNetwork.addLink(nodeFrom, nodeTo1)
         state = State(1)
         conceptNetwork.addState(state)
-        state.setNodeActivationValue("From",100)
+        state.setNodeActivationValue(100,"From","token")
         conceptNetwork.fastPropagateActivations(state,2)
-        self.assertEqual(True,state.getNodeActivationValue("To1") > 50)
+        self.assertEqual(True,state.getNodeActivationValue("To1","token") > 50)
 
     def testDumpLoad(self):
         "Test the saving of the Concept Network"
@@ -152,9 +159,9 @@ class ConceptNetworkTest(unittest.TestCase):
         conceptNetwork.addLink(nodeFrom, nodeTo1)
         state = State(1)
         conceptNetwork.addState(state)
-        state.setNodeActivationValue("From",100)
+        state.setNodeActivationValue(100,"From","token")
         conceptNetwork.fastPropagateActivations(state,2)
-        av = state.getNodeActivationValue("To1")
+        av = state.getNodeActivationValue("To1","token")
 
         f = open("cntest.data","w")
         try:
@@ -174,7 +181,7 @@ class ConceptNetworkTest(unittest.TestCase):
         # No state is dumped!
         self.assertRaises(KeyError,cnLoaded.getState,1)
 
-        nodeLoaded = cnLoaded.node["To1"]
+        nodeLoaded = cnLoaded.getNode("To1","token")
         self.assertTrue(nodeLoaded)
 
     def testRemoveState(self):
@@ -220,6 +227,17 @@ class StateTest(unittest.TestCase):
         nodeLabel= Node("Label",NodeType("token"))
         link = cn.addLink(nodeFrom,nodeTo,nodeLabel)
         self.assertEqual(1,link.getWeight(state))
+
+    def testGetNodeStateTyped(self):
+        "Test getting a node state with a type"
+        cn    = ConceptNetwork()
+        node1 = Node("Salut.",NodeType("sentence"))
+        cn.addNode(node1)
+        state = State(1)
+        cn.addState(state)
+        state.setNodeActivationValue(100, "Salut.","sentence")
+        self.assertEqual(100, state.getNodeActivationValue("Salut.","sentence"))
+
 
 class TemperatureTest(unittest.TestCase):
     "Test the Temperature class"
