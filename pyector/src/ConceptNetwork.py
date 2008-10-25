@@ -274,28 +274,31 @@ class ConceptNetwork:
 class Node:
     """A ConceptNetworkNode is
 
-    <n occ="13"     Occurrence
-      t="token"    Type
-      b="1"        Beginning of sentence
-      m="12"       Middle of sentence
-      e="1"        Ending of sentence
-      >
-     contenu
-    </n>
+    occ:    Occurrence of the node
+    type:   Type name of the node (basic here)
+    decay:  Decay rate of this type of node
+    symbol: Symbol of the node.
+
+    A node is identified by its type and name.
 
     see ConceptNetwork.addNode"""
+    __type    = "basic"
+    __decay   = 40
+
     def __init__(self, symbol, nodeType, occ=1):
         self.symbol = symbol
-        self.setType(nodeType)
+        self.setType(nodeType) # TODO: remove this
         self.occ = occ
 
     def incrementOcc(self):
         self.occ = self.occ + 1
 
     def getType(self):
+        # TODO: remove this (to replace with getTypeName and getDecay
         return self.__type
 
     def setType(self,nodeType):
+        # TODO: completely remove this method
         if nodeType.__class__.__name__ != 'NodeType':
             raise ConceptNetworkNodeTypeError, "Type is not a type!"
         self.__type = nodeType
@@ -306,6 +309,13 @@ class Node:
 
     def getOcc(self):
         return self.occ
+
+    def getTypeName(self):
+        return Node.__type
+
+    def getDecay(self):
+        "Get the decay rate of this node"
+        return Node.__decay
 
 class NodeType:
     """   A ConceptNetworkType is a @c t XmlNode
@@ -340,6 +350,8 @@ class NodeType:
     - file (an URI, a file read).
 
     @see XmlNode ConceptNetworkCreate ConceptNetworkTypeGetDepth"""
+    # TODO: remove this whole class, now integrated into Node and
+    #       its specialized classes
     possibleTypes = {"sentence"   : 50,
                      "token"      : 40,
                      "expression" : 40,
@@ -461,8 +473,6 @@ class State:
         """Get the the state of the node which symbol is given.
 
         If the state did not exist, it is created with default arguments.
-
-        TODO: change the nodeState dictionary keys to (symbol, type).
         """
         if (symbol,type) not in self.nodeState:
             self.nodeState[(symbol,type)] = NodeState()
@@ -483,7 +493,6 @@ class State:
 
     def getNodeActivationValue(self,symbol,type="basic"):
         """Get the activationValue of the node which symbol is given from Concept Network State."""
-        # TODO: modify the used key symbol -> (symbol, type)
         nodeState = self.getNodeState(symbol,type)
         if nodeState.__class__.__name__ != "NodeState":
             raise ConceptNetworkStateBadType, \
@@ -508,7 +517,7 @@ class State:
     def getAverageActivationValue(self):
         "Get the average activation value"
         activationValues = [nodeState.getActivationValue()
-                            for symbol, nodeState in self.nodeState.iteritems()]
+                            for nodeId, nodeState in self.nodeState.iteritems()]
         nb  = len(activationValues)
         sum = sum(activationValues)
         if nb:  return sum / nb
@@ -554,13 +563,14 @@ class State:
 
     def showNodes(self):
         "Print the node states"
-        print "Symbol\t\toldav\tav\tage"
-        for symbol in self.nodeState:
-            nodeState = self.nodeState[symbol]
-            print "state(%s):\t%s\t%d\t%d" % (symbol,
-                                              nodeState.getOldActivationValue(),
-                                              nodeState.getActivationValue(),
-                                              nodeState.getAge())
+        print "oldav\tav\tage\tNode"
+        for (symbol,typeName) in self.nodeState:
+            nodeState = self.nodeState[(symbol,typeName)]
+            print "%d\t%d\t%d\t%s(%s)" % (nodeState.getOldActivationValue(),
+                              nodeState.getActivationValue(),
+                              nodeState.getAge(),
+                              symbol, typeName)
+
 
 class NodeState:
     """The state of a node (activation value, old activation value, age)"""
