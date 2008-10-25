@@ -30,6 +30,47 @@ __date__      = "$Date$"
 __copyright__ = "Copyright (c) 2008 François Parmentier"
 __license__   = "GPL"
 
+from ConceptNetwork import *
+
+class TokenNode(Node):
+    """A token in a sentence.
+
+    That should be a word, or punctuation sign(s).
+
+    This TokenNode remembers:
+    beg    :    occurrence in the beginning of a sentence
+    mid    :    occurrence in the middle of a sentence
+    end    :    occurrence in the end of a sentence
+    """
+    __type = "token"
+    __decay = 40
+    def __init__(self, symbol, occ = 1, beg = 0, mid = 0, end = 0):
+        self.__beg = beg
+        self.__mid = mid
+        self.__end = end
+        Node.__init__(self, symbol, occ=occ)
+
+    def getBeginningOccurrence(self):
+        return self.__beg
+
+    def getMiddleOccurrence(self):
+        return self.__mid
+
+    def getEndOccurrence(self):
+        return self.__end
+
+    def incrementBeginningOccurrence(self):
+        self.__beg += 1
+        return self.__beg
+
+    def incrementMiddleOccurrence(self):
+        self.__mid += 1
+        return self.__mid
+
+    def incrementEndOccurrence(self):
+        self.__end += 1
+        return self.__end
+
 if __name__ == "__main__":
     from optparse import OptionParser
     usage="usage: %prog [-p username][-n botname=Ector][-v|-q][-l logfilepath][-s|-g][-h]"
