@@ -49,7 +49,7 @@ class ConceptNetworkNodeStateBadValue(ConceptNetworkError): pass
 class ConceptNetworkStateBadType(ConceptNetworkError): pass
 class TemperatureNoItems(ConceptNetworkError): pass
 class TemperatureBadValue(ConceptNetworkError): pass
-
+#------------------------------------------------------------------------------
 class ConceptNetwork:
     """A ConceptNetwork is a graph of nodes and links.
     Each node gets a type.
@@ -291,7 +291,7 @@ class ConceptNetwork:
         stateToKeep = self.getState(stateId)
         self.removeAllStates()
         self.state[stateId] = stateToKeep
-
+#------------------------------------------------------------------------------
 class Node:
     """A ConceptNetworkNode is
 
@@ -337,7 +337,7 @@ class Node:
     def getDecay(self):
         "Get the decay rate of this node"
         return Node.__decay
-
+#------------------------------------------------------------------------------
 class NodeType:
     """   A ConceptNetworkType is a @c t XmlNode
 
@@ -399,7 +399,7 @@ class NodeType:
     def getName(self):
         "Get the name of that type"
         return self.name
-
+#------------------------------------------------------------------------------
 class Link:
     """Type of the a Concept Network node
 
@@ -450,7 +450,7 @@ class Link:
 
     def getNodeLabel(self):
         return self.label
-
+#------------------------------------------------------------------------------
 class State:
     """   A ConceptNetworkState is an XmlNode.
 
@@ -591,8 +591,7 @@ class State:
                               nodeState.getActivationValue(),
                               nodeState.getAge(),
                               symbol, typeName)
-
-
+#------------------------------------------------------------------------------
 class NodeState:
     """The state of a node (activation value, old activation value, age)"""
     def __init__(self, activationValue=0, age=0):
@@ -646,7 +645,7 @@ class NodeState:
 
     def getInfluence(self):
         return self.influence
-
+#------------------------------------------------------------------------------
 class Temperature:
     "Class for chosing among weighted items according to a temperature"
     def __init__(self,temperature,influence=2):
@@ -701,7 +700,7 @@ class Temperature:
             if choice <= urgency:
                 return item
         return item[0]
-
+#------------------------------------------------------------------------------
 if __name__ == "__main__":
     # Default encoding for UTF-8
     import sys

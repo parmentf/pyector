@@ -31,7 +31,7 @@ __copyright__ = "Copyright (c) 2008 François Parmentier"
 __license__   = "GPL"
 
 from ConceptNetwork import *
-
+#------------------------------------------------------------------------------
 class TokenNode(Node):
     """A token in a sentence.
 
@@ -70,7 +70,15 @@ class TokenNode(Node):
     def incrementEndOccurrence(self):
         self.__end += 1
         return self.__end
-
+#------------------------------------------------------------------------------
+class SentenceNode(Node):
+    """A sentence node.
+    """
+    __type = "sentence"
+    __decay = 40
+    def __init__(self, symbol, occ = 1):
+        Node.__init__(self, symbol, occ=occ)
+#------------------------------------------------------------------------------
 if __name__ == "__main__":
     from optparse import OptionParser
     usage="usage: %prog [-p username][-n botname=Ector][-v|-q][-l logfilepath][-s|-g][-h]"

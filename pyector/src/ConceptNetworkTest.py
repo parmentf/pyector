@@ -35,21 +35,21 @@ __license__   = "GPL"
 
 from ConceptNetwork import *
 import unittest
-
+#------------------------------------------------------------------------------
 class NodeTest(unittest.TestCase):
     "Test the Node class"
     def testCreationOcc(self):
         "A just created node has an occurrence equals to 1"
         node = Node("Salut",NodeType("token"))
         self.assertEqual(1,node.getOcc())
-
+#------------------------------------------------------------------------------
 class NodeTypeTest(unittest.TestCase):
     "Test the NodeType class"
     # TODO: remove this, as it will be obsolete.
     def testRaiseBadType(self):
         "One cannot create an unknown type"
         self.assertRaises(ConceptNetworkNodeTypeError,NodeType,"Nimp")
-
+#------------------------------------------------------------------------------
 class ConceptNetworkTest(unittest.TestCase):
     "Test the ConceptNetwork class"
     def testConceptNetworkGetNode(self):
@@ -218,13 +218,13 @@ class ConceptNetworkTest(unittest.TestCase):
         conceptNetwork.addState(state2)
         conceptNetwork.removeStatesExcept(2)
         self.assertEqual(state2, conceptNetwork.getState(2))
-
+#------------------------------------------------------------------------------
 class LinkTest(unittest.TestCase):
     "Test the Link class"
     def testCreateBadLink(self):
         "A link has at least 2 nodes"
         self.assertRaises(ConceptNetworkIncompleteLink,Link,None,None)
-
+#------------------------------------------------------------------------------
 class StateTest(unittest.TestCase):
     "Test the State class"
     def testCreateState(self):
@@ -262,8 +262,7 @@ class StateTest(unittest.TestCase):
         cn.addState(state)
         state.setNodeActivationValue(100, "Salut.","sentence")
         self.assertEqual(100, state.getNodeActivationValue("Salut.","sentence"))
-
-
+#------------------------------------------------------------------------------
 class TemperatureTest(unittest.TestCase):
     "Test the Temperature class"
     def testChooseWeightedItems(self):
@@ -285,7 +284,7 @@ class TemperatureTest(unittest.TestCase):
         node2 = Node("2",tokenType)   # TODO : no NodeType
         l = [(node,100),(node2,1)]
         self.assertEqual(node,temperature.chooseWeightedItem(l))
-
+#------------------------------------------------------------------------------
 if __name__ == "__main__":
 	unittest.main()
 
