@@ -50,6 +50,12 @@ class TokenNode(Node):
         self.__end = end
         Node.__init__(self, symbol, occ=occ)
 
+    def getTypeName(self):
+        return "token"
+
+    def getDecay(self):
+        return 40
+
     def getBeginningOccurrence(self):
         return self.__beg
 
@@ -70,6 +76,7 @@ class TokenNode(Node):
     def incrementEndOccurrence(self):
         self.__end += 1
         return self.__end
+
 #------------------------------------------------------------------------------
 class SentenceNode(Node):
     """A sentence node.
@@ -78,6 +85,12 @@ class SentenceNode(Node):
     __decay = 40
     def __init__(self, symbol, occ = 1):
         Node.__init__(self, symbol, occ=occ)
+
+    def getTypeName(self):
+        return "sentence"
+
+    def getDecay(self):
+        return 40
 #------------------------------------------------------------------------------
 if __name__ == "__main__":
     from optparse import OptionParser
