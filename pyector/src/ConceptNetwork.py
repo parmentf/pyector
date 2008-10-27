@@ -52,7 +52,8 @@ class TemperatureBadValue(ConceptNetworkError): pass
 #------------------------------------------------------------------------------
 class ConceptNetwork:
     """A ConceptNetwork is a graph of nodes and links.
-    Each node gets a type.
+
+    Each node can be in a NodeState.
     """
     def __init__(self):
         self.node  = {}             # (symbol,type)     -> node
@@ -94,32 +95,32 @@ class ConceptNetwork:
         "Get the link going from nodeFrom to nodeTo, through nodeLabel (if it exists)"
         if not nodeFrom or not nodeTo:
             raise ConceptNetworkIncompleteLink,"There lacks at least one node!"
-        self.__hasType(nodeFrom,"Node")
-        self.__hasType(nodeTo,  "Node")
+        self.__hasType(nodeFrom,"Node")    # Maybe this is not right for derived Nodes
+        self.__hasType(nodeTo,  "Node")    # Maybe this is not right for derived Nodes
         if nodeLabel:
-            self.__hasType(nodeLabel,"Node")
+            self.__hasType(nodeLabel,"Node")    # Maybe this is not right for derived Nodes
         return self.link[(nodeFrom,nodeTo,nodeLabel)]
 
     def getLinksFrom(self,nodeFrom):
         "Get links that go from nodeFrom"
-        self.__hasType(nodeFrom,"Node")
+        self.__hasType(nodeFrom,"Node")    # Maybe this is not right for derived Nodes
         return [self.link[link] for link in self.link if link[0] == nodeFrom]
 
     def getLinksLabeled(self,nodeLabel):
         "Get links that go through nodeLabel, or from this node"
-        self.__hasType(nodeLabel,"Node")
+        self.__hasType(nodeLabel,"Node")    # Maybe this is not right for derived Nodes
         return [self.link[link] for link in self.link if link[2] == nodeLabel]
 
     def getLinksLabeledOrTo(self,nodeLabel):
         "Get links that go through nodeLabel, or to this node."
-        self.__hasType(nodeLabel,"Node")
+        self.__hasType(nodeLabel,"Node")    # Maybe this is not right for derived Nodes
         return [self.link[link] for link in self.link
                 if link[2] == nodeLabel or link[1] == nodeLabel]
 
     def getLinksTo(self,nodeTo):
         """Get links clone that go to @a nodeTo.
            Don't get the !part_of! links."""
-        self.__hasType(nodeTo,"Node")
+        self.__hasType(nodeTo,"Node")    # Maybe this is not right for derived Nodes
         return [self.link[link] for link in self.link if link[1] == nodeTo]
 
     def addLink(self,nodeFrom, nodeTo, nodeLabel=None):
@@ -129,10 +130,10 @@ class ConceptNetwork:
         If there is no label node, None should be passed as labelNode."""
         if not nodeFrom or not nodeTo:
             raise ConceptNetworkIncompleteLink,"There lacks at least one node!"
-        self.__hasType(nodeFrom,"Node")
-        self.__hasType(nodeTo,  "Node")
+        self.__hasType(nodeFrom,"Node")    # Maybe this is not right for derived Nodes
+        self.__hasType(nodeTo,  "Node")    # Maybe this is not right for derived Nodes
         if nodeLabel:
-            self.__hasType(nodeLabel,"Node")
+            self.__hasType(nodeLabel,"Node")    # Maybe this is not right for derived Nodes
         newLink = (nodeFrom,nodeTo,nodeLabel)
         if newLink in self.link:
             self.link[newLink].incrementCoOcc()
@@ -159,6 +160,7 @@ class ConceptNetwork:
         self.state[stateId] = state
 
     def getState(self,stateId):
+        """Get the state of the Concept Network which id is stateId"""
         return self.state[stateId]
 
     def propagateActivations(self,state,
@@ -304,7 +306,13 @@ class Node:
 
     A node is identified by its type and name.
 
-    see ConceptNetwork.addNode"""
+    see ConceptNetwork.addNode.
+
+    This class is the base Node class.
+    Every derived class must redefine:
+    - getDecay()
+    - getTypeName()
+    """
     __type    = "basic"
     __decay   = 40
 
@@ -315,16 +323,6 @@ class Node:
     def incrementOcc(self):
         self.occ = self.occ + 1
 
-    def getType(self):
-        # TODO: remove this (to replace with getTypeName and getDecay
-        return self.__type
-
-    def setType(self,nodeType):
-        # TODO: completely remove this method
-        if nodeType.__class__.__name__ != 'NodeType':
-            raise ConceptNetworkNodeTypeError, "Type is not a type!"
-        self.__type = nodeType
-
     def getSymbol(self):
         "Get the symbol of the node"
         return self.symbol
@@ -333,87 +331,84 @@ class Node:
         return self.occ
 
     def getTypeName(self):
-        return Node.__type
+        return self.__type
 
     def getDecay(self):
         "Get the decay rate of this node"
-        return Node.__decay
+        return self.__decay
 #------------------------------------------------------------------------------
-class NodeType:
-    """   A ConceptNetworkType is a @c t XmlNode
-
-    TODO: REWRITE!
-    @code
-    <types>
-    <t desac="50">sentence</t>
-    <t desac="40">token</t>
-    <t desac="40">expression</t>
-    <t desac="10">sentiment</t>
-    <t desac="70">utterer</t>
-    <t desac="10">label</t>
-    <t desac="50">file</t>
-    </types>
-    @endcode
-
-    - @a desac is the decay rate.
-    - @a depth is the depth of type
-    - @a contents is the name of the type.
-
-    The different types:
-    - sentence (something said by someone, delimited by
-      E_SENTENCE_SEPARATORS)
-    - token (something inside a sentence)
-    - expression (a sequence of tokens, often occurring - more than
-      E_EXPRESSION_THRESHOLD)
-    - sentiment
-    - utterer (someone that said something, may it be a bot)
-    - label (something linking two tokens or expressions). Changes the
-      influence from one to another.
-    - file (an URI, a file read).
-
-    @see XmlNode ConceptNetworkCreate ConceptNetworkTypeGetDepth"""
-    # TODO: remove this whole class, now integrated into Node and
-    #       its specialized classes
-    possibleTypes = {"sentence"   : 50,
-                     "token"      : 40,
-                     "expression" : 40,
-                     "sentiment"  : 10,
-                     "utterer"    : 70,
-                     "label"      : 10,
-                     "file"       : 50,
-                     }
-    def __init__(self,name,depth=50):
-        if name in self.__class__.possibleTypes:
-            self.name  = name
-            self.depth = depth
-            self.decay = self.__class__.possibleTypes[name]
-        else:
-            raise ConceptNetworkNodeTypeError, "Unknown node type:\"" + name + "\""
-
-    def getDepth(self):
-        return self.depth
-
-    def getDecay(self):
-        "Get the decay rate of the type"
-        return self.decay
-
-    def getName(self):
-        "Get the name of that type"
-        return self.name
+#class NodeType:
+#    """   A ConceptNetworkType is a @c t XmlNode
+#
+#    TODO: REWRITE!
+#    @code
+#    <types>
+#    <t desac="50">sentence</t>
+#    <t desac="40">token</t>
+#    <t desac="40">expression</t>
+#    <t desac="10">sentiment</t>
+#    <t desac="70">utterer</t>
+#    <t desac="10">label</t>
+#    <t desac="50">file</t>
+#    </types>
+#    @endcode
+#
+#    - @a desac is the decay rate.
+#    - @a depth is the depth of type
+#    - @a contents is the name of the type.
+#
+#    The different types:
+#    - sentence (something said by someone, delimited by
+#      E_SENTENCE_SEPARATORS)
+#    - token (something inside a sentence)
+#    - expression (a sequence of tokens, often occurring - more than
+#      E_EXPRESSION_THRESHOLD)
+#    - sentiment
+#    - utterer (someone that said something, may it be a bot)
+#    - label (something linking two tokens or expressions). Changes the
+#      influence from one to another.
+#    - file (an URI, a file read).
+#
+#    @see XmlNode ConceptNetworkCreate ConceptNetworkTypeGetDepth"""
+#    # TODO: remove this whole class, now integrated into Node and
+#    #       its specialized classes
+#    possibleTypes = {"sentence"   : 50,
+#                     "token"      : 40,
+#                     "expression" : 40,
+#                     "sentiment"  : 10,
+#                     "utterer"    : 70,
+#                     "label"      : 10,
+#                     "file"       : 50,
+#                     }
+#    def __init__(self,name,depth=50):
+#        if name in self.__class__.possibleTypes:
+#            self.name  = name
+#            self.depth = depth
+#            self.decay = self.__class__.possibleTypes[name]
+#        else:
+#            raise ConceptNetworkNodeTypeError, "Unknown node type:\"" + name + "\""
+#
+#    def getDepth(self):
+#        return self.depth
+#
+#    def getDecay(self):
+#        "Get the decay rate of the type"
+#        return self.decay
+#
+#    def getName(self):
+#        "Get the name of that type"
+#        return self.name
 #------------------------------------------------------------------------------
 class Link:
     """Type of the a Concept Network node
 
-    A ConceptNetworkLink
-    @code
-    <l f="fromSymbol"   Incoming node (identified by its symbol)
-      t="toSymbol"     Outgoing node (identified by its symbol)
-      l="labelSymbol"  Label node (optional, identified by its symbol)
-      co="2"           Co-occurrences of f and t.
-    >
-    @endcode
+    A ConceptNetwork.Link:
+    - NodeFrom: the node from which the link comes
+    - NodeTo  : the node to which the link goes
+    - Label   : (optional) the node labelling the link
+    - CoOcc   : the co-occurrence of the two nodes.
 
-    @see XmlNode ConceptNetworkAddLink
+    See ConceptNetwork.addLink
     """
     def __init__(self,nodeFrom,nodeTo,nodeLabel=None,coOcc=1):
         if not nodeFrom or not nodeTo:
@@ -453,40 +448,17 @@ class Link:
         return self.label
 #------------------------------------------------------------------------------
 class State:
-    """   A ConceptNetworkState is an XmlNode.
+    """   A ConceptNetwork.State is the state of each activated nodes.
 
-    It is attached to an ECTOR's user.
+    Each State has an id (which could be the name of an ECTOR's user).
+    This id is a python builtin type
 
-    The name of the user should be the name of the file in which the
-    ConceptNetworkState is saved.
+    A State holds the state of all Nodes which are or have been recently
+    activated.
 
-    @code
-    <state user="H_I">
-     <n age="2" av="100" ov="0" >nodeSymbol</n>
-     <n age="0" av="10"  ov="12">nodeSymbol2</n>
-     <n age="10" av="7"  ov="0" >nodeSymbol3</n>
-     ...
-     <n age="2" av="54"  ov="56">nodeSymbolN</n>
-     <sentence>
-       <n>How</n>
-       <n>are</n>
-       <n>you</n>
-       <n>?</n>
-     </sentence>
-    </state>
-    @endcode
-
-    Each node in the state has:
-    - a symbol (which identifies it in the ConceptNetwork)
-    - an @a age (which is the number of propagation since the last
-     complete activation of the node)
-    - an @a av <b>a</b>ctivation <b>v</b>alue
-    - an @a ov <b>o</b>ld activation <b>v</b>alue
-
-
-    The @a sentence part is not required. It contains one or more nodes of
-    the ConceptNetwork @see ConceptNetwork, that one can link to the next
-    entry of the user."""
+    The State keeps the link between a node's symbol and typeName to its
+    NodeState.
+    """
     def __init__(self,stateId):
         self.id        = stateId
         self.nodeState = {}         # (node symbol, node type) -> node state
@@ -525,16 +497,6 @@ class State:
         """Get the old activationValue of the node which symbol is given from Concept Network State."""
         nodeState = self.getNodeState(symbol,type)
         return nodeState.getOldActivationValue()
-
-#    def setInfluence(self,influence, symbol, type="basic"):
-#        """Set the influence to the node which symbol is @a nodSymbol in cns."""
-#        nodeState = self.getNodeState(symbol,type)
-#        nodeState.setInfluence(influence)
-#
-#    def getInfluence(self,symbol, type="basic"):
-#        """Set the influence to the node which symbol is @a nodSymbol in cns."""
-#        nodeState = self.getNodeState(symbol)
-#        return nodeState.getInfluence()
 
     def getAverageActivationValue(self):
         "Get the average activation value"
@@ -594,12 +556,18 @@ class State:
                               symbol, typeName)
 #------------------------------------------------------------------------------
 class NodeState:
-    """The state of a node (activation value, old activation value, age)"""
+    """The state of a node (activation value, old activation value, age)
+
+    Each node in the state has:
+    - an age (which is the number of propagations since the last
+     complete activation of the node)
+    - an activationValue
+    - an odlActivationValue (used during propagation).
+    """
     def __init__(self, activationValue=0, age=0):
         self.oldActivationValue = 0
         self.activationValue    = activationValue
         self.age                = age
-        self.influence          = 0
 
     def setActivationValue(self,activationValue):
         if activationValue < 0:
@@ -636,16 +604,6 @@ class NodeState:
 
     def getAge(self):
         return self.age
-
-    def setInfluence(self,influence):
-        """Set the influence to the node.
-
-        Influence represents the sum of the activation values coming
-        in the node"""
-        self.influence = influence
-
-    def getInfluence(self):
-        return self.influence
 #------------------------------------------------------------------------------
 class Temperature:
     "Class for chosing among weighted items according to a temperature"
