@@ -40,42 +40,38 @@ class NodeTest(unittest.TestCase):
     "Test the Node class"
     def testCreationOcc(self):
         "A just created node has an occurrence equals to 1"
-        node = Node("Salut",NodeType("token"))
+        node = Node("Salut")
         self.assertEqual(1,node.getOcc())
-#------------------------------------------------------------------------------
-class NodeTypeTest(unittest.TestCase):
-    "Test the NodeType class"
-    # TODO: remove this, as it will be obsolete.
-    def testRaiseBadType(self):
-        "One cannot create an unknown type"
-        self.assertRaises(ConceptNetworkNodeTypeError,NodeType,"Nimp")
 #------------------------------------------------------------------------------
 class ConceptNetworkTest(unittest.TestCase):
     "Test the ConceptNetwork class"
     def testConceptNetworkGetNode(self):
         "Test getting a node from a Concept Network after adding it"
         cn    = ConceptNetwork()
-        node1 = Node("Salut",NodeType("token")) # TODO : no more NodeType
+        node1 = Node("Salut")
         cn.addNode(node1)
-        self.assertEqual(node1, cn.getNode("Salut","token")) # TODO: "basic" or nothing
+        self.assertEqual(node1, cn.getNode("Salut","basic"))
 
     def testConceptNetworkGetNodeTyped(self):
         "Test getting a node with a type"
+        class TestNode(Node):
+            __type  = "test"
+            __decay = 35
+            def __init__(self, symbol, occ = 1):
+                Node.__init__(self, symbol, occ=occ)
+            def getTypeName(self):
+                return "test"
+            def getDecay(self):
+                return 35
         cn    = ConceptNetwork()
-        node1 = Node("Salut.",NodeType("sentence"))    # TODO: try another type
+        node1 = TestNode("Salut.")
         cn.addNode(node1)
-        self.assertEqual(node1, cn.getNode("Salut.","sentence"))
+        self.assertEqual(node1, cn.getNode("Salut.","test"))
 
     def testConceptNetworkGetUnkownNode(self):
         "Test whether an unknown node raises an exception"
         cn = ConceptNetwork()
         self.assertRaises(ConceptNetworkUnknownNode,cn.getNode,"Nimp")
-
-    def testConceptNetworkAddBadTypeNode(self):
-        "Add something else than a Node with addNode()"
-        # TODO: remove this, it will be obsolete.
-        cn = ConceptNetwork()
-        self.assertRaises(ConceptNetworkBadType,cn.addNode,"Nimp")
 
     def testConceptNetworkGetBadLink(self):
         "A link has at least 2 nodes"
@@ -85,7 +81,7 @@ class ConceptNetworkTest(unittest.TestCase):
     def testConceptNetworkAddNodeTwice(self):
         "One node added twice implies an incremented occ"
         cn   = ConceptNetwork()
-        node = Node("Salut",NodeType("token"))    # TODO: no NodeType
+        node = Node("Salut")
         cn.addNode(node)
         cn.addNode(node)
         self.assertEqual(2,node.getOcc())
@@ -93,11 +89,11 @@ class ConceptNetworkTest(unittest.TestCase):
     def testConceptNetworkGetLinksFrom(self):
         "Get links from a node"
         cn = ConceptNetwork()
-        nodeFrom = Node("From",NodeType("token"))    # TODO : no NodeType
-        nodeTo1  = Node("To1", NodeType("token"))    # TODO : no NodeType
-        nodeTo2  = Node("To2", NodeType("token"))    # TODO : no NodeType
-        nodeTo3  = Node("To3", NodeType("token"))    # TODO : no NodeType
-        nodeLabel= Node("Label",NodeType("token"))   # TODO : no NodeType
+        nodeFrom = Node("From")
+        nodeTo1  = Node("To1")
+        nodeTo2  = Node("To2")
+        nodeTo3  = Node("To3")
+        nodeLabel= Node("Label")
         cn.addLink(nodeFrom, nodeTo1)
         cn.addLink(nodeFrom, nodeTo2)
         cn.addLink(nodeFrom, nodeTo3, nodeLabel)
@@ -107,11 +103,11 @@ class ConceptNetworkTest(unittest.TestCase):
     def testConceptNetworkGetLinksLabeled(self):
         "Get links with a label"
         cn = ConceptNetwork()
-        nodeFrom = Node("From",NodeType("token"))    # TODO : no NodeType
-        nodeTo1  = Node("To1", NodeType("token"))    # TODO : no NodeType
-        nodeTo2  = Node("To2", NodeType("token"))    # TODO : no NodeType
-        nodeTo3  = Node("To3", NodeType("token"))    # TODO : no NodeType
-        nodeLabel= Node("Label",NodeType("token"))   # TODO : no NodeType
+        nodeFrom = Node("From")
+        nodeTo1  = Node("To1")
+        nodeTo2  = Node("To2")
+        nodeTo3  = Node("To3")
+        nodeLabel= Node("Label")
         cn.addLink(nodeFrom, nodeTo1,nodeLabel)
         cn.addLink(nodeFrom, nodeTo2)
         cn.addLink(nodeFrom, nodeTo3, nodeLabel)
@@ -121,10 +117,10 @@ class ConceptNetworkTest(unittest.TestCase):
     def testConceptNetworkGetLinksLabeledOrTo(self):
         "Get links with a label or to that label"
         cn = ConceptNetwork()
-        nodeFrom = Node("From",NodeType("token"))    # TODO : no NodeType
-        nodeTo1  = Node("To1", NodeType("token"))    # TODO : no NodeType
-        nodeTo2  = Node("To2", NodeType("token"))    # TODO : no NodeType
-        nodeLabel= Node("Label",NodeType("token"))   # TODO : no NodeType
+        nodeFrom = Node("From")
+        nodeTo1  = Node("To1")
+        nodeTo2  = Node("To2")
+        nodeLabel= Node("Label")
         cn.addLink(nodeFrom, nodeTo1)
         cn.addLink(nodeFrom, nodeLabel)
         cn.addLink(nodeFrom, nodeTo2, nodeLabel)
@@ -134,10 +130,10 @@ class ConceptNetworkTest(unittest.TestCase):
     def testConceptNetworkGetLinksTo(self):
         "Get links to a node"
         cn = ConceptNetwork()
-        nodeFrom = Node("From",NodeType("token"))    # TODO : no NodeType
-        nodeTo1  = Node("To1", NodeType("token"))    # TODO : no NodeType
-        nodeTo2  = Node("To2", NodeType("token"))    # TODO : no NodeType
-        nodeLabel= Node("Label",NodeType("token"))   # TODO : no NodeType
+        nodeFrom = Node("From")
+        nodeTo1  = Node("To1")
+        nodeTo2  = Node("To2")
+        nodeLabel= Node("Label")
         cn.addLink(nodeFrom, nodeTo1)
         cn.addLink(nodeFrom, nodeTo2)
         cn.addLink(nodeFrom, nodeTo2, nodeLabel)
@@ -147,46 +143,44 @@ class ConceptNetworkTest(unittest.TestCase):
     def testPropagation(self):
         "Test the propagation"
         conceptNetwork = ConceptNetwork()
-        nodeFrom = Node("From",NodeType("token"))    # TODO : no NodeType
-        nodeTo1  = Node("To1", NodeType("token"))    # TODO : no NodeType
+        nodeFrom = Node("From")
+        nodeTo1  = Node("To1")
         conceptNetwork.addNode(nodeFrom)
         conceptNetwork.addNode(nodeTo1)
         conceptNetwork.addLink(nodeFrom, nodeTo1)
         state = State(1)
         conceptNetwork.addState(state)
-        state.setNodeActivationValue(100,"From","token")    # TODO : "basic"
+        state.setNodeActivationValue(100,"From","basic")
         conceptNetwork.propagateActivations(state,2)
-        # TODO : no "token", but "basic"
-        self.assertEqual(True,state.getNodeActivationValue("To1","token") > 50)
+        self.assertEqual(True,state.getNodeActivationValue("To1","basic") > 50)
 
     def testFastPropagation(self):
         "Test the propagation"
         conceptNetwork = ConceptNetwork()
-        nodeFrom = Node("From",NodeType("token"))    # TODO : no NodeType
-        nodeTo1  = Node("To1", NodeType("token"))    # TODO : no NodeType
+        nodeFrom = Node("From")
+        nodeTo1  = Node("To1")
         conceptNetwork.addNode(nodeFrom)
         conceptNetwork.addNode(nodeTo1)
         conceptNetwork.addLink(nodeFrom, nodeTo1)
         state = State(1)
         conceptNetwork.addState(state)
-        state.setNodeActivationValue(100,"From","token")    # TODO : no NodeType
+        state.setNodeActivationValue(100,"From","basic")
         conceptNetwork.fastPropagateActivations(state,2)
-        # TODO : no NodeType
-        self.assertEqual(True,state.getNodeActivationValue("To1","token") > 50)
+        self.assertEqual(True,state.getNodeActivationValue("To1") > 50)
 
     def testDumpLoad(self):
         "Test the saving of the Concept Network"
         conceptNetwork = ConceptNetwork()
-        nodeFrom = Node("From",NodeType("token"))    # TODO : no NodeType
-        nodeTo1  = Node("To1", NodeType("token"))    # TODO : no NodeType
+        nodeFrom = Node("From")
+        nodeTo1  = Node("To1")
         conceptNetwork.addNode(nodeFrom)
         conceptNetwork.addNode(nodeTo1)
         conceptNetwork.addLink(nodeFrom, nodeTo1)
         state = State(1)
         conceptNetwork.addState(state)
-        state.setNodeActivationValue(100,"From","token")    # TODO : no NodeType
+        state.setNodeActivationValue(100,"From")
         conceptNetwork.fastPropagateActivations(state,2)
-        av = state.getNodeActivationValue("To1","token")    # TODO : no NodeType
+        av = state.getNodeActivationValue("To1")
 
         f = open("cntest.data","w")
         try:
@@ -206,7 +200,7 @@ class ConceptNetworkTest(unittest.TestCase):
         # No state is dumped!
         self.assertRaises(KeyError,cnLoaded.getState,1)
 
-        nodeLoaded = cnLoaded.getNode("To1","token")    # TODO : no NodeType (or "basic")
+        nodeLoaded = cnLoaded.getNode("To1")
         self.assertTrue(nodeLoaded)
 
     def testRemoveState(self):
@@ -237,8 +231,8 @@ class StateTest(unittest.TestCase):
         cn    = ConceptNetwork()
         state = State(1)
         cn.addState(state)
-        nodeFrom = Node("From",NodeType("token"))    # TODO : no NodeType (or "basic")
-        nodeTo   = Node("To",  NodeType("token"))    # TODO : no NodeType (or "basic")
+        nodeFrom = Node("From")
+        nodeTo   = Node("To")
         link = cn.addLink(nodeFrom,nodeTo)
         self.assertEqual(1,link.getWeight())
 
@@ -247,41 +241,39 @@ class StateTest(unittest.TestCase):
         cn    = ConceptNetwork()
         state = State(1)
         cn.addState(state)
-        nodeFrom = Node("From",NodeType("token"))    # TODO : no NodeType (or "basic")
-        nodeTo   = Node("To",  NodeType("token"))    # TODO : no NodeType (or "basic")
-        nodeLabel= Node("Label",NodeType("token"))   # TODO : no NodeType (or "basic")
+        nodeFrom = Node("From")
+        nodeTo   = Node("To")
+        nodeLabel= Node("Label")
         link = cn.addLink(nodeFrom,nodeTo,nodeLabel)
         self.assertEqual(1,link.getWeight(state))
 
     def testGetNodeStateTyped(self):
         "Test getting a node state with a type"
         cn    = ConceptNetwork()
-        node1 = Node("Salut.",NodeType("sentence"))    # TODO: derive Node to SentenceNode
+        node1 = Node("Salut.")
         cn.addNode(node1)
         state = State(1)
         cn.addState(state)
-        state.setNodeActivationValue(100, "Salut.","sentence")
-        self.assertEqual(100, state.getNodeActivationValue("Salut.","sentence"))
+        state.setNodeActivationValue(100, "Salut.","basic")
+        self.assertEqual(100, state.getNodeActivationValue("Salut.","basic"))
 #------------------------------------------------------------------------------
 class TemperatureTest(unittest.TestCase):
     "Test the Temperature class"
     def testChooseWeightedItems(self):
         temperature = Temperature(50)
-        tokenType = NodeType("token") # TODO : remove
-        node = Node("1",tokenType)    # TODO : no NodeType
+        node = Node("1")
         l = [(node,1)]
         self.assertEqual(node,temperature.chooseWeightedItem(l))
-        node2 = Node("2",tokenType)   # TODO : no NodeType
-        node3 = Node("3",tokenType)   # TODO : no NodeType
+        node2 = Node("2")
+        node3 = Node("3")
         l = [(node,2),(node2,2),(node3,2)]
         self.assertEqual(True,temperature.chooseWeightedItem(l) != None)
 
     def testCold(self):
         "When the temperature is cold, weight are reinforced"
         temperature = Temperature(0)
-        tokenType = NodeType("token") # TODO : remove
-        node = Node("1",tokenType)    # TODO : no NodeType
-        node2 = Node("2",tokenType)   # TODO : no NodeType
+        node = Node("1")
+        node2 = Node("2")
         l = [(node,100),(node2,1)]
         self.assertEqual(node,temperature.chooseWeightedItem(l))
 #------------------------------------------------------------------------------

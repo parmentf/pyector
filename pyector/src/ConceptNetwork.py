@@ -74,17 +74,21 @@ class ConceptNetwork:
         try:
             return self.node[(symbol,type)]
         except:
-            raise ConceptNetworkUnknownNode,"Unknown node: \"" + symbol + "\""
+            raise ConceptNetworkUnknownNode,"Unknown node: \"" + symbol + "\" (" + type + ")"
 
     def addNode(self,node):
         "Add a Node to the Concept Network"
-        self.__hasType(node,"Node")
         symbol = node.getSymbol()
-        type   = node.getType().getName()
+        type   = node.getTypeName()
         if (symbol,type) in self.node:
             self.node[(symbol,type)].incrementOcc()
         else:
             self.node[(symbol,type)] = node
+
+    def showNodes(self):
+        "Show all the nodes in the Concept Network"
+        for (symbol, type) in self.node:
+            print "%s (%s)" % (symbol, type)
 
     def getLink(self,nodeFrom,nodeTo,nodeLabel=None):
         "Get the link going from nodeFrom to nodeTo, through nodeLabel (if it exists)"
@@ -183,13 +187,12 @@ class ConceptNetwork:
             nodeState   = state.getNodeState(symbol,typeName)
             oldAV       = nodeState.getOldActivationValue()
             age         = nodeState.getAge()
-            type        = node.getType()
             occ         = node.getOcc()
             links       = self.getLinksTo(node)
             # Compute the influence coming to the node
             for link in links:
                 fromSymbol  = link.getNodeFrom().getSymbol()
-                fromTypeName = link.getNodeFrom().getType().getName()
+                fromTypeName = link.getNodeFrom().getTypeName()
                 fromState   = state.getNodeState(fromSymbol,fromTypeName)
                 fromAV      = fromState.getOldActivationValue()
                 weight      = link.getWeight(state)
@@ -198,7 +201,7 @@ class ConceptNetwork:
             #Compute the new activation value of the node
             influence   /= log(normalNumberComingLinks + nbIncomings) \
                          / log(normalNumberComingLinks)
-            decay       = type.getDecay()
+            decay       = node.getDecay()
             minusAge    = 200 / (1+exp(-age / memoryPerf)) - 100
             newAV   = oldAV - decay * oldAV / 100 + influence - minusAge
             if newAV > 100: newAV = 100
@@ -232,7 +235,7 @@ class ConceptNetwork:
                     weight     = link.getWeight(state)
                     nodeTo     = link.getNodeTo()
                     linkSymbol = nodeTo.getSymbol()
-                    linkTypeName = nodeTo.getType().getName()
+                    linkTypeName = nodeTo.getTypeName()
                     inflNb     = linkSymbol in influenceNb and \
                                  influenceNb[(linkSymbol, linkTypeName)] \
                                  or 0
@@ -252,8 +255,7 @@ class ConceptNetwork:
             node        = self.getNode(symbol,typeName)
             influence   = influenceValues[(symbol,typeName)]
             nbIncomings = influenceNb[(symbol,typeName)]
-            nodeType    = node.getType()
-            decay       = nodeType.getDecay()
+            decay       = node.getDecay()
             newAV       = 0
             oldAV       = state.getNodeOldActivationValue(symbol,typeName)
             age         = nodeState.getAge()
@@ -306,9 +308,8 @@ class Node:
     __type    = "basic"
     __decay   = 40
 
-    def __init__(self, symbol, nodeType, occ=1):
+    def __init__(self, symbol, occ=1):
         self.symbol = symbol
-        self.setType(nodeType) # TODO: remove this
         self.occ = occ
 
     def incrementOcc(self):
