@@ -92,6 +92,12 @@ class SentenceNode(Node):
     def getDecay(self):
         return 40
 #------------------------------------------------------------------------------
+class Ector:
+    "The ECTOR class"
+    def __init__(self,botname="Ector",username="User"):
+        self.botname == botname    # FIXME: Why doesn't it work?!?
+        self.username == username
+#------------------------------------------------------------------------------
 if __name__ == "__main__":
     import sys
     from optparse import OptionParser
@@ -118,6 +124,9 @@ if __name__ == "__main__":
     username = options.username and options.username or ""
     botname  = options.botname.capitalize()
     version  = "0.1"
+
+    # FIXME: that does not work!?!
+    #ector    = Ector(botname, username)
 
     print """pyECTOR version %s, Copyright (C) 2008 Francois PARMENTIER
 pyECTOR comes with ABSOLUTELY NO WARRANTY; for details type `@show w'.
@@ -149,18 +158,22 @@ under certain conditions; type `@show c' for details.
             print usage.replace("%prog", "Ectory.py")
         elif entry[:8] == "@person ":
             username = entry[8:].strip()
+        elif entry[:6] == "@name ":
+            botname = entry[6:].strip()
+            ector.setName(botname)    # FIXME: when ector will be an instance of Ector.
         elif entry[:8] == "@version":
             print "Version: %s" % (version)
+        elif entry[:6] == "@write":
+            ector.dump()
         elif entry[:5] == "@quit" or entry[:5] == "@exit" or entry[:4] == "@bye":
             break
         # Help
         elif entry[:5] == "@help":
-            print """
- - @usage   : print the options of the Ector.py command
+            print """ - @usage   : print the options of the Ector.py command
  - @quit    : quit
  - @exit    : quit
  - @bye     : quit
  - @person  : change the utterer name (like -p)
+ - @name    : change the bot's name (like -n)
  - @version : give the current version
- - @write   : save Ector's Concept Network and state
-"""
+ - @write   : save Ector's Concept Network and state"""
