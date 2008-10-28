@@ -93,6 +93,7 @@ class SentenceNode(Node):
         return 40
 #------------------------------------------------------------------------------
 if __name__ == "__main__":
+    import sys
     from optparse import OptionParser
     usage="usage: %prog [-p username][-n botname=Ector][-v|-q][-l logfilepath][-s|-g][-h]"
     parser = OptionParser(usage=usage,version="%prog 0.1")
@@ -109,5 +110,57 @@ if __name__ == "__main__":
     print "Args    = %s" % args
     print "Options = %s" % options
     print "botname = %s" % options.botname.capitalize()
-    print "verbose = %s" %options.verbose
+    print "verbose = %s" % options.verbose
 
+    license  = None
+    stdin    = sys.stdin
+    stdout   = sys.stdout
+    username = options.username and options.username or ""
+    botname  = options.botname.capitalize()
+    version  = "0.1"
+
+    print """pyECTOR version %s, Copyright (C) 2008 Francois PARMENTIER
+pyECTOR comes with ABSOLUTELY NO WARRANTY; for details type `@show w'.
+This is free software, and you are welcome to redistribute it
+under certain conditions; type `@show c' for details.
+@help gives a basic help on pyECTOR commands.""" % (version)
+
+    while True:
+        stdout.write(username+">")
+        entry = stdin.readline().strip()
+
+        # No Warranty
+        if entry[:7] == "@show w":
+            if not license:
+                f = open("../LICENSE")
+                license = f.readlines()
+                f.close()
+            for i in range(257,278):
+                stdout.write(license[i])
+        # Conditions
+        elif entry[:7] == "@show c":
+            if not license:
+                f = open("../LICENSE")
+                license = f.readlines()
+                f.close()
+            for i in range(57,256):
+                stdout.write(license[i])
+        elif entry[:6] == "@usage":
+            print usage.replace("%prog", "Ectory.py")
+        elif entry[:8] == "@person ":
+            username = entry[8:].strip()
+        elif entry[:8] == "@version":
+            print "Version: %s" % (version)
+        elif entry[:5] == "@quit" or entry[:5] == "@exit" or entry[:4] == "@bye":
+            break
+        # Help
+        elif entry[:5] == "@help":
+            print """
+ - @usage   : print the options of the Ector.py command
+ - @quit    : quit
+ - @exit    : quit
+ - @bye     : quit
+ - @person  : change the utterer name (like -p)
+ - @version : give the current version
+ - @write   : save Ector's Concept Network and state
+"""
