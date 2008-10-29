@@ -95,8 +95,8 @@ class SentenceNode(Node):
 class Ector:
     "The ECTOR class"
     def __init__(self,botname="Ector",username="User"):
-        self.botname == botname    # FIXME: Why doesn't it work?!?
-        self.username == username
+        self.botname  = botname
+        self.username = username
 #------------------------------------------------------------------------------
 if __name__ == "__main__":
     import sys
@@ -125,8 +125,7 @@ if __name__ == "__main__":
     botname  = options.botname.capitalize()
     version  = "0.1"
 
-    # FIXME: that does not work!?!
-    #ector    = Ector(botname, username)
+    ector    = Ector(botname, username)
 
     print """pyECTOR version %s, Copyright (C) 2008 Francois PARMENTIER
 pyECTOR comes with ABSOLUTELY NO WARRANTY; for details type `@show w'.
@@ -160,7 +159,7 @@ under certain conditions; type `@show c' for details.
             username = entry[8:].strip()
         elif entry[:6] == "@name ":
             botname = entry[6:].strip()
-            ector.setName(botname)    # FIXME: when ector will be an instance of Ector.
+            ector.setName(botname)
         elif entry[:8] == "@version":
             print "Version: %s" % (version)
         elif entry[:6] == "@write":
