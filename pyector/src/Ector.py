@@ -83,7 +83,54 @@ class SentenceNode(Node):
     """A sentence node.
     """
     __type = "sentence"
+    __decay = 50
+    def __init__(self, symbol, occ = 1):
+        Node.__init__(self, symbol, occ=occ)
+
+    def getTypeName(self):
+        return self.__type
+
+    def getDecay(self):
+        return self.__decay
+#------------------------------------------------------------------------------
+class ExpressionNode(Node):
+    """An expression node.
+
+    An expression is a sequence of several tokens.
+    """
+    __type = "expression"
     __decay = 40
+    def __init__(self, symbol, occ = 1):
+        Node.__init__(self, symbol, occ=occ)
+
+    def getTypeName(self):
+        return self.__type
+
+    def getDecay(self):
+        return self.__decay
+
+#------------------------------------------------------------------------------
+class SentimentNode(Node):
+    """A sentiment node.
+    """
+    __type = "sentiment"
+    __decay = 10
+    def __init__(self, symbol, occ = 1):
+        Node.__init__(self, symbol, occ=occ)
+
+    def getTypeName(self):
+        return self.__type
+
+    def getDecay(self):
+        return self.__decay
+#------------------------------------------------------------------------------
+class UttererNode(Node):
+    """An utterer node.
+
+    An utterer say sentences.
+    """
+    __type = "utterer"
+    __decay = 70
     def __init__(self, symbol, occ = 1):
         Node.__init__(self, symbol, occ=occ)
 
