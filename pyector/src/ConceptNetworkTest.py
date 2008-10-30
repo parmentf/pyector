@@ -60,13 +60,14 @@ class ConceptNetworkTest(unittest.TestCase):
             def __init__(self, symbol, occ = 1):
                 Node.__init__(self, symbol, occ=occ)
             def getTypeName(self):
-                return "test"
+                return self.__type
             def getDecay(self):
-                return 35
+                return self.__decay
         cn    = ConceptNetwork()
         node1 = TestNode("Salut.")
         cn.addNode(node1)
         self.assertEqual(node1, cn.getNode("Salut.","test"))
+        self.assertEqual("test", node1.getTypeName())
 
     def testConceptNetworkGetUnkownNode(self):
         "Test whether an unknown node raises an exception"
