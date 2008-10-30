@@ -51,10 +51,10 @@ class TokenNode(Node):
         Node.__init__(self, symbol, occ=occ)
 
     def getTypeName(self):
-        return "token"
+        return self.__type
 
     def getDecay(self):
-        return 40
+        return self.__decay
 
     def getBeginningOccurrence(self):
         return self.__beg
@@ -87,16 +87,33 @@ class SentenceNode(Node):
         Node.__init__(self, symbol, occ=occ)
 
     def getTypeName(self):
-        return "sentence"
+        return self.__type
 
     def getDecay(self):
-        return 40
+        return self.__decay
 #------------------------------------------------------------------------------
 class Ector:
     "The ECTOR class"
     def __init__(self,botname="Ector",username="User"):
         self.botname  = botname
         self.username = username
+        self.cn       = ConceptNetwork()
+
+    def dump(self):
+        """Save ECTOR.
+
+        Save the ConceptNetwork in cn.pkl, and the state in usernameState.pkl"""
+        # Save the ConceptNetwork
+        f = open("cn.pkl","w")
+        self.cn.dump(f)
+        f.close()
+        # Save username's state
+        if self.username:
+            filename = self.username + "_state.pkl"
+            f        = open(filename,"w")
+            state    = self.cn.getState(username)
+            pickle.dump(state,f,2)
+            f.close()
 #------------------------------------------------------------------------------
 if __name__ == "__main__":
     import sys
