@@ -31,6 +31,7 @@ __copyright__ = "Copyright (c) 2008 François Parmentier"
 __license__   = "GPL"
 
 from ConceptNetwork import *
+import os
 #------------------------------------------------------------------------------
 class TokenNode(Node):
     """A token in a sentence.
@@ -97,7 +98,19 @@ class Ector:
     def __init__(self,botname="Ector",username="User"):
         self.botname  = botname
         self.username = username
-        self.cn       = ConceptNetwork()
+        if os.path.exists("cn.pkl"):
+            f    = open("cn.pkl","r")
+            self.cn    = pickle.load(f)
+            f.close()
+        else:
+            self.cn    = ConceptNetwork()
+        self.loadUserState()
+#        if username:
+#            filename    = self.__getStateId()
+#            f           = open(filename,"r")
+#            state       = pickle.load(f)
+#            f.close()
+#            self.cn.addState(state)
 
     def dump(self):
         """Save ECTOR.
@@ -109,11 +122,43 @@ class Ector:
         f.close()
         # Save username's state
         if self.username:
-            filename = self.username + "_state.pkl"
+            filename = self.__getStateId()
             f        = open(filename,"w")
             state    = self.cn.getState(username)
             pickle.dump(state,f,2)
             f.close()
+
+    def showStatus(self):
+        """Show Ector's status (ConceptNetwork stats, states)"""
+        self.cn.showNodes()
+        self.cn.showStates()
+
+    def __getStateId(self):
+        """Create a state id from the username"""
+        return self.username + "_state.pkl"
+
+    def setUser(self,username):
+        """Change user's name.
+
+        Create a new state, if it does not exist.
+        """
+        self.username    = username
+        try:
+            self.cn.getState(username)
+        except:
+            self.loadUserState()
+
+    def loadUserState(self):
+        """Load the state matching username"""
+        if self.username:
+            filename    = self.__getStateId()
+            if os.path.exists(filename):
+                f           = open(filename,"r")
+                state       = pickle.load(f)
+                f.close()
+            else:
+                state    = State(username)
+            self.cn.addState(state)
 #------------------------------------------------------------------------------
 if __name__ == "__main__":
     import sys
@@ -130,10 +175,10 @@ if __name__ == "__main__":
                       help="shut up!")
 
     (options, args) = parser.parse_args()
-    print "Args    = %s" % args
-    print "Options = %s" % options
-    print "botname = %s" % options.botname.capitalize()
-    print "verbose = %s" % options.verbose
+#    print "Args    = %s" % args
+#    print "Options = %s" % options
+#    print "botname = %s" % options.botname.capitalize()
+#    print "verbose = %s" % options.verbose
 
     license  = None
     stdin    = sys.stdin
@@ -172,8 +217,11 @@ under certain conditions; type `@show c' for details.
                 stdout.write(license[i])
         elif entry[:6] == "@usage":
             print usage.replace("%prog", "Ectory.py")
+        elif entry[:7] == "@status":
+            ector.showStatus()
         elif entry[:8] == "@person ":
             username = entry[8:].strip()
+            ector.setUser(username)
         elif entry[:6] == "@name ":
             botname = entry[6:].strip()
             ector.setName(botname)
@@ -192,4 +240,6 @@ under certain conditions; type `@show c' for details.
  - @person  : change the utterer name (like -p)
  - @name    : change the bot's name (like -n)
  - @version : give the current version
- - @write   : save Ector's Concept Network and state"""
+ - @write   : save Ector's Concept Network and state
+ - @status  : show the status of Ector (Concept Network, states)"""
+

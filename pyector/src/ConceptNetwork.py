@@ -295,6 +295,12 @@ class ConceptNetwork:
         stateToKeep = self.getState(stateId)
         self.removeAllStates()
         self.state[stateId] = stateToKeep
+
+    def showStates(self):
+        """Show all states id"""
+        print "States (%d)" % (len(self.state))
+        for id in self.state:
+            print "\t%s" % (id)
 #------------------------------------------------------------------------------
 class Node:
     """A ConceptNetworkNode is
