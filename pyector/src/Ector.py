@@ -152,12 +152,6 @@ class Ector:
         else:
             self.cn    = ConceptNetwork()
         self.loadUserState()
-#        if username:
-#            filename    = self.__getStateId()
-#            f           = open(filename,"r")
-#            state       = pickle.load(f)
-#            f.close()
-#            self.cn.addState(state)
 
     def dump(self):
         """Save ECTOR.
