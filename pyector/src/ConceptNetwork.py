@@ -673,6 +673,7 @@ class Temperature:
 #------------------------------------------------------------------------------
 if __name__ == "__main__":
     import sys
+    import os
     from optparse import OptionParser
 
     usage="usage: %prog [-h]"
@@ -683,14 +684,17 @@ if __name__ == "__main__":
 
     filename    = options.filename
 
-    f = open(filename)
-    try:
-        cn = pickle.load(f)
-    finally:
-        f.close()
+    if os.path.exists(filename):
+        f = open(filename)
+        try:
+            cn = pickle.load(f)
+        finally:
+            f.close()
+    else:
+        cn = ConceptNetwork()
 
     while True:
         line = sys.stdin.readline()
         if sys.stdin.closed:
             break
-        
+
