@@ -257,6 +257,22 @@ class StateTest(unittest.TestCase):
         cn.addState(state)
         state.setNodeActivationValue(100, "Salut.","basic")
         self.assertEqual(100, state.getNodeActivationValue("Salut.","basic"))
+
+    def testAging(self):
+        "See if a old node state is removed when too old"
+        conceptNetwork = ConceptNetwork()
+        nodeFrom = Node("From")
+        nodeTo1  = Node("To1")
+        conceptNetwork.addNode(nodeFrom)
+        conceptNetwork.addNode(nodeTo1)
+        conceptNetwork.addLink(nodeFrom, nodeTo1)
+        state = State(1)
+        conceptNetwork.addState(state)
+        state.setNodeActivationValue(100,"From","basic")
+        for i in range(0,51):
+            conceptNetwork.fastPropagateActivations(state,2)
+        state.setNodeActivationValue(0, "From", "basic")
+        self.assertRaises(KeyError,state.nodeState.__getitem__,("From","basic"))
 #------------------------------------------------------------------------------
 class TemperatureTest(unittest.TestCase):
     "Test the Temperature class"
