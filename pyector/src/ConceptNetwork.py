@@ -89,7 +89,27 @@ class ConceptNetwork:
     def showNodes(self):
         "Show all the nodes in the Concept Network"
         for (symbol, type) in self.node:
-            print "%s (%s)" % (symbol, type)
+            print "%s (%s): %d" % (symbol, type, self.getNode(symbol,type).getOcc())
+
+    def showLinks(self,stateId=None):
+        "Show all the links in the Concept Network"
+        for (fro,to,label) in self.link:
+            if label:
+                if not stateId:
+                    print "%10s -(%10s %d)-> %10s" % (fro.getSymbol(),
+                                                   label.getSymbol(),
+                                                   self.link[(fro,to,label)].getWeight(),
+                                                   to.getSymbol())
+                else:
+                    state = self.getState(stateId)
+                    print "%10s -(%10s %d)-> %10s" % (fro.getSymbol(),
+                                                   label.getSymbol(),
+                                                   self.link[(fro,to,label)].getWeight(state),
+                                                   to.getSymbol())
+            else:
+                print "%10s ------(%d)-------> %10s" % (fro.getSymbol(),
+                                         self.link[(fro,to,label)].getWeight(),
+                                         to.getSymbol())
 
     def getLink(self,nodeFrom,nodeTo,nodeLabel=None):
         "Get the link going from nodeFrom to nodeTo, through nodeLabel (if it exists)"
@@ -443,7 +463,7 @@ class Link:
         labelAV = None
         occ     = self.fro.getOcc()
         weight  = self.coOcc / occ
-        if self.label:
+        if self.label and state:
             symbol = self.label.getSymbol()
             labelAV = state.getNodeActivationValue(symbol)
             weight += (1 - weight) * labelAV / 100
@@ -692,9 +712,37 @@ if __name__ == "__main__":
             f.close()
     else:
         cn = ConceptNetwork()
+    state    = State(1)
+    cn.addState(state)
 
     while True:
-        line = sys.stdin.readline()
+        line = sys.stdin.readline().strip()
         if sys.stdin.closed:
             break
-
+        if line[:9] == "@addnode ":
+            node = Node(line[9:])
+            cn.addNode(node)
+            print "Node \"%s\" added" % (line[9:])
+        elif line[:9] == "@addlink ":
+            params = line[9:].split()
+            if len(params) == 2:
+                node1 = cn.getNode(params[0])
+                node2 = cn.getNode(params[1])
+                print cn.addLink(node1,node2)
+            elif len(params) == 3:
+                node1 = cn.getNode(params[0])
+                node2 = cn.getNode(params[1])
+                node3 = cn.getNode(params[2])
+                print cn.addLink(node1,node2,node3)
+        elif line[:10] == "@shownodes":
+            cn.showNodes()
+        elif line[:10] == "@showlinks":
+            cn.showLinks(1)
+        elif line[:10] == "@activate ":
+            params = line[10:].split()
+            if len(params) == 1:
+                state.setNodeActivationValue(100, params[0])
+            else:
+                state.setNodeActivationValue(int(params[1]), params[0])
+        elif line[:10] == "@showstate":
+            state.showNodes()
