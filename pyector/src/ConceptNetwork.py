@@ -672,39 +672,25 @@ class Temperature:
         return item[0]
 #------------------------------------------------------------------------------
 if __name__ == "__main__":
-    # Default encoding for UTF-8
     import sys
-    #sys.setdefaultencoding('iso−8859−1')
+    from optparse import OptionParser
 
-    conceptNetwork = ConceptNetwork()
-    nodeFrom = Node("From")
-    nodeTo1  = Node("To1")
-    conceptNetwork.addNode(nodeFrom)
-    conceptNetwork.addNode(nodeTo1)
-    conceptNetwork.addLink(nodeFrom, nodeTo1)
-    state = State(1)
-    conceptNetwork.addState(state)
-    state.checkNodes()
-    state.setNodeActivationValue(100,"From")
-    state.checkNodes()
-    conceptNetwork.fastPropagateActivations(state,2)
-    state.showNodes()
-    print "To1: %d" % state.getNodeActivationValue("To1")
+    usage="usage: %prog [-h]"
+    parser = OptionParser(usage=usage,version="%prog 0.1")
+    parser.add_option("-f", "--file", dest="filename", default="cn.pkl",
+                      help="open the file as a Concept Network")
+    (options, args) = parser.parse_args()
 
-    f = open("cn.data","w")
-    conceptNetwork.dump(f,0)
+    filename    = options.filename
 
-    sys.exit(0)
-    cn    = ConceptNetwork()
-    TOKEN = NodeType("token")
-    node1 = Node("Salut",TOKEN)
-    node2 = Node("toi",TOKEN)
-    cn.addLink(node1,node2)
-    print "getLinksFrom(\"Salut\")"
-    print cn.getLinksFrom(node1)
+    f = open(filename)
+    try:
+        cn = pickle.load(f)
+    finally:
+        f.close()
 
-    l = [(node1,59),(node2,41)]
-    temperature = Temperature(55)
-    temperature.randomize()
-
-    print temperature.chooseWeightedItem(l).getSymbol()
+    while True:
+        line = sys.stdin.readline()
+        if sys.stdin.closed:
+            break
+        
