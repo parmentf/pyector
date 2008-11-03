@@ -98,17 +98,17 @@ class ConceptNetwork:
                 if not stateId:
                     print "%10s -(%10s %d)-> %10s" % (fro.getSymbol(),
                                                    label.getSymbol(),
-                                                   self.link[(fro,to,label)].getWeight(),
+                                                   self.link[(fro,to,label)].getWeight() * 100,
                                                    to.getSymbol())
                 else:
                     state = self.getState(stateId)
                     print "%10s -(%10s %d)-> %10s" % (fro.getSymbol(),
                                                    label.getSymbol(),
-                                                   self.link[(fro,to,label)].getWeight(state),
+                                                   self.link[(fro,to,label)].getWeight(state) * 100,
                                                    to.getSymbol())
             else:
                 print "%10s ------(%d)-------> %10s" % (fro.getSymbol(),
-                                         self.link[(fro,to,label)].getWeight(),
+                                         self.link[(fro,to,label)].getWeight() * 100,
                                          to.getSymbol())
 
     def getLink(self,nodeFrom,nodeTo,nodeLabel=None):
@@ -462,7 +462,7 @@ class Link:
         state: state of the concept network used to compute the weight"""
         labelAV = None
         occ     = self.fro.getOcc()
-        weight  = self.coOcc / occ
+        weight  = float(self.coOcc) / occ
         if self.label and state:
             symbol = self.label.getSymbol()
             labelAV = state.getNodeActivationValue(symbol)
@@ -726,8 +726,16 @@ if __name__ == "__main__":
         elif line[:9] == "@addlink ":
             params = line[9:].split()
             if len(params) == 2:
-                node1 = cn.getNode(params[0])
-                node2 = cn.getNode(params[1])
+                try:
+                    node1 = cn.getNode(params[0])
+                except ConceptNetworkUnknownNode:
+                    print "The node \"%s\" does not exist!" % (params[0])
+                    continue
+                try:
+                    node2 = cn.getNode(params[1])
+                except ConceptNetworkUnknownNode:
+                    print "The node \"%s\" does not exist!" % (params[1])
+                    continue
                 print cn.addLink(node1,node2)
             elif len(params) == 3:
                 node1 = cn.getNode(params[0])
@@ -753,3 +761,13 @@ if __name__ == "__main__":
                     cn.fastPropagateActivations(state)
             else:
                 cn.fastPropagateActivations(state)
+        elif line[:5] == "@help":
+            print """@help give this help
+@addnode name: add the node given
+@addlink node1 node2 [label]: add a link from node1 to node2
+@activate name [activation value]: activate a node from its name
+@propagate [nb]: propagate the activation nb times
+@shownodes: show the nodes in the ConceptNetwork
+@showlinks: show the links in the ConceptNetwork
+@showstate: show the state of the nodes
+"""
