@@ -251,23 +251,28 @@ class ConceptNetwork:
                                      influenceNb[(linkSymbol,linkTypeName)] or 0) \
                                      + 1
 
-        ## For all influenced nodes ##
-        for (symbol,typeName) in influenceValues.keys():
-            nodeState   = state.getNodeState(symbol,typeName)
-            node        = self.getNode(symbol,typeName)
-            influence   = influenceValues[(symbol,typeName)]
-            nbIncomings = influenceNb[(symbol,typeName)]
-            decay       = node.getDecay()
-            newAV       = 0
-            oldAV       = state.getNodeOldActivationValue(symbol,typeName)
-            age         = nodeState.getAge()
+        ## For all nodes in the state ##
+        influenceValueKeys = influenceValues.keys()
+        for (symbol, typeName) in state.nodeState:
+            nodeState = state.getNodeState(symbol,typeName)
+            oldAV    = nodeState.getOldActivationValue()
+            node     = self.getNode(symbol, typeName)
+            age      = nodeState.getAge()
+            decay    = node.getDecay()
+            minusAge = 200 / (1 + exp(-age / memoryPerf)) - 100
+            # If this node is not influenced at all
+            if not (symbol,typeName) in influenceValueKeys:
+                newAV    = oldAV - decay * oldAV / 100 - minusAge
+            # If this node receives influence
+            else:
+                influence   = influenceValues[(symbol,typeName)]
+                nbIncomings = influenceNb[(symbol,typeName)]
 
-            influence  /= log(normalNumberComingLinks + nbIncomings)\
-                          / log(normalNumberComingLinks)
-            minusAge    = 200 / (1 + exp(-age / memoryPerf)) - 100
+                influence  /= log(normalNumberComingLinks + nbIncomings) \
+                              / log(normalNumberComingLinks)
 
-            newAV       = oldAV - decay * oldAV / 100 + influence \
-                          - minusAge
+                newAV       = oldAV - decay * oldAV / 100 + influence \
+                              - minusAge
             if newAV > 100: newAV = 100
             if newAV < 0:   newAV = 0
             nodeState.setActivationValue(newAV)
