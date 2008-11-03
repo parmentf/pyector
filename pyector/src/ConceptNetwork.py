@@ -231,7 +231,7 @@ class ConceptNetwork:
             nodeState.setActivationValue(newAV)
 
     def fastPropagateActivations(self,state,
-                                 normalNumberComingLinks,
+                                 normalNumberComingLinks = 2,
                                  memoryPerf = 80):
         """Propagates activation values within state.
 
@@ -698,7 +698,7 @@ if __name__ == "__main__":
 
     usage="usage: %prog [-h]"
     parser = OptionParser(usage=usage,version="%prog 0.1")
-    parser.add_option("-f", "--file", dest="filename", default="cn.pkl",
+    parser.add_option("-f", "--file", dest="filename", default="conceptnetwork.pkl",
                       help="open the file as a Concept Network")
     (options, args) = parser.parse_args()
 
@@ -746,3 +746,10 @@ if __name__ == "__main__":
                 state.setNodeActivationValue(int(params[1]), params[0])
         elif line[:10] == "@showstate":
             state.showNodes()
+        elif line[:10] == "@propagate":
+            if len(line) > 10:
+                nb = int(line[11:].strip())
+                for i in range(0,nb):
+                    cn.fastPropagateActivations(state)
+            else:
+                cn.fastPropagateActivations(state)
