@@ -259,7 +259,10 @@ class StateTest(unittest.TestCase):
         self.assertEqual(100, state.getNodeActivationValue("Salut.","basic"))
 
     def testAging(self):
-        "See if a old node state is removed when too old"
+        """See if a old node state is removed when too old.
+
+        When a NodeState has more than 50 propagations, and that it is set to zero,
+        it has to disappear from the state of the ConceptNetwork."""
         conceptNetwork = ConceptNetwork()
         nodeFrom = Node("From")
         nodeTo1  = Node("To1")
