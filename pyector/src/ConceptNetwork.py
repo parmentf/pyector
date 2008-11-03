@@ -691,6 +691,7 @@ class Temperature:
                 return item
         return item[0]
 #------------------------------------------------------------------------------
+# main
 if __name__ == "__main__":
     import sys
     import os
@@ -750,6 +751,8 @@ if __name__ == "__main__":
             params = line[10:].split()
             if len(params) == 1:
                 state.setNodeActivationValue(100, params[0])
+                nodeState = state.getNodeState(params[0])
+                nodeState.resetAge()
             else:
                 state.setNodeActivationValue(int(params[1]), params[0])
         elif line[:10] == "@showstate":
@@ -761,6 +764,15 @@ if __name__ == "__main__":
                     cn.fastPropagateActivations(state)
             else:
                 cn.fastPropagateActivations(state)
+        elif line[:5] == "@save":
+            # FIXME: the conceptnetwork.pkl file is not readable.
+            file = open(filename,"w")
+            cn.dump(file, 1)
+            file.close()
+            file = open("state_1.pkl","w")
+            pickle.dump(state,file,1)
+            file.close()
+            print "Concept Network saved in \"%s\"" % (filename)
         elif line[:5] == "@help":
             print """@help give this help
 @addnode name: add the node given
