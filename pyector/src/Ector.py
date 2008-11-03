@@ -237,6 +237,8 @@ under certain conditions; type `@show c' for details.
 @help gives a basic help on pyECTOR commands.""" % (version)
 
     while True:
+        if stdin.closed:
+            break
         stdout.write(username+">")
         entry = stdin.readline().strip()
 
