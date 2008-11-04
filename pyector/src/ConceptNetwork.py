@@ -766,11 +766,12 @@ if __name__ == "__main__":
                 cn.fastPropagateActivations(state)
         elif line[:5] == "@save":
             # FIXME: the conceptnetwork.pkl file is not readable.
+            # NOTE: with the protocol 0, it works!
             file = open(filename,"w")
-            cn.dump(file, 1)
+            cn.dump(file, 0)
             file.close()
             file = open("state_1.pkl","w")
-            pickle.dump(state,file,1)
+            pickle.dump(state,file,0)
             file.close()
             print "Concept Network saved in \"%s\"" % (filename)
         elif line[:5] == "@help":
