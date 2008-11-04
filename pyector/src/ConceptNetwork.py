@@ -774,6 +774,8 @@ if __name__ == "__main__":
             pickle.dump(state,file,0)
             file.close()
             print "Concept Network saved in \"%s\"" % (filename)
+        elif line.startswith("@quit"):
+            break
         elif line[:5] == "@help":
             print """@help give this help
 @addnode name: add the node given
@@ -783,4 +785,5 @@ if __name__ == "__main__":
 @shownodes: show the nodes in the ConceptNetwork
 @showlinks: show the links in the ConceptNetwork
 @showstate: show the state of the nodes
+@quit: quit without saving
 """
