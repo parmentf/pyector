@@ -39,7 +39,6 @@ tar -xvzf pyector-0_1.tar.gz .
 
 Important note
 --------------
-///////////////////
 Version 0.1 does not come with a functional Ector!
 Only ConceptNetwork.py will work.
 
@@ -55,7 +54,6 @@ existing nodes), and even +@activate+ a node, so you can
 +@propagate+ activation values, and +@showstate+.
 
 A small reminder about the commands is obtained by typing +@help+.
-///////////////////
 
 Usage
 -----
