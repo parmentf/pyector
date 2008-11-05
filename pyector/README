@@ -37,6 +37,26 @@ Once you've downloaded the file, untar it like that:
 tar -xvzf pyector-0_1.tar.gz .
 -------------------
 
+Important note
+--------------
+///////////////////
+Version 0.1 does not come with a functional Ector!
+Only ConceptNetwork.py will work.
+
+----------
+python ConceptNetwork.py
+----------
+
+It allows one to play with its internal mechanism: the
+http://code.google.com/p/pyector/wiki/ConceptNetwork[Concept Network].
+
+You can +@addnode+ (add a node), +@addlink+ (add a link between two
+existing nodes), and even +@activate+ a node, so you can
++@propagate+ activation values, and +@showstate+.
+
+A small reminder about the commands is obtained by typing +@help+.
+///////////////////
+
 Usage
 -----
 -------------------
@@ -52,6 +72,15 @@ A small help is available from ECTOR prompt:
 -------------------
 User>@help
 -------------------
+
+From the prompt, you just have to speak to Ector.
+-------------------
+User>Hello!
+Ector>Hello!
+User>...
+-------------------
+The first sentences you will say will be echoed, but after some utterance,
+Ector will begin to link words, and to create original answers.
 
 Resources
 ---------
