@@ -785,5 +785,6 @@ if __name__ == "__main__":
 @shownodes: show the nodes in the ConceptNetwork
 @showlinks: show the links in the ConceptNetwork
 @showstate: show the state of the nodes
+@save: save the Concept Network and its state
 @quit: quit without saving
 """
