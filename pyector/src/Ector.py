@@ -32,7 +32,8 @@ __license__   = "GPL"
 
 from ConceptNetwork import *
 import os
-#------------------------------------------------------------------------------
+
+
 class TokenNode(Node):
     """A token in a sentence.
 
@@ -78,7 +79,7 @@ class TokenNode(Node):
         self.__end += 1
         return self.__end
 
-#------------------------------------------------------------------------------
+
 class SentenceNode(Node):
     """A sentence node.
     """
@@ -92,7 +93,8 @@ class SentenceNode(Node):
 
     def getDecay(self):
         return self.__decay
-#------------------------------------------------------------------------------
+
+
 class ExpressionNode(Node):
     """An expression node.
 
@@ -109,7 +111,7 @@ class ExpressionNode(Node):
     def getDecay(self):
         return self.__decay
 
-#------------------------------------------------------------------------------
+
 class SentimentNode(Node):
     """A sentiment node.
     """
@@ -123,7 +125,8 @@ class SentimentNode(Node):
 
     def getDecay(self):
         return self.__decay
-#------------------------------------------------------------------------------
+
+
 class UttererNode(Node):
     """An utterer node.
 
@@ -139,7 +142,8 @@ class UttererNode(Node):
 
     def getDecay(self):
         return self.__decay
-#------------------------------------------------------------------------------
+
+
 class Ector:
     "The ECTOR class"
     def __init__(self,botname="Ector",username="User"):
@@ -200,7 +204,8 @@ class Ector:
             else:
                 state    = State(username)
             self.cn.addState(state)
-#------------------------------------------------------------------------------
+
+
 if __name__ == "__main__":
     import sys
     from optparse import OptionParser
@@ -226,7 +231,7 @@ if __name__ == "__main__":
     stdout   = sys.stdout
     username = options.username and options.username or ""
     botname  = options.botname.capitalize()
-    version  = "0.1"
+    version  = "0.2"
 
     ector    = Ector(botname, username)
 

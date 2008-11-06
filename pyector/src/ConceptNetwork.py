@@ -49,12 +49,14 @@ class ConceptNetworkNodeStateBadValue(ConceptNetworkError): pass
 class ConceptNetworkStateBadType(ConceptNetworkError): pass
 class TemperatureNoItems(ConceptNetworkError): pass
 class TemperatureBadValue(ConceptNetworkError): pass
-#------------------------------------------------------------------------------
+
+
 class ConceptNetwork:
     """A ConceptNetwork is a graph of nodes and links.
 
     Each node can be in a NodeState.
     """
+
     def __init__(self):
         self.node  = {}             # (symbol,type)     -> node
         self.link  = {}             # (from,to,label)   -> link
@@ -326,7 +328,8 @@ class ConceptNetwork:
         print "States (%d)" % (len(self.state))
         for id in self.state:
             print "\t%s" % (id)
-#------------------------------------------------------------------------------
+
+
 class Node:
     """A ConceptNetworkNode is
 
@@ -367,7 +370,8 @@ class Node:
     def getDecay(self):
         "Get the decay rate of this node"
         return self.__decay
-#------------------------------------------------------------------------------
+
+
 #class NodeType:
 #    """   A ConceptNetworkType is a @c t XmlNode
 #
@@ -429,7 +433,8 @@ class Node:
 #    def getName(self):
 #        "Get the name of that type"
 #        return self.name
-#------------------------------------------------------------------------------
+
+
 class Link:
     """Type of the a Concept Network node
 
@@ -441,6 +446,7 @@ class Link:
 
     See ConceptNetwork.addLink
     """
+
     def __init__(self,nodeFrom,nodeTo,nodeLabel=None,coOcc=1):
         if not nodeFrom or not nodeTo:
             raise ConceptNetworkIncompleteLink,"There lacks at least one node!"
@@ -477,7 +483,8 @@ class Link:
 
     def getNodeLabel(self):
         return self.label
-#------------------------------------------------------------------------------
+
+
 class State:
     """   A ConceptNetwork.State is the state of each activated nodes.
 
@@ -490,6 +497,7 @@ class State:
     The State keeps the link between a node's symbol and typeName to its
     NodeState.
     """
+
     def __init__(self,stateId):
         self.id        = stateId
         self.nodeState = {}         # (node symbol, node type) -> node state
@@ -585,7 +593,8 @@ class State:
                               nodeState.getActivationValue(),
                               nodeState.getAge(),
                               symbol, typeName)
-#------------------------------------------------------------------------------
+
+
 class NodeState:
     """The state of a node (activation value, old activation value, age)
 
@@ -635,7 +644,8 @@ class NodeState:
 
     def getAge(self):
         return self.age
-#------------------------------------------------------------------------------
+
+
 class Temperature:
     "Class for chosing among weighted items according to a temperature"
     def __init__(self,temperature,influence=2):
@@ -690,7 +700,8 @@ class Temperature:
             if choice <= urgency:
                 return item
         return item[0]
-#------------------------------------------------------------------------------
+
+
 # main
 if __name__ == "__main__":
     import sys

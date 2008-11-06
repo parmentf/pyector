@@ -35,14 +35,16 @@ __license__   = "GPL"
 
 from ConceptNetwork import *
 import unittest
-#------------------------------------------------------------------------------
+
+
 class NodeTest(unittest.TestCase):
     "Test the Node class"
     def testCreationOcc(self):
         "A just created node has an occurrence equals to 1"
         node = Node("Salut")
         self.assertEqual(1,node.getOcc())
-#------------------------------------------------------------------------------
+
+
 class ConceptNetworkTest(unittest.TestCase):
     "Test the ConceptNetwork class"
     def testConceptNetworkGetNode(self):
@@ -213,13 +215,15 @@ class ConceptNetworkTest(unittest.TestCase):
         conceptNetwork.addState(state2)
         conceptNetwork.removeStatesExcept(2)
         self.assertEqual(state2, conceptNetwork.getState(2))
-#------------------------------------------------------------------------------
+
+
 class LinkTest(unittest.TestCase):
     "Test the Link class"
     def testCreateBadLink(self):
         "A link has at least 2 nodes"
         self.assertRaises(ConceptNetworkIncompleteLink,Link,None,None)
-#------------------------------------------------------------------------------
+
+
 class StateTest(unittest.TestCase):
     "Test the State class"
     def testCreateState(self):
@@ -276,7 +280,8 @@ class StateTest(unittest.TestCase):
             conceptNetwork.fastPropagateActivations(state,2)
         state.setNodeActivationValue(0, "From", "basic")
         self.assertRaises(KeyError,state.nodeState.__getitem__,("From","basic"))
-#------------------------------------------------------------------------------
+
+
 class TemperatureTest(unittest.TestCase):
     "Test the Temperature class"
     def testChooseWeightedItems(self):
@@ -296,7 +301,8 @@ class TemperatureTest(unittest.TestCase):
         node2 = Node("2")
         l = [(node,100),(node2,1)]
         self.assertEqual(node,temperature.chooseWeightedItem(l))
-#------------------------------------------------------------------------------
+
+
 if __name__ == "__main__":
 	unittest.main()
 
