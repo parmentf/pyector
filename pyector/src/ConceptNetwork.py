@@ -703,8 +703,7 @@ class Temperature:
 
 
 # main
-if __name__ == "__main__":
-    import sys
+def main():
     import os
     from optparse import OptionParser
 
@@ -786,7 +785,7 @@ if __name__ == "__main__":
             file.close()
             print "Concept Network saved in \"%s\"" % (filename)
         elif line.startswith("@quit"):
-            break
+            return 0
         elif line[:5] == "@help":
             print """@help give this help
 @addnode name: add the node given
@@ -797,5 +796,10 @@ if __name__ == "__main__":
 @showlinks: show the links in the ConceptNetwork
 @showstate: show the state of the nodes
 @save: save the Concept Network and its state
-@quit: quit without saving
-"""
+@quit: quit without saving"""
+
+if __name__ == "__main__":
+    import sys
+
+    status = main()
+    sys.exit(status)

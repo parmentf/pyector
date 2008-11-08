@@ -202,12 +202,11 @@ class Ector:
                 state       = pickle.load(f)
                 f.close()
             else:
-                state    = State(username)
+                state    = State(self.username)
             self.cn.addState(state)
 
 
-if __name__ == "__main__":
-    import sys
+def main():
     from optparse import OptionParser
     usage="usage: %prog [-p username][-n botname=Ector][-v|-q][-l logfilepath][-s|-g][-h]"
     parser = OptionParser(usage=usage,version="%prog 0.1")
@@ -278,7 +277,7 @@ under certain conditions; type `@show c' for details.
         elif entry[:6] == "@write":
             ector.dump()
         elif entry[:5] == "@quit" or entry[:5] == "@exit" or entry[:4] == "@bye":
-            break
+            return 0
         # Help
         elif entry[:5] == "@help":
             print """ - @usage   : print the options of the Ector.py command
@@ -291,3 +290,7 @@ under certain conditions; type `@show c' for details.
  - @write   : save Ector's Concept Network and state
  - @status  : show the status of Ector (Concept Network, states)"""
 
+if __name__ == "__main__":
+    import sys
+    status = main()
+    sys.exit(status)
