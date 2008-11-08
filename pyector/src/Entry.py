@@ -65,11 +65,22 @@ class Entry:
             except ValueError:
                 # if sep in not in the haystack
                 break
+
+            # Cat the separator characters
             if i+1 == len(haystack):
                 # if it's the last character of the string
                 break
-            while haystack[i+1] in sepList:
+            nextInSep = i+1 < len(haystack)
+            if nextInSep:
+                nextInSep = haystack[i+1] in sepList
+            while nextInSep:
                 i += 1
+                # Stop if the end of the haystack is compound of separators
+                nextInSep = i+1 < len(haystack)
+                if nextInSep:
+                    nextInSep = haystack[i+1] in sepList
+                if not nextInSep:
+                    return indices
             previous = i
             indices += [i]
 

@@ -53,7 +53,7 @@ class EntryTest(unittest.TestCase):
         e        = Entry(line)
         self.assertEqual([line], e.getSentences())
 
-    def testSenteceTwo(self):
+    def testSentenceTwo(self):
         "Separate two sentences"
         e    = Entry("One. Two!")
         self.assertEqual(["One.","Two!"], e.getSentences())
