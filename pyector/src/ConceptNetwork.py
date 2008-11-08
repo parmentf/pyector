@@ -33,7 +33,7 @@ __date__      = "$Date$"
 __copyright__ = "Copyright (c) 2008 François Parmentier"
 __license__   = "GPL"
 
-from math import *
+from math import log, exp
 import random
 import time
 import pickle
