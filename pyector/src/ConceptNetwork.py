@@ -372,69 +372,6 @@ class Node:
         return self.__decay
 
 
-#class NodeType:
-#    """   A ConceptNetworkType is a @c t XmlNode
-#
-#    TODO: REWRITE!
-#    @code
-#    <types>
-#    <t desac="50">sentence</t>
-#    <t desac="40">token</t>
-#    <t desac="40">expression</t>
-#    <t desac="10">sentiment</t>
-#    <t desac="70">utterer</t>
-#    <t desac="10">label</t>
-#    <t desac="50">file</t>
-#    </types>
-#    @endcode
-#
-#    - @a desac is the decay rate.
-#    - @a depth is the depth of type
-#    - @a contents is the name of the type.
-#
-#    The different types:
-#    - sentence (something said by someone, delimited by
-#      E_SENTENCE_SEPARATORS)
-#    - token (something inside a sentence)
-#    - expression (a sequence of tokens, often occurring - more than
-#      E_EXPRESSION_THRESHOLD)
-#    - sentiment
-#    - utterer (someone that said something, may it be a bot)
-#    - label (something linking two tokens or expressions). Changes the
-#      influence from one to another.
-#    - file (an URI, a file read).
-#
-#    @see XmlNode ConceptNetworkCreate ConceptNetworkTypeGetDepth"""
-#    # TODO: remove this whole class, now integrated into Node and
-#    #       its specialized classes
-#    possibleTypes = {"sentence"   : 50,
-#                     "token"      : 40,
-#                     "expression" : 40,
-#                     "sentiment"  : 10,
-#                     "utterer"    : 70,
-#                     "label"      : 10,
-#                     "file"       : 50,
-#                     }
-#    def __init__(self,name,depth=50):
-#        if name in self.__class__.possibleTypes:
-#            self.name  = name
-#            self.depth = depth
-#            self.decay = self.__class__.possibleTypes[name]
-#        else:
-#            raise ConceptNetworkNodeTypeError, "Unknown node type:\"" + name + "\""
-#
-#    def getDepth(self):
-#        return self.depth
-#
-#    def getDecay(self):
-#        "Get the decay rate of the type"
-#        return self.decay
-#
-#    def getName(self):
-#        "Get the name of that type"
-#        return self.name
-
-
 class Link:
     """Type of the a Concept Network node
 
