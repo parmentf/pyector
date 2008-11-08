@@ -82,6 +82,8 @@ class Entry:
         in order to avoid cutting a phrase because of the dots."""
         # If sentences are not yet computed
         if not self.sentences:
+            # TODO: Get the URL and the mails, and replace them
+            pass
             # Get the indices of the sentence separators.
             idx = []
             for sep in SENTENCE_SEPARATORS:
@@ -91,10 +93,11 @@ class Entry:
             self.sentences = []
             h = 0
             for i in idx:
-                print h,i, self.line[h:i]
                 self.sentences += [self.line[h:i+1].strip()]
                 h = i+1
-            self.sentences += [self.line[h:]]
+            self.sentences += [self.line[h:].strip()]
+            #TODO: Replace the locations of the URL and mails with the values
+            pass
         return self.sentences
 
 
