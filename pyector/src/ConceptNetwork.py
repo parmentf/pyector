@@ -775,8 +775,7 @@ def main():
             else:
                 cn.fastPropagateActivations(state)
         elif line[:5] == "@save":
-            # FIXME: the conceptnetwork.pkl file is not readable.
-            # NOTE: with the protocol 0, it works!
+            # NOTE: the writing protocol must be the same than the reading one
             file = open(filename,"w")
             cn.dump(file, 0)
             file.close()
