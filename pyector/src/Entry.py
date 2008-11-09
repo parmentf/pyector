@@ -42,13 +42,13 @@ class Entry:
     It has to be parsed into sentences, sentences into tokens, and tokens
     join to expressions.
     """
-    def __init__(self,line,botname="Ector",username="User"):
+    def __init__(self,entry,botname="Ector",username="User"):
         """To create an Entry, one needs a line string
 
-        Replace the botname in the line by "@bot", and username by "@user@"
+        Replace the botname in the line by "@bot@", and username by "@user@"
         """
-        self.line = line.replace(botname,"@bot@")
-        self.line = self.line.replace(username,"@user@")
+        self.entry = entry.replace(botname,"@bot@")
+        self.entry = self.entry.replace(username,"@user@")
         self.sentences = None
 
     def getIndices(self, haystack, sep, sepList):
@@ -98,15 +98,15 @@ class Entry:
             # Get the indices of the sentence separators.
             idx = []
             for sep in SENTENCE_SEPARATORS:
-                idx += self.getIndices(self.line,sep,SENTENCE_SEPARATORS)
+                idx += self.getIndices(self.entry,sep,SENTENCE_SEPARATORS)
             idx.sort()
             # Build the list of sentences, from the separators.
             self.sentences = []
             h = 0
             for i in idx:
-                self.sentences += [self.line[h:i+1].strip()]
+                self.sentences += [self.entry[h:i+1].strip()]
                 h = i+1
-            self.sentences += [self.line[h:].strip()]
+            self.sentences += [self.entry[h:].strip()]
             #TODO: Replace the locations of the URL and mails with the values
             pass
         return self.sentences
