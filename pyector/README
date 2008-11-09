@@ -5,7 +5,7 @@ author parmentierf@users.sourceforge.net
 
 Description
 -----------
-ECTOR is a learning chatterbot. pyECTOR is its python version.
+ECTOR is a learning chatterbot. pyECTOR is its Python version.
 
 ECTOR learns from what people say. It is based on a artificial
 intelligence architecture, that is inspired from Copycat, an AI
@@ -21,7 +21,7 @@ It's to you to teach it.
 Prerequisites
 -------------
 pyECTOR is written in Python so you need a Python interpreter
-(version 2.5 or later) to execute pyector. Python is installed by
+(version 2.5 or later) to execute pyECTOR. Python is installed by
 default in most Linux distributions.  You can download Python from the
 official Python website http://www.python.org.
 
