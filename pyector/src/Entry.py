@@ -56,46 +56,26 @@ class Entry:
         # Use a re, with \b around names to avoid replacing part of words,
         # like director -> dir@bot@.
         # See http://docs.python.org/dev/howto/regex.html
-        reBotname  = re.compile(r'\b'+botname+r'\b', re.IGNORECASE)
+        reBotname  = re.compile(r'\b'+botname+r'\b',  re.IGNORECASE|re.LOCALE)
         reUsername = re.compile(r'\b'+username+r'\b', re.IGNORECASE|re.LOCALE)
         self.entry = reBotname.sub('@bot@', entry)
         self.entry = reUsername.sub('@user@', self.entry)
         self.sentences = None
 
-    def getIndices(self, haystack, sep, sepList):
+    def getIndices(self, haystack):
         """Get all indices of sep in the string haystack.
 
         haystack: the string to search
         sep: the separator character
         sepList: list of the separators considered as part as the separator"""
+        reSENTENCES_SEPARATORS = re.compile(r'[?!\.]+ *')
+        iterator = reSENTENCES_SEPARATORS.finditer(haystack)
+
         indices  = []
-        previous = -1
-        while True:
-            try:
-                i        = haystack.index(sep,previous+1)
-            except ValueError:
-                # if sep in not in the haystack
-                break
+        for match in iterator:
+            indices += [match.end()]
 
-            # Cat the separator characters
-            if i+1 == len(haystack):
-                # if it's the last character of the string
-                break
-            nextInSep = i+1 < len(haystack)
-            if nextInSep:
-                nextInSep = haystack[i+1] in sepList
-            while nextInSep:
-                i += 1
-                # Stop if the end of the haystack is compound of separators
-                nextInSep = i+1 < len(haystack)
-                if nextInSep:
-                    nextInSep = haystack[i+1] in sepList
-                if not nextInSep:
-                    return indices
-            previous = i
-            indices += [i]
-
-        return indices
+        return indices[:-1]
 
     def getSentences(self):
         """Split the line of the entry into sentences.
@@ -107,16 +87,13 @@ class Entry:
             # TODO: Get the URL and the mails, and replace them
             pass
             # Get the indices of the sentence separators.
-            idx = []
-            for sep in SENTENCE_SEPARATORS:
-                idx += self.getIndices(self.entry,sep,SENTENCE_SEPARATORS)
-            idx.sort()
+            idx = self.getIndices(self.entry)
             # Build the list of sentences, from the separators.
             self.sentences = []
             h = 0
             for i in idx:
-                self.sentences += [self.entry[h:i+1].strip()]
-                h = i+1
+                self.sentences += [self.entry[h:i].strip()]
+                h = i
             self.sentences += [self.entry[h:].replace("\n"," ").strip()]
             #TODO: Replace the locations of the URL and mails with the values
             pass
