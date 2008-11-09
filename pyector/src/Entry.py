@@ -42,7 +42,11 @@ import re
 MAIL_REGEX = re.compile(r"([a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[A-Z]{2}|com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|museum))",
                           re.IGNORECASE|re.MULTILINE)
 reACRONYMS = re.compile(r'(?:[A-Z]\.)+', re.LOCALE)
-reURL      = re.compile(r"", re.IGNORECASE)
+reURL      = re.compile(r"(?:http|ftp|file)://(?:[a-z0-9]+\.){1,3}[a-z0-9]+", re.IGNORECASE)
+#reURL      = re.compile(r"([^:/?#]+:)?(?://[^/?#]*)?[^?#]*(?:\?[^#]*)?(?:#.*)?", re.IGNORECASE)
+
+#r"(([a-zA-Z][0-9a-zA-Z+\\-\\.]*:)?/{0,2}[0-9a-zA-Z;/?:@&=+$\\.\\-_!~*'()%]+)?(#[0-9a-zA-Z;/?:@&=+$\\.\\-_!~*'()%]+)?"
+#r"(?:http|ftp|file)://(?:[a-z0-9]+\.){1,3}[a-z0-9]+"
 
 class Entry:
     """An entry is a line of input.
@@ -84,7 +88,7 @@ class Entry:
         in order to avoid cutting a phrase because of the dots."""
         # If sentences are not yet computed
         if not self.sentences:
-            # TODO: Get the URL and the mails, and replace them
+            # Get the URL and the mails, and replace them
             # Get the acronyms ############################
             iterator   = reACRONYMS.finditer(self.entry)
             acronyms   = {}
@@ -103,8 +107,17 @@ class Entry:
                 key = "@mail"+str(i)+"@"
                 mails[key] = match.group()
                 self.entry = self.entry.replace(mails[key], key, 1)
-            pass
-            # Get the indices of the sentence separators.
+            # Get the URL #################################
+            iterator    = reURL.finditer(self.entry)
+            urls        = {}
+            i           = 0
+            for match in iterator:
+                i+=1
+                key        = "@url"+str(i)+"@"
+                urls[key]  = match.group()
+                self.entry = self.entry.replace(urls[key], key, 1)
+
+            # Get the indices of the sentence separators. ###########
             idx = self.getIndices(self.entry)
             # Build the list of sentences, from the separators.
             self.sentences = []
@@ -113,7 +126,8 @@ class Entry:
                 self.sentences += [self.entry[h:i].strip()]
                 h = i
             self.sentences += [self.entry[h:].replace("\n"," ").strip()]
-            #TODO: Replace the locations of the URL and mails with the values
+
+            # Replace the locations of the URL and mails with the values
             for i in range(len(self.sentences)):
                 # Put the acronyms back
                 for key in acronyms:
@@ -121,7 +135,9 @@ class Entry:
                 # Put the mails back
                 for key in mails:
                     self.sentences[i] = self.sentences[i].replace(key, mails[key])
-            pass
+                # Put the URLs back
+                for key in urls:
+                    self.sentences[i] = self.sentences[i].replace(key, urls[key])
         return self.sentences
 
 
