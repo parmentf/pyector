@@ -85,6 +85,14 @@ class EntryTest(unittest.TestCase):
         e    = Entry(line)
         self.assertEqual([line], e.getSentences())
 
+    def testSentenceOneLines(self):
+        """Parse one sentence in several lines.
+        Lines have to be appended."""
+        lines = """How
+are you?"""
+        e     = Entry(lines)
+        self.assertEqual(["How are you?"], e.getSentences())
+
 
 if __name__ == "__main__":
     unittest.main()

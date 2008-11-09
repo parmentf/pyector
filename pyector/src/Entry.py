@@ -106,7 +106,7 @@ class Entry:
             for i in idx:
                 self.sentences += [self.entry[h:i+1].strip()]
                 h = i+1
-            self.sentences += [self.entry[h:].strip()]
+            self.sentences += [self.entry[h:].replace("\n"," ").strip()]
             #TODO: Replace the locations of the URL and mails with the values
             pass
         return self.sentences
