@@ -65,9 +65,7 @@ class Entry:
     def getIndices(self, haystack):
         """Get all indices of sep in the string haystack.
 
-        haystack: the string to search
-        sep: the separator character
-        sepList: list of the separators considered as part as the separator"""
+        haystack: the string to search"""
         reSENTENCES_SEPARATORS = re.compile(r'[?!\.]+ *')
         iterator = reSENTENCES_SEPARATORS.finditer(haystack)
 
@@ -85,6 +83,16 @@ class Entry:
         # If sentences are not yet computed
         if not self.sentences:
             # TODO: Get the URL and the mails, and replace them
+            # Get the acronyms
+            reACRONYMS = re.compile(r'(?:[A-Z]\.)+', re.LOCALE)
+            iterator   = reACRONYMS.finditer(self.entry)
+            acronyms   = {}
+            i          = 0
+            for match in iterator:
+                i  += 1
+                key = "@acro"+str(i)+"@"
+                acronyms[key] = match.group()
+                self.entry = self.entry.replace(acronyms[key], key, 1)
             pass
             # Get the indices of the sentence separators.
             idx = self.getIndices(self.entry)
@@ -96,6 +104,10 @@ class Entry:
                 h = i
             self.sentences += [self.entry[h:].replace("\n"," ").strip()]
             #TODO: Replace the locations of the URL and mails with the values
+            for i in range(len(self.sentences)):
+                # Put the acronyms
+                for key in acronyms:
+                    self.sentences[i] = self.sentences[i].replace(key, acronyms[key])
             pass
         return self.sentences
 
