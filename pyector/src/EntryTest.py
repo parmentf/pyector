@@ -58,6 +58,33 @@ class EntryTest(unittest.TestCase):
         e    = Entry("One. Two!")
         self.assertEqual(["One.","Two!"], e.getSentences())
 
+    def testSentenceFour(self):
+        "Separate two sentences"
+        e    = Entry("One. Two! Three? Four.")
+        self.assertEqual(["One.","Two!","Three?","Four."], e.getSentences())
+
+    def testSentenceOneUrl(self):
+        "Parse one sentence containing an URL"
+        e    = Entry("The site http://pyector.googlecode.com/ is great!")
+        self.assertEqual(["The site http://pyector.googlecode.com/ is great!"],
+                         e.getSentences())
+
+    def testSentenceOneSmiley(self):
+        "Parse one sentence containing a smiley"
+        e    = Entry("Eheh :) this is cool")
+        self.assertEqual(["Eheh :) this is cool"], e.getSentences())
+
+    def testSentenceOneAcronym(self):
+        "Parse one sentence containing acronyms"
+        e    = Entry("A.I. means Artificial Intelligence.")
+        self.assertEqual(["A.I. means Artificial Intelligence."], e.getSentences())
+
+    def testSentenceOneMail(self):
+        "Parse one sentence containing mail"
+        line = "The mail of my developer is parmentierf@users.sourceforge.net."
+        e    = Entry(line)
+        self.assertEqual([line], e.getSentences())
+
 
 if __name__ == "__main__":
     unittest.main()
