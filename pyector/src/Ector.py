@@ -82,6 +82,11 @@ class TokenNode(Node):
 
 class SentenceNode(Node):
     """A sentence node.
+
+    TODO: use attributes to store how many times the sentence is at the
+          beginning of a dialogue or (more difficult) at the end of one.
+          Better: use attributes to store how many times the sentence
+          is the first phrase, the last one, or a middle one in the line.
     """
     __type = "sentence"
     __decay = 50
