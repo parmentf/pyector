@@ -99,6 +99,15 @@ are you?"""
         e     = Entry(lines)
         self.assertEqual(["How are you?"], e.getSentences())
 
+    def testBotname(self):
+        """Replace botname by '@bot@'"""
+        e    = Entry("Ector is the director!")
+        self.assertEqual("@bot@ is the director!",e.entry)
+
+    def testUsername(self):
+        """Replace user name by '@user@'"""
+        e    = Entry("François is the bot master!",username="François")
+        self.assertEqual("@user@ is the bot master!",e.entry)
 
 if __name__ == "__main__":
     unittest.main()

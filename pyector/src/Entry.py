@@ -36,19 +36,30 @@ __license__   = "GPL"
 SENTENCE_SEPARATORS = "!?."
 WORD_SEPARATORS     = "/,'()[];:\"-+«»!?.<>="
 
+import re
+
+# From http://www.regular-expressions.info/email.html
+MAIL_REGEXP = re.compile(r"([a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[A-Z]{2}|com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|museum))",
+                          re.IGNORECASE|re.MULTILINE)
+
 class Entry:
     """An entry is a line of input.
 
     It has to be parsed into sentences, sentences into tokens, and tokens
     join to expressions.
     """
-    def __init__(self,entry,botname="Ector",username="User"):
+    def __init__(self,entry,username="User",botname="Ector"):
         """To create an Entry, one needs a line string
 
         Replace the botname in the line by "@bot@", and username by "@user@"
         """
-        self.entry = entry.replace(botname,"@bot@")
-        self.entry = self.entry.replace(username,"@user@")
+        # Use a re, with \b around names to avoid replacing part of words,
+        # like director -> dir@bot@.
+        # See http://docs.python.org/dev/howto/regex.html
+        reBotname  = re.compile(r'\b'+botname+r'\b', re.IGNORECASE)
+        reUsername = re.compile(r'\b'+username+r'\b', re.IGNORECASE|re.LOCALE)
+        self.entry = reBotname.sub('@bot@', entry)
+        self.entry = reUsername.sub('@user@', self.entry)
         self.sentences = None
 
     def getIndices(self, haystack, sep, sepList):
