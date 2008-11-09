@@ -85,6 +85,12 @@ class EntryTest(unittest.TestCase):
         e    = Entry(line)
         self.assertEqual([line], e.getSentences())
 
+    def testSentenceOneMail2(self):
+        "Parse one sentence containing a mail with a dotted name"
+        line = "The mail of my developer is foo.bar@users.sourceforge.net."
+        e    = Entry(line)
+        self.assertEqual([line], e.getSentences())
+
     def testSentenceOneLines(self):
         """Parse one sentence in several lines.
         Lines have to be appended."""
