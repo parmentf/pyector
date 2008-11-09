@@ -39,8 +39,10 @@ WORD_SEPARATORS     = "/,'()[];:\"-+«»!?.<>="
 import re
 
 # From http://www.regular-expressions.info/email.html
-MAIL_REGEXP = re.compile(r"([a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[A-Z]{2}|com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|museum))",
+MAIL_REGEX = re.compile(r"([a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[A-Z]{2}|com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|museum))",
                           re.IGNORECASE|re.MULTILINE)
+reACRONYMS = re.compile(r'(?:[A-Z]\.)+', re.LOCALE)
+reURL      = re.compile(r"", re.IGNORECASE)
 
 class Entry:
     """An entry is a line of input.
@@ -83,8 +85,7 @@ class Entry:
         # If sentences are not yet computed
         if not self.sentences:
             # TODO: Get the URL and the mails, and replace them
-            # Get the acronyms
-            reACRONYMS = re.compile(r'(?:[A-Z]\.)+', re.LOCALE)
+            # Get the acronyms ############################
             iterator   = reACRONYMS.finditer(self.entry)
             acronyms   = {}
             i          = 0
@@ -93,6 +94,15 @@ class Entry:
                 key = "@acro"+str(i)+"@"
                 acronyms[key] = match.group()
                 self.entry = self.entry.replace(acronyms[key], key, 1)
+            # Get the mails ###############################
+            iterator    = MAIL_REGEX.finditer(self.entry)
+            mails       = {}
+            i           = 0
+            for match in iterator:
+                i += 1
+                key = "@mail"+str(i)+"@"
+                mails[key] = match.group()
+                self.entry = self.entry.replace(mails[key], key, 1)
             pass
             # Get the indices of the sentence separators.
             idx = self.getIndices(self.entry)
@@ -105,9 +115,12 @@ class Entry:
             self.sentences += [self.entry[h:].replace("\n"," ").strip()]
             #TODO: Replace the locations of the URL and mails with the values
             for i in range(len(self.sentences)):
-                # Put the acronyms
+                # Put the acronyms back
                 for key in acronyms:
                     self.sentences[i] = self.sentences[i].replace(key, acronyms[key])
+                # Put the mails back
+                for key in mails:
+                    self.sentences[i] = self.sentences[i].replace(key, mails[key])
             pass
         return self.sentences
 
