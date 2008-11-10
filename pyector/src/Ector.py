@@ -90,7 +90,7 @@ class TokenNode(Node):
 
     def show(self):
         """Display the node"""
-        print "%s (%s): %d (%d,%d,%d)" % (self.getSymbol(),
+        print "%10s (%8s): %d (%d,%d,%d)" % (self.getSymbol(),
                                self.getTypeName(),
                                self.getOcc(),
                                self.getBeginningOccurrence(),
@@ -102,21 +102,33 @@ class TokenNode(Node):
 class SentenceNode(Node):
     """A sentence node.
 
-    TODO: use attributes to store how many times the sentence is at the
-          beginning of a dialogue or (more difficult) at the end of one.
-          Better: use attributes to store how many times the sentence
-          is the first phrase, the last one, or a middle one in the line.
+    - beg: number of occurrences of this sentence in top of the dialogue.
     """
     __type = "sentence"
     __decay = 50
     def __init__(self, symbol, occ = 1):
         Node.__init__(self, symbol, occ=occ)
+        self.beg    = 0
+
+    def addNode(self,node):
+        """Add beg, mid, and end of the node to self."""
+        Node.addNode(self, node)
+        self.beg += node.beg
 
     def getTypeName(self):
         return self.__type
 
     def getDecay(self):
         return self.__decay
+
+    def show(self):
+        """Display the node
+        Display the number of times it was on top of a dialogue."""
+        print "%10s (%8s): %d (%d)" % (self.getSymbol(),
+                               self.getTypeName(),
+                               self.getOcc(),
+                               self.beg,
+                               )
 
 
 class ExpressionNode(Node):
@@ -170,11 +182,25 @@ class UttererNode(Node):
     def getDecay(self):
         return self.__decay
 
+    def getLastTime(self):
+        """Get the last time the utterer talked"""
+        return self.__lastTime
+
     def addNode(self,node):
         """Update the last time the utterer talked."""
         Node.addNode(self, node)
         self.__lastTime = time.localtime()
 
+    def show(self):
+        """Display the node
+        Display the last time the utterer talked"""
+        print "%10s (%8s): %d (%d/%d/%d)" % (self.getSymbol(),
+                               self.getTypeName(),
+                               self.getOcc(),
+                               self.__lastTime[0],
+                               self.__lastTime[1],
+                               self.__lastTime[2]
+                               )
 
 class Ector:
     "The ECTOR class"
@@ -322,6 +348,17 @@ class Ector:
         return sentenceNode
 
 
+def logEntry(filename, utterer, entry):
+    """Log the utterer's entry in the file"""
+    f    = file(filename,"a")
+    t    = time.localtime()
+    print >> f, "%4d/%2d/%2d - %2d:%2d:%2d\t%s\t%s" % (t[0], t[1], t[2],
+                                                   t[3], t[4], t[5],
+                                                   utterer,
+                                                   entry)
+    f.close()
+
+
 def main():
     from optparse import OptionParser
     import sys
@@ -335,6 +372,8 @@ def main():
                       help="say all that you can say")
     parser.add_option("-q", action="store_false", dest="verbose",
                       help="shut up!")
+    parser.add_option("-l", "--log", dest="logname", default="",
+                      help="log the dialogue in log file")
 
     (options, args) = parser.parse_args()
 
@@ -343,9 +382,12 @@ def main():
     stdout   = sys.stdout
     username = options.username
     botname  = options.botname.capitalize()
+    logfilename = options.logname
     version  = "0.2"
 
     ector    = Ector(botname, username)
+
+    previousSentenceNode    = None
 
     print """pyECTOR version %s, Copyright (C) 2008 Francois PARMENTIER
 pyECTOR comes with ABSOLUTELY NO WARRANTY; for details type `@show w'.
@@ -395,22 +437,40 @@ under certain conditions; type `@show c' for details.
             ector.cn.showNodes()
         elif entry[:10] == "@showlinks":
             ector.cn.showLinks(1)
+        elif entry.startswith("@log "):
+            logfilename    = entry[5:]
+            print "Log file: %s" % (logfilename)
+        elif entry == "@log" or entry == "@logoff":
+            print "Log off (%s)" % logfilename
+            logfilename = ''
         # Help
         elif entry[:5] == "@help":
             print """You can just start typing phrases.
 But there are some commands you can use:
- - @usage   : print the options of the Ector.py command
- - @quit    : quit
- - @exit    : quit
- - @bye     : quit
- - @person  : change the utterer name (like -p)
- - @name    : change the bot's name (like -n)
- - @version : give the current version
- - @write   : save Ector's Concept Network and state
- - @status  : show the status of Ector (Concept Network, states)"""
+ - @usage     : print the options of the Ector.py command
+ - @quit      : quit
+ - @exit      : quit
+ - @bye       : quit
+ - @person    : change the utterer name (like -p)
+ - @name      : change the bot's name (like -n)
+ - @version   : give the current version
+ - @write     : save Ector's Concept Network and state
+ - @shownodes : show the nodes of the Concept Network
+ - @showlinks : show the links of the Concept Network
+ - @log [file]: log the entries in the file (no file turns off the logging)
+ - @status    : show the status of Ector (Concept Network, states)"""
         else:
-             ector.addEntry(entry)
-             # TODO: if log is activated, log the entry.
+             lastSentenceNode = ector.addEntry(entry)
+             if previousSentenceNode:
+                 ector.cn.addLink(previousSentenceNode,lastSentenceNode)
+             else:
+                 # First sentence of a dialogue
+                 lastSentenceNode.beg += 1
+             previousSentenceNode    = lastSentenceNode
+             # if log is activated, log the entry.
+             if logfilename:
+                 logEntry(logfilename, username, entry)
+
 
 if __name__ == "__main__":
     import sys
