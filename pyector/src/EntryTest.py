@@ -57,6 +57,8 @@ class EntryTest(unittest.TestCase):
         "Separate two sentences"
         e    = Entry("One. Two!")
         self.assertEqual(["One.","Two!"], e.getSentences())
+        e    = Entry("One. Two")
+        self.assertEqual(["One.","Two"], e.getSentences())
 
     def testSentenceFour(self):
         "Separate two sentences"
@@ -98,6 +100,12 @@ class EntryTest(unittest.TestCase):
 are you?"""
         e     = Entry(lines)
         self.assertEqual(["How are you?"], e.getSentences())
+
+    def testSentenceTwoSmiley(self):
+        """Parse two sentences: one normal, and one smiley"""
+        line     = "What happen with a smiley? :)"
+        e        = Entry(line)
+        self.assertEqual(["What happen with a smiley?",":)"],e.getSentences())
 
     def testBotname(self):
         """Replace botname by '@bot@'"""

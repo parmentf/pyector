@@ -82,7 +82,10 @@ class Entry:
         for match in iterator:
             indices += [match.end()]
 
-        return indices[:-1]
+        if len(indices) and indices[-1] == '':
+            return indices[:-1]
+        else:
+            return indices
 
     def getSentences(self):
         """Split the line of the entry into sentences.
@@ -126,9 +129,10 @@ class Entry:
             self.sentences = []
             h = 0
             for i in idx:
-                self.sentences += [self.entry[h:i].strip()]
+                self.sentences += [self.entry[h:i].replace("\n"," ").strip()]
                 h = i
-            self.sentences += [self.entry[h:].replace("\n"," ").strip()]
+            if h < len(self.entry):
+                self.sentences += [self.entry[h:].replace("\n"," ").strip()]
 
             # Replace the locations of the URL and mails with the values
             for i in range(len(self.sentences)):
