@@ -37,7 +37,7 @@ import os
 class TokenNode(Node):
     """A token in a sentence.
 
-    That should be a word, or punctuation sign(s).
+    That should be a word, a smiley, or punctuation sign(s).
 
     This TokenNode remembers:
     beg    :    occurrence in the beginning of a sentence
@@ -51,6 +51,13 @@ class TokenNode(Node):
         self.__mid = mid
         self.__end = end
         Node.__init__(self, symbol, occ=occ)
+
+    def addNode(self,node):
+        """Add beg, mid, and end of the node to self."""
+        Node.addNode(self, node)
+        self.__beg += node.getBeginningOccurrence()
+        self.__mid += node.getMiddleOccurrence()
+        self.__end += node.getEndOccurrence()
 
     def getTypeName(self):
         return self.__type

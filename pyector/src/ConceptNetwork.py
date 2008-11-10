@@ -84,7 +84,8 @@ class ConceptNetwork:
         symbol = node.getSymbol()
         type   = node.getTypeName()
         if (symbol,type) in self.node:
-            self.node[(symbol,type)].incrementOcc()
+            #self.node[(symbol,type)].incrementOcc()
+            self.node[(symbol, type)].addNode(node)
         else:
             self.node[(symbol,type)] = node
 
@@ -356,6 +357,13 @@ class Node:
 
     def incrementOcc(self):
         self.occ = self.occ + 1
+
+    def addNode(self, node):
+        """Add the characteristics of the node to self.
+
+        Typically, add the occ of the node to self.
+        To be specialized..."""
+        self.occ += node.getOcc()
 
     def getSymbol(self):
         "Get the symbol of the node"
