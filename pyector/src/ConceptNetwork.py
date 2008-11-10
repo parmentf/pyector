@@ -744,6 +744,7 @@ def main():
 
 if __name__ == "__main__":
     import sys
+    import Ector
 
     status = main()
     sys.exit(status)
