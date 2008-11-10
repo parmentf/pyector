@@ -92,7 +92,7 @@ class ConceptNetwork:
     def showNodes(self):
         "Show all the nodes in the Concept Network"
         for (symbol, type) in self.node:
-            print "%s (%s): %d" % (symbol, type, self.getNode(symbol,type).getOcc())
+            self.getNode(symbol,type).show()
 
     def showLinks(self,stateId=None):
         "Show all the links in the Concept Network"
@@ -153,10 +153,10 @@ class ConceptNetwork:
         If there is no label node, None should be passed as labelNode."""
         if not nodeFrom or not nodeTo:
             raise ConceptNetworkIncompleteLink,"There lacks at least one node!"
-        self.__hasType(nodeFrom,"Node")    # Maybe this is not right for derived Nodes
-        self.__hasType(nodeTo,  "Node")    # Maybe this is not right for derived Nodes
-        if nodeLabel:
-            self.__hasType(nodeLabel,"Node")    # Maybe this is not right for derived Nodes
+#        self.__hasType(nodeFrom,"Node")    # Maybe this is not right for derived Nodes
+#        self.__hasType(nodeTo,  "Node")    # Maybe this is not right for derived Nodes
+#        if nodeLabel:
+#            self.__hasType(nodeLabel,"Node")    # Maybe this is not right for derived Nodes
         newLink = (nodeFrom,nodeTo,nodeLabel)
         if newLink in self.link:
             self.link[newLink].incrementCoOcc()
@@ -300,7 +300,7 @@ class ConceptNetwork:
             if newAV < 0:   newAV = 0
             nodeState.setActivationValue(newAV)
 
-    def dump(self,file,protocol=2):
+    def dump(self,file,protocol=0):
         """Dump the Concept Network in the file
 
         File must be opened. File is not closed by the method.
@@ -378,6 +378,12 @@ class Node:
     def getDecay(self):
         "Get the decay rate of this node"
         return self.__decay
+
+    def show(self):
+        """Display the node"""
+        print "%s (%s): %d" % (self.getSymbol(),
+                               self.getTypeName(),
+                               self.getOcc())
 
 
 class Link:
@@ -744,7 +750,7 @@ def main():
 
 if __name__ == "__main__":
     import sys
-    import Ector
+    from Ector import TokenNode, UttererNode, SentenceNode   # To be able to load specialized nodes
 
     status = main()
     sys.exit(status)

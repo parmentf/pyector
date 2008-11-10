@@ -31,6 +31,8 @@ __copyright__ = "Copyright (c) 2008 François Parmentier"
 __license__   = "GPL"
 
 from ConceptNetwork import *
+from Entry          import Entry
+from time           import localtime
 import os
 
 
@@ -85,6 +87,16 @@ class TokenNode(Node):
     def incrementEndOccurrence(self):
         self.__end += 1
         return self.__end
+
+    def show(self):
+        """Display the node"""
+        print "%s (%s): %d (%d,%d,%d)" % (self.getSymbol(),
+                               self.getTypeName(),
+                               self.getOcc(),
+                               self.getBeginningOccurrence(),
+                               self.getMiddleOccurrence(),
+                               self.getEndOccurrence())
+
 
 
 class SentenceNode(Node):
@@ -143,17 +155,25 @@ class UttererNode(Node):
     """An utterer node.
 
     An utterer say sentences.
+    The last time he uttered is reminded.
     """
     __type = "utterer"
     __decay = 70
+    __lastTime = None
     def __init__(self, symbol, occ = 1):
         Node.__init__(self, symbol, occ=occ)
+        self.__lastTime    = time.localtime()
 
     def getTypeName(self):
         return self.__type
 
     def getDecay(self):
         return self.__decay
+
+    def addNode(self,node):
+        """Update the last time the utterer talked."""
+        Node.addNode(self, node)
+        self.__lastTime = time.localtime()
 
 
 class Ector:
@@ -181,8 +201,8 @@ class Ector:
         if self.username:
             filename = self.__getStateId()
             f        = open(filename,"w")
-            state    = self.cn.getState(username)
-            pickle.dump(state,f,2)
+            state    = self.cn.getState(self.username)
+            pickle.dump(state,f)
             f.close()
 
     def showStatus(self):
@@ -217,12 +237,97 @@ class Ector:
                 state    = State(self.username)
             self.cn.addState(state)
 
+    def addEntry(self,entry):
+        """Add an entry into the Concept Network of Ector.
+
+        Add an entry into the Concept Network of Ector.
+        An entry may be constituted from several sentences.
+        When file is not NULL, it is taken instead utterer.
+
+        - entry     entry to add
+
+        Return the last sentenceNode of the entry.
+        """
+        state               = self.cn.getState(self.username)
+        e = Entry(entry, self.username, self.botname)
+        sentences           = e.getSentences()
+        lastSentenceNode    = None
+        for sentence in sentences:
+            sentenceNode = self.addSentence(sentence)
+            state.setNodeActivationValue(100, sentence, "sentence")
+            if lastSentenceNode:
+                self.cn.addLink(lastSentenceNode,sentenceNode)
+            lastSentenceNode = sentenceNode
+        return lastSentenceNode
+
+    def addSentence(self,sentence):
+        """Add a sentence into the Concept Network of Ector.
+
+        Add a sentence into the Concept Network of Ector.
+        Adds its tokens too.
+
+        /*
+        except when
+        the sentence already exists (in this case, the occurrence is not
+        incremented, nor are expression created -this should lead to the
+        creation of expressions identical to the sentence).
+        */
+
+        In the case where file exist, username is not
+        taken into account, but file is, and is of type "file".
+
+        -  sentence   sentence to add
+
+        Return   the node of the sentence added."""
+        state          = self.cn.getState(self.username)
+        # Activate the utterer, and add it to the concept network
+        uttererNode    = UttererNode(self.username)
+        self.cn.addNode(uttererNode)
+        state.setNodeActivationValue(100, self.username, "utterer")
+        # Add the sentence node to the concept network.
+        sentenceNode   = SentenceNode(sentence)
+        self.cn.addNode(sentenceNode)
+        state.setNodeActivationValue(100, sentence, "sentence")
+        # TODO: if the occurrence of the sentence node is only 1,
+        #       compute the expressions
+        pass
+        # Link it to the utterer node.
+        self.cn.addBidirectionalLink(uttererNode, sentenceNode)
+        # Add the tokens to the concept network, link them to the sentence
+        e                 = Entry("None")
+        tokens            = e.getTokens(sentence)
+        beginning         = 1
+        middle            = 0
+        end               = 0
+        previousTokenNode = None
+        i                 = 0
+        for token in tokens:
+            i += 1
+            # Add the token node to the concept network
+            tokenNode = TokenNode(token, 1, beginning, middle, end)
+            self.cn.addNode(tokenNode)
+            state.setNodeActivationValue(100, token, "token")
+            if beginning:
+                beginning = 0
+                middle    = 1
+            if middle and i == len(tokens) - 1:
+                middle    = 0
+                end       = 1
+            # Link it to the previous node
+            if previousTokenNode:
+                self.cn.addLink(previousTokenNode,tokenNode)
+            previousTokenNode = tokenNode
+            # Link it to the sentence node
+            self.cn.addBidirectionalLink(tokenNode, sentenceNode)
+        return sentenceNode
+
 
 def main():
     from optparse import OptionParser
+    import sys
     usage="usage: %prog [-p username][-n botname=Ector][-v|-q][-l logfilepath][-s|-g][-h]"
     parser = OptionParser(usage=usage,version="%prog 0.1")
-    parser.add_option("-p", "--person", dest="username",
+    parser.add_option("-p", "--person", dest="username", default="User",
                       help="give the name of the utterer")
     parser.add_option("-n", "--name", dest="botname", default="Ector",
                       help="give the name of the bot")
@@ -232,15 +337,11 @@ def main():
                       help="shut up!")
 
     (options, args) = parser.parse_args()
-#    print "Args    = %s" % args
-#    print "Options = %s" % options
-#    print "botname = %s" % options.botname.capitalize()
-#    print "verbose = %s" % options.verbose
 
     license  = None
     stdin    = sys.stdin
     stdout   = sys.stdout
-    username = options.username and options.username or ""
+    username = options.username
     botname  = options.botname.capitalize()
     version  = "0.2"
 
@@ -285,14 +386,20 @@ under certain conditions; type `@show c' for details.
             botname = entry[6:].strip()
             ector.setName(botname)
         elif entry[:8] == "@version":
-            print "Version: %s" % (version)
+            print "pyECTOR version %s" % (version)
         elif entry[:6] == "@write":
             ector.dump()
         elif entry[:5] == "@quit" or entry[:5] == "@exit" or entry[:4] == "@bye":
             return 0
+        elif entry[:10] == "@shownodes":
+            ector.cn.showNodes()
+        elif entry[:10] == "@showlinks":
+            ector.cn.showLinks(1)
         # Help
         elif entry[:5] == "@help":
-            print """ - @usage   : print the options of the Ector.py command
+            print """You can just start typing phrases.
+But there are some commands you can use:
+ - @usage   : print the options of the Ector.py command
  - @quit    : quit
  - @exit    : quit
  - @bye     : quit
@@ -301,6 +408,9 @@ under certain conditions; type `@show c' for details.
  - @version : give the current version
  - @write   : save Ector's Concept Network and state
  - @status  : show the status of Ector (Concept Network, states)"""
+        else:
+             ector.addEntry(entry)
+             # TODO: if log is activated, log the entry.
 
 if __name__ == "__main__":
     import sys
