@@ -116,6 +116,14 @@ are you?"""
         self.assertEqual(["This","sentence","is","not","important","."],
                          e.getTokens(line))
 
+    def testTokensSmiley(self):
+        """Get tokens comprising smileys"""
+        line = "This should work :)"
+        e    = Entry(line)
+        self.assertEqual(["This","should","work",":)"], e.getTokens(line))
+        line = "This should work too :)."
+        self.assertEqual(["This","should","work","too",":)","."], e.getTokens(line))
+
 
 if __name__ == "__main__":
     unittest.main()

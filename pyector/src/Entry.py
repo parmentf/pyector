@@ -146,10 +146,35 @@ class Entry:
     def getPositions(self,sentence,regex):
         """Get the positions give by the regular expression regex in the sentence."""
         iterator    = regex.finditer(sentence)
-        pos         = []
-        for match in iterator:
-            pos += [match.span()]
+        pos         = [match.span() for match in iterator]
         return pos
+
+    def getSmileys(self,tokens):
+        """Get smileys from punctuation tokens
+
+        Tokens is a list of tokens (order is important)
+
+        For example, when a token contains ":).", it should be separated
+        into ":)" and "."
+
+        Example:
+        ['This', 'should', 'work', 'too', ':).']
+        should be separated into:
+        ['This', 'should', 'work', 'too', ':)', '.']
+        """
+        result = []
+        for token in tokens:
+            iterator = reSMILEYS.finditer(token)
+            i, j    = 0, 0    # Positions of previous token part
+            for match in iterator:
+                if match.start() > j:
+                    result += [token[i:j], token[match.start():match.end()]]
+                else:
+                    result += [token[match.start():match.end()]]
+                (i, j)    = match.span()
+            if j < len(token):
+                result += [token[j:]]
+        return result
 
     def getTokens(self, sentence):
         """Get the tokens of one sentence.
@@ -169,7 +194,7 @@ class Entry:
         tokens = []
         for span in pos:
             tokens += [sentence[span[0]:span[1]].strip()]
-        return tokens
+        return self.getSmileys(tokens)
 
 if __name__ == "__main__":
     e = Entry("Un. Deux? Trois!! Quatre.")
