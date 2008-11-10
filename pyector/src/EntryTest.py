@@ -132,6 +132,12 @@ are you?"""
         line = "This should work too :)."
         self.assertEqual(["This","should","work","too",":)","."], e.getTokens(line))
 
+    def testTokensUnicode(self):
+        """Get tokens with accented characters"""
+        line = "Comment ça va?"
+        e    = Entry(line)
+        self.assertEqual(["Comment","ça","va","?"], e.getTokens(line))
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -38,7 +38,7 @@ WORD_SEPARATORS     = "[/,'()[];:\"-+«»!\?\.<>=]+"
 
 import re
 
-reSENTENCES_SEPARATORS = re.compile(r'[?!\.]+\s*')
+reSENTENCES_SEPARATORS = re.compile(r'[?!\.]+\s*', re.LOCALE)
 # From http://www.regular-expressions.info/email.html
 MAIL_REGEX = re.compile(r"([a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[A-Z]{2}|com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|museum))",
                           re.IGNORECASE|re.MULTILINE)
@@ -50,7 +50,7 @@ reURL      = re.compile(r"(?:http|ftp|file)://(?:[a-z0-9]+\.){1,3}[a-z0-9]+", re
 #r"(?:http|ftp|file)://(?:[a-z0-9]+\.){1,3}[a-z0-9]+"
 reSMILEYS  = re.compile(r"[<=]?[X:B8][\-o]?[)(ODPp\]\[]")
 reWORDS    = re.compile(r'\b\w+\b', re.LOCALE)
-reWORD_SEP = re.compile(r'[\.,;!?+=\-()\[\]"\':/]+')
+reWORD_SEP = re.compile(r'[\.,;!?+=\-()\[\]"\':/]+', re.LOCALE)
 
 class Entry:
     """An entry is a line of input.
