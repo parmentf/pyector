@@ -109,5 +109,13 @@ are you?"""
         e    = Entry("François is the bot master!",username="François")
         self.assertEqual("@user@ is the bot master!",e.entry)
 
+    def testTokens(self):
+        """Get the tokens of one sentence"""
+        line = "This sentence is not important."
+        e    = Entry(line)
+        self.assertEqual(["This","sentence","is","not","important","."],
+                         e.getTokens(line))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -34,10 +34,11 @@ __copyright__ = "Copyright (c) 2008 François Parmentier"
 __license__   = "GPL"
 
 SENTENCE_SEPARATORS = "!?."
-WORD_SEPARATORS     = "/,'()[];:\"-+«»!?.<>="
+WORD_SEPARATORS     = "[/,'()[];:\"-+«»!\?\.<>=]+"
 
 import re
 
+reSENTENCES_SEPARATORS = re.compile(r'[?!\.]+\s*')
 # From http://www.regular-expressions.info/email.html
 MAIL_REGEX = re.compile(r"([a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[A-Z]{2}|com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|museum))",
                           re.IGNORECASE|re.MULTILINE)
@@ -47,6 +48,9 @@ reURL      = re.compile(r"(?:http|ftp|file)://(?:[a-z0-9]+\.){1,3}[a-z0-9]+", re
 
 #r"(([a-zA-Z][0-9a-zA-Z+\\-\\.]*:)?/{0,2}[0-9a-zA-Z;/?:@&=+$\\.\\-_!~*'()%]+)?(#[0-9a-zA-Z;/?:@&=+$\\.\\-_!~*'()%]+)?"
 #r"(?:http|ftp|file)://(?:[a-z0-9]+\.){1,3}[a-z0-9]+"
+reSMILEYS  = re.compile(r"[<=]?[X:B8][\-o]?[)(ODPp\]\[]")
+reWORDS    = re.compile(r'\b\w+\b', re.LOCALE)
+reWORD_SEP = re.compile(r'[\.,;!?+=\-]+')
 
 class Entry:
     """An entry is a line of input.
@@ -72,7 +76,6 @@ class Entry:
         """Get all indices of sep in the string haystack.
 
         haystack: the string to search"""
-        reSENTENCES_SEPARATORS = re.compile(r'[?!\.]+ *')
         iterator = reSENTENCES_SEPARATORS.finditer(haystack)
 
         indices  = []
@@ -140,6 +143,31 @@ class Entry:
                     self.sentences[i] = self.sentences[i].replace(key, urls[key])
         return self.sentences
 
+    def getTokens(self, sentence):
+        """Get the tokens of one sentence.
+
+        A token can be:
+        - a word
+        - a punctuation mark (or several concateneted)
+        - a smiley"""
+        # Get the words' positions
+        iterator    = reWORDS.finditer(sentence)
+        posWords    = []
+        for match in iterator:
+            posWords += [match.span()]
+        # Get the separators's positions
+        iterator    = reWORD_SEP.finditer(sentence)
+        posSep      = []
+        for match in iterator:
+            posSep += [match.span()]
+        # Join the positions
+        pos = posWords + posSep
+        pos.sort()
+        # Build the list of tokens from positions
+        tokens = []
+        for span in pos:
+            tokens += [sentence[span[0]:span[1]].strip()]
+        return tokens
 
 if __name__ == "__main__":
     e = Entry("Un. Deux? Trois!! Quatre.")
