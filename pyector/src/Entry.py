@@ -50,7 +50,7 @@ reURL      = re.compile(r"(?:http|ftp|file)://(?:[a-z0-9]+\.){1,3}[a-z0-9]+", re
 #r"(?:http|ftp|file)://(?:[a-z0-9]+\.){1,3}[a-z0-9]+"
 reSMILEYS  = re.compile(r"[<=]?[X:B8][\-o]?[)(ODPp\]\[]")
 reWORDS    = re.compile(r'\b\w+\b', re.LOCALE)
-reWORD_SEP = re.compile(r'[\.,;!?+=\-]+')
+reWORD_SEP = re.compile(r'[\.,;!?+=\-()\[\]"\':/]+')
 
 class Entry:
     """An entry is a line of input.
@@ -143,6 +143,14 @@ class Entry:
                     self.sentences[i] = self.sentences[i].replace(key, urls[key])
         return self.sentences
 
+    def getPositions(self,sentence,regex):
+        """Get the positions give by the regular expression regex in the sentence."""
+        iterator    = regex.finditer(sentence)
+        pos         = []
+        for match in iterator:
+            pos += [match.span()]
+        return pos
+
     def getTokens(self, sentence):
         """Get the tokens of one sentence.
 
@@ -151,15 +159,9 @@ class Entry:
         - a punctuation mark (or several concateneted)
         - a smiley"""
         # Get the words' positions
-        iterator    = reWORDS.finditer(sentence)
-        posWords    = []
-        for match in iterator:
-            posWords += [match.span()]
+        posWords  = self.getPositions(sentence, reWORDS)
         # Get the separators's positions
-        iterator    = reWORD_SEP.finditer(sentence)
-        posSep      = []
-        for match in iterator:
-            posSep += [match.span()]
+        posSep    = self.getPositions(sentence, reWORD_SEP)
         # Join the positions
         pos = posWords + posSep
         pos.sort()
