@@ -38,19 +38,19 @@ WORD_SEPARATORS     = "[/,'()[];:\"-+«»!\?\.<>=]+"
 
 import re
 
-reSENTENCES_SEPARATORS = re.compile(r'[?!\.]+\s*', re.LOCALE)
+reSENTENCES_SEPARATORS = re.compile(r'[?!\.]+\s*', re.LOCALE|re.UNICODE)
 # From http://www.regular-expressions.info/email.html
 MAIL_REGEX = re.compile(r"([a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[A-Z]{2}|com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|museum))",
-                          re.IGNORECASE|re.MULTILINE)
-reACRONYMS = re.compile(r'(?:[A-Z]\.)+', re.LOCALE)
-reURL      = re.compile(r"(?:http|ftp|file)://(?:[a-z0-9]+\.){1,3}[a-z0-9]+", re.IGNORECASE)
+                          re.IGNORECASE|re.MULTILINE|re.UNICODE)
+reACRONYMS = re.compile(r'(?:[A-Z]\.)+', re.LOCALE|re.UNICODE)
+reURL      = re.compile(r"(?:http|ftp|file)://(?:[a-z0-9]+\.){1,3}[a-z0-9]+", re.IGNORECASE|re.UNICODE)
 #reURL      = re.compile(r"([^:/?#]+:)?(?://[^/?#]*)?[^?#]*(?:\?[^#]*)?(?:#.*)?", re.IGNORECASE)
 
 #r"(([a-zA-Z][0-9a-zA-Z+\\-\\.]*:)?/{0,2}[0-9a-zA-Z;/?:@&=+$\\.\\-_!~*'()%]+)?(#[0-9a-zA-Z;/?:@&=+$\\.\\-_!~*'()%]+)?"
 #r"(?:http|ftp|file)://(?:[a-z0-9]+\.){1,3}[a-z0-9]+"
-reSMILEYS  = re.compile(r"[<=]?[X:B8][\-o]?[)(ODPp\]\[]")
-reWORDS    = re.compile(r'\b\w+\b', re.LOCALE)
-reWORD_SEP = re.compile(r'[\.,;!?+=\-()\[\]"\':/]+', re.LOCALE)
+reSMILEYS  = re.compile(r"[<=]?[X:B8][\-o]?[)(ODPp\]\[]",re.UNICODE)
+reWORDS    = re.compile(r'\b\w+\b', re.UNICODE)
+reWORD_SEP = re.compile(r'[\.,;!?+=\-()\[\]"'+r"\':/]+", re.UNICODE)
 
 class Entry:
     """An entry is a line of input.
