@@ -370,9 +370,9 @@ def main():
     usage="usage: %prog [-p username][-n botname=Ector][-v|-q][-l logfilepath=ector.log][-s|-g][-h]"
     parser = OptionParser(usage=usage,version="%prog 0.2")
     parser.add_option("-p", "--person", dest="username", default="User",
-                      help="give the name of the utterer")
+                      help="set the name of the utterer")
     parser.add_option("-n", "--name", dest="botname", default="Ector",
-                      help="give the name of the bot")
+                      help="set the name of the bot")
     parser.add_option("-v", action="store_true", dest="verbose", default=False,
                       help="say all that you can say")
     parser.add_option("-q", action="store_false", dest="verbose",
