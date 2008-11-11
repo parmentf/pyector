@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# coding: utf-8
+# -*- coding: utf-8 -*-
 
 # pyECTOR, learning chatterbot, by François PARMENTIER
 # http://code.google.com/p/pyector/
@@ -34,7 +34,12 @@ from ConceptNetwork import *
 from Entry          import Entry
 from time           import localtime
 import os
+import sys, locale
 
+ENCODING    = locale.getdefaultlocale()[1]
+print "Encoding =", ENCODING
+DEFAULT_ENCODING    = sys.getdefaultencoding()
+print "Default encoding =", DEFAULT_ENCODING
 
 class TokenNode(Node):
     """A token in a sentence.
@@ -90,7 +95,7 @@ class TokenNode(Node):
 
     def show(self):
         """Display the node"""
-        print "%10s (%8s): %d (%d,%d,%d)" % (self.getSymbol(),
+        print "%10s (%8s): %d (%d,%d,%d)" % (self.getSymbol().encode(ENCODING),
                                self.getTypeName(),
                                self.getOcc(),
                                self.getBeginningOccurrence(),
@@ -124,10 +129,10 @@ class SentenceNode(Node):
     def show(self):
         """Display the node
         Display the number of times it was on top of a dialogue."""
-        print "%10s (%8s): %d (%d)" % (self.getSymbol(),
+        print "%10s (%8s): %d (%d)" % (self.getSymbol().encode(ENCODING),
                                self.getTypeName(),
                                self.getOcc(),
-                               self.beg,
+                               self.beg
                                )
 
 
@@ -329,6 +334,8 @@ class Ector:
         i                 = 0
         for token in tokens:
             i += 1
+            if i == len(tokens):
+                end    = 1
             # Add the token node to the concept network
             tokenNode = TokenNode(token, 1, beginning, middle, end)
             self.cn.addNode(tokenNode)
@@ -348,20 +355,20 @@ class Ector:
         return sentenceNode
 
 
-def logEntry(filename, utterer, entry):
+def logEntry(filename, utterer, entry, encoding=ENCODING):
     """Log the utterer's entry in the file"""
     f    = file(filename,"a")
     t    = time.localtime()
     print >> f, "%4d/%2d/%2d - %2d:%2d:%2d\t%s\t%s" % (t[0], t[1], t[2],
                                                    t[3], t[4], t[5],
                                                    utterer,
-                                                   entry)
+                                                   entry.encode(encoding))
     f.close()
 
 
 def main():
     from optparse import OptionParser
-    import sys
+
     usage="usage: %prog [-p username][-n botname=Ector][-v|-q][-l logfilepath][-s|-g][-h]"
     parser = OptionParser(usage=usage,version="%prog 0.1")
     parser.add_option("-p", "--person", dest="username", default="User",
@@ -460,6 +467,7 @@ But there are some commands you can use:
  - @log [file]: log the entries in the file (no file turns off the logging)
  - @status    : show the status of Ector (Concept Network, states)"""
         else:
+             entry    = unicode(entry, ENCODING)
              lastSentenceNode = ector.addEntry(entry)
              if previousSentenceNode:
                  ector.cn.addLink(previousSentenceNode,lastSentenceNode)

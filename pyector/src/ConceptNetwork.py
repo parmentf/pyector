@@ -38,6 +38,11 @@ import random
 import time
 import pickle
 
+import sys, locale
+
+ENCODING    = locale.getdefaultlocale()[1]
+DEFAULT_ENCODING    = sys.getdefaultencoding()
+
 class ConceptNetworkError(Exception): pass
 class ConceptNetworkNodeTypeError(ConceptNetworkError): pass
 class ConceptNetworkUnknownNode(ConceptNetworkError): pass
@@ -99,20 +104,20 @@ class ConceptNetwork:
         for (fro,to,label) in self.link:
             if label:
                 if not stateId:
-                    print "%10s -(%10s %d)-> %10s" % (fro.getSymbol(),
-                                                   label.getSymbol(),
+                    print "%10s -(%10s %d)-> %10s" % (fro.getSymbol().encode(ENCODING),
+                                                   label.getSymbol().encode(ENCODING),
                                                    self.link[(fro,to,label)].getWeight() * 100,
-                                                   to.getSymbol())
+                                                   to.getSymbol().encode(ENCODING))
                 else:
                     state = self.getState(stateId)
-                    print "%10s -(%10s %d)-> %10s" % (fro.getSymbol(),
-                                                   label.getSymbol(),
+                    print "%10s -(%10s %d)-> %10s" % (fro.getSymbol().encode(ENCODING),
+                                                   label.getSymbol().encode(ENCODING),
                                                    self.link[(fro,to,label)].getWeight(state) * 100,
-                                                   to.getSymbol())
+                                                   to.getSymbol().encode(ENCODING))
             else:
-                print "%10s ------(%d)-------> %10s" % (fro.getSymbol(),
+                print "%10s ------(%d)-------> %10s" % (fro.getSymbol().encode(ENCODING),
                                          self.link[(fro,to,label)].getWeight() * 100,
-                                         to.getSymbol())
+                                         to.getSymbol().encode(ENCODING))
 
     def getLink(self,nodeFrom,nodeTo,nodeLabel=None):
         "Get the link going from nodeFrom to nodeTo, through nodeLabel (if it exists)"
@@ -381,7 +386,7 @@ class Node:
 
     def show(self):
         """Display the node"""
-        print "%s (%s): %d" % (self.getSymbol(),
+        print "%s (%s): %d" % (self.getSymbol().encode(ENCODING),
                                self.getTypeName(),
                                self.getOcc())
 
@@ -543,7 +548,7 @@ class State:
             print "%d\t%d\t%d\t%s(%s)" % (nodeState.getOldActivationValue(),
                               nodeState.getActivationValue(),
                               nodeState.getAge(),
-                              symbol, typeName)
+                              symbol.encode(ENCODING), typeName)
 
 
 class NodeState:
