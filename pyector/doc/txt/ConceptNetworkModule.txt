@@ -6,7 +6,7 @@ author parmentierf@users.sourceforge.net
 Introduction
 ------------
 
-Version 0.1 of pyECTOR has only one module usable: ConceptNetwork.py.
+From version 0.1 of pyECTOR the ConceptNetwork.py module is usable:.
 Let's see what it can do.
 
 
