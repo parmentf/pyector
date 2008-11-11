@@ -37,9 +37,7 @@ import os
 import sys, locale
 
 ENCODING    = locale.getdefaultlocale()[1]
-print "Encoding =", ENCODING
 DEFAULT_ENCODING    = sys.getdefaultencoding()
-print "Default encoding =", DEFAULT_ENCODING
 
 class TokenNode(Node):
     """A token in a sentence.
