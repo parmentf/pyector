@@ -369,7 +369,7 @@ def logEntry(filename, utterer, entry, encoding=ENCODING):
 def main():
     from optparse import OptionParser
 
-    usage="usage: %prog [-p username][-n botname=Ector][-v|-q][-l logfilepath][-s|-g][-h]"
+    usage="usage: %prog [-p username][-n botname=Ector][-v|-q][-l logfilepath=ector.log][-s|-g][-h]"
     parser = OptionParser(usage=usage,version="%prog 0.1")
     parser.add_option("-p", "--person", dest="username", default="User",
                       help="give the name of the utterer")
@@ -379,7 +379,7 @@ def main():
                       help="say all that you can say")
     parser.add_option("-q", action="store_false", dest="verbose",
                       help="shut up!")
-    parser.add_option("-l", "--log", dest="logname", default="",
+    parser.add_option("-l", "--log", dest="logname", default="ector.log",
                       help="log the dialogue in log file")
 
     (options, args) = parser.parse_args()
