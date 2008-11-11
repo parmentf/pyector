@@ -1,0 +1,446 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 8.2.7" />
+<style type="text/css">
+/* Debug borders */
+p, li, dt, dd, div, pre, h1, h2, h3, h4, h5, h6 {
+/*
+  border: 1px solid red;
+*/
+}
+
+body {
+  margin: 1em 5% 1em 5%;
+}
+
+a {
+  color: blue;
+  text-decoration: underline;
+}
+a:visited {
+  color: fuchsia;
+}
+
+em {
+  font-style: italic;
+  color: navy;
+}
+
+strong {
+  font-weight: bold;
+  color: #083194;
+}
+
+tt {
+  color: navy;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #527bbd;
+  font-family: sans-serif;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+h1, h2, h3 {
+  border-bottom: 2px solid silver;
+}
+h2 {
+  padding-top: 0.5em;
+}
+h3 {
+  float: left;
+}
+h3 + * {
+  clear: left;
+}
+
+div.sectionbody {
+  font-family: serif;
+  margin-left: 0;
+}
+
+hr {
+  border: 1px solid silver;
+}
+
+p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+ul, ol, li > p {
+  margin-top: 0;
+}
+
+pre {
+  padding: 0;
+  margin: 0;
+}
+
+span#author {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+span#email {
+}
+span#revision {
+  font-family: sans-serif;
+}
+
+div#footer {
+  font-family: sans-serif;
+  font-size: small;
+  border-top: 2px solid silver;
+  padding-top: 0.5em;
+  margin-top: 4.0em;
+}
+div#footer-text {
+  float: left;
+  padding-bottom: 0.5em;
+}
+div#footer-badges {
+  float: right;
+  padding-bottom: 0.5em;
+}
+
+div#preamble,
+div.tableblock, div.imageblock, div.exampleblock, div.verseblock,
+div.quoteblock, div.literalblock, div.listingblock, div.sidebarblock,
+div.admonitionblock {
+  margin-right: 10%;
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+div.admonitionblock {
+  margin-top: 2.5em;
+  margin-bottom: 2.5em;
+}
+
+div.content { /* Block element content. */
+  padding: 0;
+}
+
+/* Block element titles. */
+div.title, caption.title {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 1.0em;
+  margin-bottom: 0.5em;
+}
+div.title + * {
+  margin-top: 0;
+}
+
+td div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content + div.title {
+  margin-top: 0.0em;
+}
+
+div.sidebarblock > div.content {
+  background: #ffffee;
+  border: 1px solid silver;
+  padding: 0.5em;
+}
+
+div.listingblock {
+  margin-right: 0%;
+}
+div.listingblock > div.content {
+  border: 1px solid silver;
+  background: #f4f4f4;
+  padding: 0.5em;
+}
+
+div.quoteblock {
+  padding-left: 2.0em;
+}
+div.quoteblock > div.attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock {
+  padding-left: 2.0em;
+}
+div.verseblock > div.content {
+  white-space: pre;
+}
+div.verseblock > div.attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+/* DEPRECATED: Pre version 8.2.7 verse style literal block. */
+div.verseblock + div.attribution {
+  text-align: left;
+}
+
+div.admonitionblock .icon {
+  vertical-align: top;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #527bbd;
+  padding-right: 0.5em;
+}
+div.admonitionblock td.content {
+  padding-left: 0.5em;
+  border-left: 2px solid silver;
+}
+
+div.exampleblock > div.content {
+  border-left: 2px solid silver;
+  padding: 0.5em;
+}
+
+div.imageblock div.content { padding-left: 0; }
+div.imageblock img { border: 1px solid silver; }
+span.image img { border-style: none; }
+
+dl {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+dt {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+  font-style: normal;
+}
+dd > *:first-child {
+  margin-top: 0.1em;
+}
+
+ul, ol {
+    list-style-position: outside;
+}
+div.olist > ol {
+  list-style-type: decimal;
+}
+div.olist2 > ol {
+  list-style-type: lower-alpha;
+}
+
+div.tableblock > table {
+  border: 3px solid #527bbd;
+}
+thead {
+  font-family: sans-serif;
+  font-weight: bold;
+}
+tfoot {
+  font-weight: bold;
+}
+
+div.hlist {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+div.hlist td {
+  padding-bottom: 15px;
+}
+td.hlist1 {
+  vertical-align: top;
+  font-style: normal;
+  padding-right: 0.8em;
+}
+td.hlist2 {
+  vertical-align: top;
+}
+
+@media print {
+  div#footer-badges { display: none; }
+}
+
+div#toctitle {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 1.0em;
+  margin-bottom: 0.1em;
+}
+
+div.toclevel1, div.toclevel2, div.toclevel3, div.toclevel4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+div.toclevel2 {
+  margin-left: 2em;
+  font-size: 0.9em;
+}
+div.toclevel3 {
+  margin-left: 4em;
+  font-size: 0.9em;
+}
+div.toclevel4 {
+  margin-left: 6em;
+  font-size: 0.9em;
+}
+/* Workarounds for IE6's broken and incomplete CSS2. */
+
+div.sidebar-content {
+  background: #ffffee;
+  border: 1px solid silver;
+  padding: 0.5em;
+}
+div.sidebar-title, div.image-title {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-weight: bold;
+  margin-top: 0.0em;
+  margin-bottom: 0.5em;
+}
+
+div.listingblock div.content {
+  border: 1px solid silver;
+  background: #f4f4f4;
+  padding: 0.5em;
+}
+
+div.quoteblock-attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock-content {
+  white-space: pre;
+}
+div.verseblock-attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+
+div.exampleblock-content {
+  border-left: 2px solid silver;
+  padding-left: 0.5em;
+}
+
+/* IE6 sets dynamically generated links as visited. */
+div#toc a:visited { color: blue; }
+
+/* Because IE6 child selector is broken. */
+div.olist2 ol {
+  list-style-type: lower-alpha;
+}
+div.olist2 div.olist ol {
+  list-style-type: decimal;
+}
+</style>
+<title>pyECTOR README file</title>
+</head>
+<body>
+<div id="header">
+<h1>pyECTOR README file</h1>
+<span id="author">author parmentierf@users.sourceforge.net</span><br />
+<span id="revision">version 0.2,</span>
+2008-11-11
+</div>
+<h2 id="_description">Description</h2>
+<div class="sectionbody">
+<div class="para"><p>ECTOR is a learning chatterbot. pyECTOR is its Python version.</p></div>
+<div class="para"><p>ECTOR learns from what people say. It is based on a artificial
+intelligence architecture, that is inspired from Copycat, an AI
+system from Mitchell and Hofstadter.</p></div>
+<div class="para"><p>The Concept Network it uses is a mix between neural and semantic
+networks. It uses co-occurences to compute the influence of one
+semantic node on another. The links are statistically weighted.</p></div>
+<div class="para"><p>So, ECTOR does not know anything at its "birth".
+It's to you to teach it.</p></div>
+</div>
+<h2 id="_prerequisites">Prerequisites</h2>
+<div class="sectionbody">
+<div class="para"><p>pyECTOR is written in Python so you need a Python interpreter
+(version 2.5 or later) to execute pyECTOR. Python is installed by
+default in most Linux distributions.  You can download Python from the
+official Python website <a href="http://www.python.org">http://www.python.org</a>.</p></div>
+</div>
+<h2 id="_obtaining_pyector">Obtaining pyECTOR</h2>
+<div class="sectionbody">
+<div class="para"><p>The latest pyECTOR version and online documentation can be found at
+<a href="http://pyector.googlecode.com/">http://pyector.googlecode.com/</a></p></div>
+</div>
+<h2 id="_installation">Installation</h2>
+<div class="sectionbody">
+<div class="para"><p>Once you've downloaded the file, untar it like that:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>tar -xvzf pyector-0.2.tar.gz .</tt></pre>
+</div></div>
+</div>
+<h2 id="_important_note">Important note</h2>
+<div class="sectionbody">
+<div class="para"><p>Version 0.2 does not come with a functional Ector!
+Its is not yet answering.</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>python ConceptNetwork.py</tt></pre>
+</div></div>
+<div class="para"><p>It allows one to play with its internal mechanism: the
+<a href="http://code.google.com/p/pyector/wiki/ConceptNetwork">Concept Network</a>.</p></div>
+<div class="para"><p>You can <tt>@addnode</tt> (add a node), <tt>@addlink</tt> (add a link between two
+existing nodes), and even <tt>@activate</tt> a node, so you can
+<tt>@propagate</tt> activation values, and <tt>@showstate</tt>.</p></div>
+<div class="para"><p>A small reminder about the commands is obtained by typing <tt>@help</tt>.</p></div>
+<div class="para"><p>See doc/html/ConceptNetworkModule.html.</p></div>
+</div>
+<h2 id="_usage">Usage</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre><tt>python Ector.py [-p username][-n botname=Ector][-v|-q][-l logfilepath=ector.log][-s|-g][-h]</tt></pre>
+</div></div>
+<div class="para"><p>Be aware that ECTOR does not know anything at the beginning (first launch).
+You have to teach it all!
+It learns from what you say (so be polite and write well, if you want ECTOR
+to do so).</p></div>
+<div class="para"><p>A small help is available from ECTOR prompt:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>User&gt;@help</tt></pre>
+</div></div>
+<div class="para"><p>From the prompt, you just have to speak to Ector.</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>User&gt;Hello!
+Ector&gt;Hello!
+User&gt;...</tt></pre>
+</div></div>
+<div class="para"><p>The first sentences you will say will be echoed, but after some utterance,
+Ector will begin to link words, and to create original answers.</p></div>
+</div>
+<h2 id="_resources">Resources</h2>
+<div class="sectionbody">
+<div class="ilist"><ul>
+<li>
+<p>
+<a href="http://pyector.googlecode.com/">http://pyector.googlecode.com/</a>
+</p>
+</li>
+</ul></div>
+</div>
+<h2 id="_copying">COPYING</h2>
+<div class="sectionbody">
+<div class="para"><p>Copyright &#169; 2008 François Parmentier. Free use of this software
+is granted under the terms of the GNU General Public License (GPL).</p></div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Version 0.2<br />
+Last updated 2008-11-11 14:49:52
+</div>
+</div>
+</body>
+</html>

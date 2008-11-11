@@ -1,0 +1,492 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 8.2.7" />
+<style type="text/css">
+/* Debug borders */
+p, li, dt, dd, div, pre, h1, h2, h3, h4, h5, h6 {
+/*
+  border: 1px solid red;
+*/
+}
+
+body {
+  margin: 1em 5% 1em 5%;
+}
+
+a {
+  color: blue;
+  text-decoration: underline;
+}
+a:visited {
+  color: fuchsia;
+}
+
+em {
+  font-style: italic;
+  color: navy;
+}
+
+strong {
+  font-weight: bold;
+  color: #083194;
+}
+
+tt {
+  color: navy;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #527bbd;
+  font-family: sans-serif;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+h1, h2, h3 {
+  border-bottom: 2px solid silver;
+}
+h2 {
+  padding-top: 0.5em;
+}
+h3 {
+  float: left;
+}
+h3 + * {
+  clear: left;
+}
+
+div.sectionbody {
+  font-family: serif;
+  margin-left: 0;
+}
+
+hr {
+  border: 1px solid silver;
+}
+
+p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+ul, ol, li > p {
+  margin-top: 0;
+}
+
+pre {
+  padding: 0;
+  margin: 0;
+}
+
+span#author {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+span#email {
+}
+span#revision {
+  font-family: sans-serif;
+}
+
+div#footer {
+  font-family: sans-serif;
+  font-size: small;
+  border-top: 2px solid silver;
+  padding-top: 0.5em;
+  margin-top: 4.0em;
+}
+div#footer-text {
+  float: left;
+  padding-bottom: 0.5em;
+}
+div#footer-badges {
+  float: right;
+  padding-bottom: 0.5em;
+}
+
+div#preamble,
+div.tableblock, div.imageblock, div.exampleblock, div.verseblock,
+div.quoteblock, div.literalblock, div.listingblock, div.sidebarblock,
+div.admonitionblock {
+  margin-right: 10%;
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+div.admonitionblock {
+  margin-top: 2.5em;
+  margin-bottom: 2.5em;
+}
+
+div.content { /* Block element content. */
+  padding: 0;
+}
+
+/* Block element titles. */
+div.title, caption.title {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 1.0em;
+  margin-bottom: 0.5em;
+}
+div.title + * {
+  margin-top: 0;
+}
+
+td div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content + div.title {
+  margin-top: 0.0em;
+}
+
+div.sidebarblock > div.content {
+  background: #ffffee;
+  border: 1px solid silver;
+  padding: 0.5em;
+}
+
+div.listingblock {
+  margin-right: 0%;
+}
+div.listingblock > div.content {
+  border: 1px solid silver;
+  background: #f4f4f4;
+  padding: 0.5em;
+}
+
+div.quoteblock {
+  padding-left: 2.0em;
+}
+div.quoteblock > div.attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock {
+  padding-left: 2.0em;
+}
+div.verseblock > div.content {
+  white-space: pre;
+}
+div.verseblock > div.attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+/* DEPRECATED: Pre version 8.2.7 verse style literal block. */
+div.verseblock + div.attribution {
+  text-align: left;
+}
+
+div.admonitionblock .icon {
+  vertical-align: top;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #527bbd;
+  padding-right: 0.5em;
+}
+div.admonitionblock td.content {
+  padding-left: 0.5em;
+  border-left: 2px solid silver;
+}
+
+div.exampleblock > div.content {
+  border-left: 2px solid silver;
+  padding: 0.5em;
+}
+
+div.imageblock div.content { padding-left: 0; }
+div.imageblock img { border: 1px solid silver; }
+span.image img { border-style: none; }
+
+dl {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+dt {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+  font-style: normal;
+}
+dd > *:first-child {
+  margin-top: 0.1em;
+}
+
+ul, ol {
+    list-style-position: outside;
+}
+div.olist > ol {
+  list-style-type: decimal;
+}
+div.olist2 > ol {
+  list-style-type: lower-alpha;
+}
+
+div.tableblock > table {
+  border: 3px solid #527bbd;
+}
+thead {
+  font-family: sans-serif;
+  font-weight: bold;
+}
+tfoot {
+  font-weight: bold;
+}
+
+div.hlist {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+div.hlist td {
+  padding-bottom: 15px;
+}
+td.hlist1 {
+  vertical-align: top;
+  font-style: normal;
+  padding-right: 0.8em;
+}
+td.hlist2 {
+  vertical-align: top;
+}
+
+@media print {
+  div#footer-badges { display: none; }
+}
+
+div#toctitle {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 1.0em;
+  margin-bottom: 0.1em;
+}
+
+div.toclevel1, div.toclevel2, div.toclevel3, div.toclevel4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+div.toclevel2 {
+  margin-left: 2em;
+  font-size: 0.9em;
+}
+div.toclevel3 {
+  margin-left: 4em;
+  font-size: 0.9em;
+}
+div.toclevel4 {
+  margin-left: 6em;
+  font-size: 0.9em;
+}
+/* Workarounds for IE6's broken and incomplete CSS2. */
+
+div.sidebar-content {
+  background: #ffffee;
+  border: 1px solid silver;
+  padding: 0.5em;
+}
+div.sidebar-title, div.image-title {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-weight: bold;
+  margin-top: 0.0em;
+  margin-bottom: 0.5em;
+}
+
+div.listingblock div.content {
+  border: 1px solid silver;
+  background: #f4f4f4;
+  padding: 0.5em;
+}
+
+div.quoteblock-attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock-content {
+  white-space: pre;
+}
+div.verseblock-attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+
+div.exampleblock-content {
+  border-left: 2px solid silver;
+  padding-left: 0.5em;
+}
+
+/* IE6 sets dynamically generated links as visited. */
+div#toc a:visited { color: blue; }
+
+/* Because IE6 child selector is broken. */
+div.olist2 ol {
+  list-style-type: lower-alpha;
+}
+div.olist2 div.olist ol {
+  list-style-type: decimal;
+}
+</style>
+<title>Functionalities of the ConceptNetwork module</title>
+</head>
+<body>
+<div id="header">
+<h1>Functionalities of the ConceptNetwork module</h1>
+<span id="author">author parmentierf@users.sourceforge.net</span><br />
+<span id="revision">version 0.2,</span>
+2008-11-11
+</div>
+<h2 id="_introduction">Introduction</h2>
+<div class="sectionbody">
+<div class="para"><p>Version 0.1 of pyECTOR has only one module usable: ConceptNetwork.py.
+Let's see what it can do.</p></div>
+</div>
+<h2 id="_run_it">Run it</h2>
+<div class="sectionbody">
+<div class="para"><p>src/ConceptNetwork.py is a import module, and is aimed to be used by Ector.py,
+but it can also be run as a autonomous program. If you are in a shell, in the
+root directory of the project, you can type:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>python src/ConceptNetwork.py</tt></pre>
+</div></div>
+</div>
+<h2 id="_use_it">Use it</h2>
+<div class="sectionbody">
+<div class="para"><p>When started, it loads an optional concept network from a file named <tt>conceptnetwork.pkl</tt>.
+But the first time you run it, the ConceptNetwork is empty.</p></div>
+<h3 id="_add_node">Add node</h3><div style="clear:left"></div>
+<div class="para"><p>You can add a basic node using the <tt>@addnode</tt> command, like that:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>@addnode from
+Node "from" added</tt></pre>
+</div></div>
+<div class="para"><p>All the text after the command becomes the symbol of the new node.</p></div>
+<h3 id="_add_link">Add link</h3><div style="clear:left"></div>
+<div class="para"><p>To create a link, you need at least two nodes. So, let's create another one:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>@addnode to
+Node "to" added</tt></pre>
+</div></div>
+<div class="para"><p><strong>Note:</strong> you could add a node which symbol contains a space, but you would not be
+able to link it to another node, as the separator of the <tt>@addlink</tt>'s parameters
+is <em>space</em>.</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>@addlink from to
+&lt;__main__.Link instance at 0x01356440&gt;</tt></pre>
+</div></div>
+<div class="para"><p>This command creates a link from the "from" node to the "to" node. The command
+displays the representation of the python object created, so you can know it has
+succeeded.</p></div>
+<h3 id="_display_nodes">Display nodes</h3><div style="clear:left"></div>
+<div class="para"><p>You can always display all nodes in the ConceptNetwork:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>@shownodes
+from (basic): 1
+to (basic): 1</tt></pre>
+</div></div>
+<div class="para"><p>The <tt>@shownodes</tt> command displays one node per line:</p></div>
+<div class="ilist"><ul>
+<li>
+<p>
+the symbol of the node
+</p>
+</li>
+<li>
+<p>
+the type of the node (<tt>basic</tt> for all nodes added thanks to `@addnode`command)
+</p>
+</li>
+<li>
+<p>
+the occurrence of the node (the number of times the symbol has been added in
+    the ConceptNetwork).
+</p>
+</li>
+</ul></div>
+<h3 id="_activate_a_node">Activate a node</h3><div style="clear:left"></div>
+<div class="para"><p>In order to enable the ActivationPropagation, one needs to activate at least one
+node (setting its ActivationValue to 100 or less):</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>@activate from</tt></pre>
+</div></div>
+<div class="para"><p>In version 0.1, this command does not yield any output.</p></div>
+<h3 id="_display_the_activation_values_of_the_nodes">Display the activation values of the nodes</h3><div style="clear:left"></div>
+<div class="para"><p>To see the state of the ConceptNetwork, use <tt>@showstate</tt>:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>@showstate
+oldav   av      age     Node
+100     13      1       from(basic)
+0       63      0       to(basic)</tt></pre>
+</div></div>
+<div class="para"><p>This command displays only the state of the nodes which have been active in less
+than 50 ActivationPropagations:</p></div>
+<div class="ilist"><ul>
+<li>
+<p>
+old activation: the activation of the node at the beginning of the last
+    activation propagation
+</p>
+</li>
+<li>
+<p>
+activation value: the ActivationValue of the node at the end of the last
+    activation propagation
+</p>
+</li>
+<li>
+<p>
+age: number of activation propagations since the first activation of the
+    node
+</p>
+</li>
+<li>
+<p>
+node: symbol (type) of the node, which is the id of the node.
+</p>
+</li>
+</ul></div>
+<h3 id="_online_help">Online help</h3><div style="clear:left"></div>
+<div class="para"><p>Except this page, you can use the <tt>@help</tt> command, which displays a list of the
+available commands:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><tt>@help
+@help give this help
+@addnode name: add the node given
+@addlink node1 node2 [label]: add a link from node1 to node2
+@activate name [activation value]: activate a node from its name
+@propagate [nb]: propagate the activation nb times
+@shownodes: show the nodes in the ConceptNetwork
+@showlinks: show the links in the ConceptNetwork
+@showstate: show the state of the nodes
+@save: save the Concept Network and its state
+@quit: quit without saving</tt></pre>
+</div></div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Version 0.2<br />
+Last updated 2008-11-11 14:44:58
+</div>
+</div>
+</body>
+</html>

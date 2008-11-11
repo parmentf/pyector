@@ -1,0 +1,463 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 8.2.7" />
+<style type="text/css">
+/* Debug borders */
+p, li, dt, dd, div, pre, h1, h2, h3, h4, h5, h6 {
+/*
+  border: 1px solid red;
+*/
+}
+
+body {
+  margin: 1em 5% 1em 5%;
+}
+
+a {
+  color: blue;
+  text-decoration: underline;
+}
+a:visited {
+  color: fuchsia;
+}
+
+em {
+  font-style: italic;
+  color: navy;
+}
+
+strong {
+  font-weight: bold;
+  color: #083194;
+}
+
+tt {
+  color: navy;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #527bbd;
+  font-family: sans-serif;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+h1, h2, h3 {
+  border-bottom: 2px solid silver;
+}
+h2 {
+  padding-top: 0.5em;
+}
+h3 {
+  float: left;
+}
+h3 + * {
+  clear: left;
+}
+
+div.sectionbody {
+  font-family: serif;
+  margin-left: 0;
+}
+
+hr {
+  border: 1px solid silver;
+}
+
+p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+ul, ol, li > p {
+  margin-top: 0;
+}
+
+pre {
+  padding: 0;
+  margin: 0;
+}
+
+span#author {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+span#email {
+}
+span#revision {
+  font-family: sans-serif;
+}
+
+div#footer {
+  font-family: sans-serif;
+  font-size: small;
+  border-top: 2px solid silver;
+  padding-top: 0.5em;
+  margin-top: 4.0em;
+}
+div#footer-text {
+  float: left;
+  padding-bottom: 0.5em;
+}
+div#footer-badges {
+  float: right;
+  padding-bottom: 0.5em;
+}
+
+div#preamble,
+div.tableblock, div.imageblock, div.exampleblock, div.verseblock,
+div.quoteblock, div.literalblock, div.listingblock, div.sidebarblock,
+div.admonitionblock {
+  margin-right: 10%;
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+div.admonitionblock {
+  margin-top: 2.5em;
+  margin-bottom: 2.5em;
+}
+
+div.content { /* Block element content. */
+  padding: 0;
+}
+
+/* Block element titles. */
+div.title, caption.title {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 1.0em;
+  margin-bottom: 0.5em;
+}
+div.title + * {
+  margin-top: 0;
+}
+
+td div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content + div.title {
+  margin-top: 0.0em;
+}
+
+div.sidebarblock > div.content {
+  background: #ffffee;
+  border: 1px solid silver;
+  padding: 0.5em;
+}
+
+div.listingblock {
+  margin-right: 0%;
+}
+div.listingblock > div.content {
+  border: 1px solid silver;
+  background: #f4f4f4;
+  padding: 0.5em;
+}
+
+div.quoteblock {
+  padding-left: 2.0em;
+}
+div.quoteblock > div.attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock {
+  padding-left: 2.0em;
+}
+div.verseblock > div.content {
+  white-space: pre;
+}
+div.verseblock > div.attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+/* DEPRECATED: Pre version 8.2.7 verse style literal block. */
+div.verseblock + div.attribution {
+  text-align: left;
+}
+
+div.admonitionblock .icon {
+  vertical-align: top;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #527bbd;
+  padding-right: 0.5em;
+}
+div.admonitionblock td.content {
+  padding-left: 0.5em;
+  border-left: 2px solid silver;
+}
+
+div.exampleblock > div.content {
+  border-left: 2px solid silver;
+  padding: 0.5em;
+}
+
+div.imageblock div.content { padding-left: 0; }
+div.imageblock img { border: 1px solid silver; }
+span.image img { border-style: none; }
+
+dl {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+dt {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+  font-style: normal;
+}
+dd > *:first-child {
+  margin-top: 0.1em;
+}
+
+ul, ol {
+    list-style-position: outside;
+}
+div.olist > ol {
+  list-style-type: decimal;
+}
+div.olist2 > ol {
+  list-style-type: lower-alpha;
+}
+
+div.tableblock > table {
+  border: 3px solid #527bbd;
+}
+thead {
+  font-family: sans-serif;
+  font-weight: bold;
+}
+tfoot {
+  font-weight: bold;
+}
+
+div.hlist {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+div.hlist td {
+  padding-bottom: 15px;
+}
+td.hlist1 {
+  vertical-align: top;
+  font-style: normal;
+  padding-right: 0.8em;
+}
+td.hlist2 {
+  vertical-align: top;
+}
+
+@media print {
+  div#footer-badges { display: none; }
+}
+
+div#toctitle {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 1.0em;
+  margin-bottom: 0.1em;
+}
+
+div.toclevel1, div.toclevel2, div.toclevel3, div.toclevel4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+div.toclevel2 {
+  margin-left: 2em;
+  font-size: 0.9em;
+}
+div.toclevel3 {
+  margin-left: 4em;
+  font-size: 0.9em;
+}
+div.toclevel4 {
+  margin-left: 6em;
+  font-size: 0.9em;
+}
+/* Workarounds for IE6's broken and incomplete CSS2. */
+
+div.sidebar-content {
+  background: #ffffee;
+  border: 1px solid silver;
+  padding: 0.5em;
+}
+div.sidebar-title, div.image-title {
+  color: #527bbd;
+  font-family: sans-serif;
+  font-weight: bold;
+  margin-top: 0.0em;
+  margin-bottom: 0.5em;
+}
+
+div.listingblock div.content {
+  border: 1px solid silver;
+  background: #f4f4f4;
+  padding: 0.5em;
+}
+
+div.quoteblock-attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock-content {
+  white-space: pre;
+}
+div.verseblock-attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+
+div.exampleblock-content {
+  border-left: 2px solid silver;
+  padding-left: 0.5em;
+}
+
+/* IE6 sets dynamically generated links as visited. */
+div#toc a:visited { color: blue; }
+
+/* Because IE6 child selector is broken. */
+div.olist2 ol {
+  list-style-type: lower-alpha;
+}
+div.olist2 div.olist ol {
+  list-style-type: decimal;
+}
+</style>
+<title>What is a Concept Network?</title>
+</head>
+<body>
+<div id="header">
+<h1>What is a Concept Network?</h1>
+<span id="author">author parmentierf@users.sourceforge.net</span><br />
+<span id="revision">version 0.2,</span>
+2008-11-11
+</div>
+<h2 id="_introduction">Introduction</h2>
+<div class="sectionbody">
+<div class="para"><p>A Concept Network is a net made of nodes and weighted links
+between them. It can be wholly connected.</p></div>
+</div>
+<h2 id="_a_concept">A concept</h2>
+<div class="sectionbody">
+<div class="para"><p>A concept is a set of nodes in the Concept Network, strongly bound together and
+simultaneously activated. Thus, when nodes named <tt>network</tt>, <tt>neural</tt>, <tt>Widrow</tt>,
+<tt>Kohonen</tt>, and <tt>Hoff</tt> are in a Concept Network, one can assume that they
+constitute one concept, different from the one constituted by <tt>Markov</tt>,
+<tt>hidden</tt>, though the <tt>network</tt> node could belong to the <em>hidden Markov network</em>
+concept.</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>                   ###########                  ######
+                  ## Kohonen ###                ######  Neural Network concept
+~~~~~~~~~~  ############|################       ######
+~ Markov------network ##|####### Widrow ###
+ ~~|~~~~~~   ##|###\####|#######/######\#####   ~~~~~~
+~~~|~~~~~~~~~~~|~~##\###|##/---+ ##### Hoff #   ~~~~~~  Markov Network concept
+~ HMM-------hidden # neural-----------/#####    ~~~~~~
+~~~~~~~~~~~~~~~~~~ #######################
+                                                ------  Links</tt></pre>
+</div></div>
+<div class="para"><p>This is true, only if the Concept Network was designed in order to associate
+conceptually near symbols.</p></div>
+</div>
+<h2 id="_node">Node</h2>
+<div class="sectionbody">
+<div class="para"><p>Each node has these fields:</p></div>
+<div class="ilist"><ul>
+<li>
+<p>
+symbol (S):
+    it contains the symbolic information.
+</p>
+</li>
+<li>
+<p>
+occurrence (occ):
+    number of times it occurred (in ECTOR case, how many times it appeared in
+    user's utterance).
+</p>
+</li>
+<li>
+<p>
+type (Ty):
+    what type of node it is (depends on the application). For ECTOR, they can be
+    "token", "sentence", "sentiment", "expression", "utterer", "label", "file",
+    &#8230;. See NodeType.
+</p>
+</li>
+<li>
+<p>
+state (AV):
+    the ActivationValue of the node, within a whole ConceptNetworkState.
+</p>
+</li>
+</ul></div>
+</div>
+<h2 id="_link">Link</h2>
+<div class="sectionbody">
+<div class="para"><p>Each ConceptNetwork link comes from node. Its is directed to another node, and
+has following fields:</p></div>
+<div class="ilist"><ul>
+<li>
+<p>
+node
+    the node pointed by this link
+</p>
+</li>
+<li>
+<p>
+weight
+    the influence that the departure node has on the arrival node, that one can
+    also see as a conceptual proximity of the two related nodes. This LinkWeight
+    is computed, according to the incoming node's occurrence and the
+    co-occurrence of the two nodes.
+</p>
+</li>
+<li>
+<p>
+label
+    optional label node, turning the link into a labeled link
+</p>
+</li>
+</ul></div>
+<div class="para"><p>The next figure shows an a minimal Concept Network sample, where the birthday
+node is completely activated (100%). This node is linked to cake, whose
+activation value is zero. This link's type is eat, and is weight 95%. This
+network is an abstract representation of the fact that for an anniversary, one
+often eats a cake.</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><tt>/----------------\                             /--------------\
+|   S: birthday  |                             |    S: cake   |
++----------------+                             +--------------+
+| Ty: token      |     /-----------------\     | Ty: token    |
+| AV: 100 %      +-----+ T: eat | W: 95% +----&gt;+ AV:  0%      |
+\----------------/     \-----------------/     \--------------/</tt></pre>
+</div></div>
+<div class="para"><p>Like in neural networks, the activation value from birthday will be propagated
+to cake, thanks to the ActivationPropagation mechanism.</p></div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Version 0.2<br />
+Last updated 2008-11-11 14:45:03
+</div>
+</div>
+</body>
+</html>
