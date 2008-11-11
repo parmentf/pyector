@@ -1,7 +1,7 @@
 pyECTOR README file
 ===================
 author parmentierf@users.sourceforge.net
-0.1, 2008-11-05
+0.2, 2008-11-11
 
 Description
 -----------
@@ -34,13 +34,13 @@ Installation
 ------------
 Once you've downloaded the file, untar it like that:
 -------------------
-tar -xvzf pyector-0_1.tar.gz .
+tar -xvzf pyector-0.2.tar.gz .
 -------------------
 
 Important note
 --------------
-Version 0.1 does not come with a functional Ector!
-Only ConceptNetwork.py will work.
+Version 0.2 does not come with a functional Ector!
+Its is not yet answering.
 
 ----------
 python ConceptNetwork.py
@@ -55,10 +55,12 @@ existing nodes), and even +@activate+ a node, so you can
 
 A small reminder about the commands is obtained by typing +@help+.
 
+See doc/html/ConceptNetworkModule.html.
+
 Usage
 -----
 -------------------
-python Ector.py [-p username][-n botname=Ector][-v|-q][-l logfilepath][-s|-g][-h]
+python Ector.py [-p username][-n botname=Ector][-v|-q][-l logfilepath=ector.log][-s|-g][-h]
 -------------------
 
 Be aware that ECTOR does not know anything at the beginning (first launch).
