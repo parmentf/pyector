@@ -368,7 +368,7 @@ def main():
     from optparse import OptionParser
 
     usage="usage: %prog [-p username][-n botname=Ector][-v|-q][-l logfilepath=ector.log][-s|-g][-h]"
-    parser = OptionParser(usage=usage,version="%prog 0.1")
+    parser = OptionParser(usage=usage,version="%prog 0.2")
     parser.add_option("-p", "--person", dest="username", default="User",
                       help="give the name of the utterer")
     parser.add_option("-n", "--name", dest="botname", default="Ector",
