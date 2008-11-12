@@ -358,7 +358,7 @@ class Ector:
         for i in range(times):
             self.cn.fastPropagateActivations(state)
 
-    def getActivatedSentence(self):
+    def getActivatedSentenceNode(self):
         """Get one of the most activated sentences"""
         state        = self.cn.getState(self.username)
         maximumAV    = state.getMaximumActivationValue(self.cn, "sentence")
@@ -368,7 +368,7 @@ class Ector:
         temperature  = Temperature(60)
         if sentences:
             sentenceNode = temperature.chooseWeightedItem(sentences)
-            return sentenceNode.getSymbol()
+            return sentenceNode
         else:
             return ''
 
@@ -397,16 +397,16 @@ def main():
                       help="set the name of the utterer")
     parser.add_option("-n", "--name", dest="botname", default="Ector",
                       help="set the name of the bot")
-    parser.add_option("-v", action="store_true", dest="verbose", default=False,
+    parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=True,
                       help="say all that you can say")
-    parser.add_option("-q", action="store_false", dest="verbose",
+    parser.add_option("-q", "--quiet", action="store_false", dest="verbose",
                       help="shut up!")
     parser.add_option("-l", "--log", dest="logname", default="ector.log",
                       help="log the dialogue in log file")
-    parser.add_option("-s", "--sentence", dest="sentence", default=True,
-                      help="set sentence reply mode")
-    parser.add_option("-q", "--quiet", dest="quiet", default=False,
-                       help="make the bot shut up")
+    parser.add_option("-s", "--sentence", action="store_true", dest="sentence", default=True,
+                      help="set sentence reply mode on")
+    parser.add_option("-g", "--generate", action="store_false", dest="sentence",
+                      help="set generate reply mode on")
 
     (options, args) = parser.parse_args()
 
@@ -418,10 +418,11 @@ def main():
     logfilename = options.logname
     version  = "0.2"
     sentence_mode = options.sentence
-    generate_mode = False
-    quiet_mode    = options.quiet
+    generate_mode = not sentence_mode    # sentence and generate modes are antagonist
+    verbose    = options.verbose
 
-    if quiet_mode:
+    # Quiet mode is above sentence or generate modes
+    if not verbose:
         sentence_mode    = False
         generate_mode    = False
 
@@ -533,7 +534,11 @@ But there are some commands you can use:
              reply    = None
              if sentence_mode:
                  # Get one of the most activated sentences
-                 reply    = ector.getActivatedSentence()
+                 replyNode = ector.getActivatedSentenceNode()
+                 reply     = replyNode.getSymbol()
+                 reply     = reply.replace("@bot@",  username)
+                 reply     = reply.replace("@user@", botname)
+                 previousSentenceNode = replyNode
              if reply:
                  print ector.botname, ">", reply.encode(ENCODING)
                  if logfilename:
