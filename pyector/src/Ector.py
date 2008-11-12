@@ -379,6 +379,8 @@ def main():
                       help="shut up!")
     parser.add_option("-l", "--log", dest="logname", default="ector.log",
                       help="log the dialogue in log file")
+    parser.add_option("-s", "--sentence", dest="sentence", default=True,
+                      help="set sentence reply mode")
 
     (options, args) = parser.parse_args()
 
@@ -389,6 +391,7 @@ def main():
     botname  = options.botname.capitalize()
     logfilename = options.logname
     version  = "0.2"
+    sentence_mode = options.sentence
 
     ector    = Ector(botname, username)
 
@@ -448,6 +451,14 @@ under certain conditions; type `@show c' for details.
         elif entry == "@log" or entry == "@logoff":
             print "Log off (%s)" % logfilename
             logfilename = ''
+        elif entry.lower() == "@sentence on":
+            sentence_mode = True
+            print "Sentence reply mode ON"
+        elif entry.lower() == "@sentence off":
+            sentence_mode = False
+            print "Sentence reply mode OFF"
+        elif entry.lower() == "@sentence":
+            print "Sentence reply mode", sentence_mode and "ON" or "OFF"
         # Help
         elif entry[:5] == "@help":
             print """You can just start typing phrases.
@@ -463,7 +474,8 @@ But there are some commands you can use:
  - @shownodes : show the nodes of the Concept Network
  - @showlinks : show the links of the Concept Network
  - @log [file]: log the entries in the file (no file turns off the logging)
- - @status    : show the status of Ector (Concept Network, states)"""
+ - @status    : show the status of Ector (Concept Network, states)
+ - @sentence [ON|OFF]: set the sentence reply mode"""
         else:
              entry    = unicode(entry, ENCODING)
              lastSentenceNode = ector.addEntry(entry)
