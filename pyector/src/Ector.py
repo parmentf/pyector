@@ -405,6 +405,8 @@ def main():
                       help="log the dialogue in log file")
     parser.add_option("-s", "--sentence", dest="sentence", default=True,
                       help="set sentence reply mode")
+    parser.add_option("-q", "--quiet", dest="quiet", default=False,
+                       help="make the bot shut up")
 
     (options, args) = parser.parse_args()
 
@@ -416,6 +418,12 @@ def main():
     logfilename = options.logname
     version  = "0.2"
     sentence_mode = options.sentence
+    generate_mode = False
+    quiet_mode    = options.quiet
+
+    if quiet_mode:
+        sentence_mode    = False
+        generate_mode    = False
 
     ector    = Ector(botname, username)
 
@@ -479,6 +487,7 @@ under certain conditions; type `@show c' for details.
             logfilename = ''
         elif entry.lower() == "@sentence on":
             sentence_mode = True
+            generate_mode = False     # sentence and generate modes are not compatible
             print "Sentence reply mode ON"
         elif entry.lower() == "@sentence off":
             sentence_mode = False
@@ -527,6 +536,8 @@ But there are some commands you can use:
                  reply    = ector.getActivatedSentence()
              if reply:
                  print ector.botname, ">", reply.encode(ENCODING)
+                 if logfilename:
+                     logEntry(logfilename, botname, reply)
 
 
 if __name__ == "__main__":
