@@ -123,15 +123,10 @@ class ConceptNetwork:
         "Get the link going from nodeFrom to nodeTo, through nodeLabel (if it exists)"
         if not nodeFrom or not nodeTo:
             raise ConceptNetworkIncompleteLink,"There lacks at least one node!"
-        self.__hasType(nodeFrom,"Node")    # Maybe this is not right for derived Nodes
-        self.__hasType(nodeTo,  "Node")    # Maybe this is not right for derived Nodes
-        if nodeLabel:
-            self.__hasType(nodeLabel,"Node")    # Maybe this is not right for derived Nodes
         return self.link[(nodeFrom,nodeTo,nodeLabel)]
 
     def getLinksFrom(self,nodeFrom):
         "Get links that go from nodeFrom"
-        self.__hasType(nodeFrom,"Node")    # Maybe this is not right for derived Nodes
         return [self.link[link] for link in self.link if link[0] == nodeFrom]
 
     def getLinksLabeled(self,nodeLabel):
@@ -648,7 +643,7 @@ class Temperature:
             ur[item.getSymbol()] = urgencySum
 
         if urgencySum < 1: urgencySum = 1
-        choice = random.randint(0,urgencySum)
+        choice = random.randint(0,int(urgencySum))
 
         for (item, weight) in items:
             symbol  = item.getSymbol()

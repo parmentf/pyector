@@ -352,6 +352,30 @@ class Ector:
             self.cn.addBidirectionalLink(tokenNode, sentenceNode)
         return sentenceNode
 
+    def propagate(self,times=1):
+        """Propagate the activation in the state of the utterer"""
+        state = self.cn.getState(self.username)
+        for i in range(times):
+            self.cn.fastPropagateActivations(state)
+
+    def getActivatedSentence(self):
+        """Get one of the most activated sentences"""
+        state        = self.cn.getState(self.username)
+        maximumAV    = state.getMaximumActivationValue(self.cn, "sentence")
+        sentences    = state.getActivatedTypedNodes(self.cn, "sentence",
+                                                    maximumAV - 10)
+        # TODO: compute a temperature according the state's activations
+        temperature  = Temperature(60)
+        if sentences:
+            sentenceNode = temperature.chooseWeightedItem(sentences)
+            return sentenceNode.getSymbol()
+        else:
+            return ''
+
+    def showState(self,stateID):
+        """Show the state matching stateID"""
+        state        = self.cn.getState(stateID)
+        state.showNodes()
 
 def logEntry(filename, utterer, entry, encoding=ENCODING):
     """Log the utterer's entry in the file"""
@@ -445,6 +469,8 @@ under certain conditions; type `@show c' for details.
             ector.cn.showNodes()
         elif entry[:10] == "@showlinks":
             ector.cn.showLinks(1)
+        elif entry == "@showstate":
+            ector.showState(username)
         elif entry.startswith("@log "):
             logfilename    = entry[5:]
             print "Log file: %s" % (logfilename)
@@ -473,9 +499,12 @@ But there are some commands you can use:
  - @write     : save Ector's Concept Network and state
  - @shownodes : show the nodes of the Concept Network
  - @showlinks : show the links of the Concept Network
+ - @showstate : show the state of the nodes
  - @log [file]: log the entries in the file (no file turns off the logging)
  - @status    : show the status of Ector (Concept Network, states)
  - @sentence [ON|OFF]: set the sentence reply mode"""
+        elif entry.startswith("@"):
+            print "There is no command",entry
         else:
              entry    = unicode(entry, ENCODING)
              lastSentenceNode = ector.addEntry(entry)
@@ -488,6 +517,16 @@ But there are some commands you can use:
              # if log is activated, log the entry.
              if logfilename:
                  logEntry(logfilename, username, entry)
+             # Propagate activation
+             ector.propagate(2)
+             ector.showState(username)
+             # Get the reply
+             reply    = None
+             if sentence_mode:
+                 # Get one of the most activated sentences
+                 reply    = ector.getActivatedSentence()
+             if reply:
+                 print ector.botname, ">", reply.encode(ENCODING)
 
 
 if __name__ == "__main__":
