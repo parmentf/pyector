@@ -32,8 +32,8 @@ Here is the synopsis of the command (version 0.2):
 python Ector.py [-p username=User][-n botname=Ector][-l logfilepath=ector.log][-h]
 --------------------
 
-p --person
-^^^^^^^^^^
+-p --person
+^^^^^^^^^^^
 This option gives the user name to Ector.
 It is the name under which you are recognized by Ector.
 It will be used to create a file `username_state.pkl` in which it will save the
@@ -54,21 +54,21 @@ User>@person Bill
 Bill>
 --------------------
 
-n --name
-^^^^^^^^
+-n --name
+^^^^^^^^^
 You can change the name of the bot, but its default name will be *`Ector`*.
 The name you give is capitalized.
 
-l --log
-^^^^^^^
+-l --log
+^^^^^^^^
 You can change the file in which the log is written.
 By default, the file is `ector.log` and is saved in the current directory (from
 where you launch Ector).
 
 This is the same as the `@log` command.
 
-h --help
-^^^^^^^^
+-h --help
+^^^^^^^^^
 The help option reminds the usage of the program:
 --------------------
 $python src/Ector.py -h
@@ -82,14 +82,13 @@ Options:
                         set the name of the utterer
   -n BOTNAME, --name=BOTNAME
                         set the name of the bot
-  -v                    say all that you can say
-  -q                    shut up!
+  -v, --verbose         say all that you can say
+  -q, --quiet           shut up!
   -l LOGNAME, --log=LOGNAME
                         log the dialogue in log file
+  -s, --sentence        set sentence reply mode on
+  -g, --generate        set generate reply mode on
 --------------------
-Although some options are already present, they are not functional: -v, -q are
-not applicable, as Ector does not answer, even in version 0.2.
-
 
 Use it
 ~~~~~~
@@ -125,9 +124,10 @@ But there are some commands you can use:
  - @write     : save Ector's Concept Network and state
  - @shownodes : show the nodes of the Concept Network
  - @showlinks : show the links of the Concept Network
+ - @showstate : show the state of the nodes
  - @log [file]: log the entries in the file (no file turns off the logging)
  - @status    : show the status of Ector (Concept Network, states)
-User>
+ - @sentence [ON|OFF]: set the sentence reply modeUser>
 --------------------
 
 @usage
@@ -138,7 +138,7 @@ Usage is the same than `-h, --help` option. It gives the synopsis of the program
 ^^^^^^^^^^^^^^^^^^
 `@quit`, `@exit`, and `@bye` are the same command: it is the only means to quit Ector.
 
-*Warning*: at this point, if you did not save the ConceptNetwork (using `@write`), all you said since the last save will be lost!
+WARNING: at this point, if you did not save the ConceptNetwork (using `@write`), all you said since the last save will be lost!
 
 @person
 ^^^^^^^
@@ -149,7 +149,7 @@ User>@person Bill
 Bill>
 --------------------
 
-*Warning*: at this point, if you did not save, Ector won't remember your last
+WARNING: at this point, if you did not save, Ector won't remember your last
 conversation state the next time you return as `User`.
 
 @name
@@ -193,10 +193,10 @@ Hi @bot@, how are you? (sentence): 1 (1)
 User>
 --------------------
 
-*Warning*: this could overwhelm the screen, if your ConceptNetwork is already
+WARNING: this could overwhelm the screen, if your ConceptNetwork is already
 big!
 
-*Note*: at the launch, Ector try to read the `cn.pkl` file. If you already wrote
+NOTE: at the launch, Ector try to read the `cn.pkl` file. If you already wrote
 it, the ConceptNetwork shall not be empty.
 
 @showlinks
@@ -204,8 +204,8 @@ it, the ConceptNetwork shall not be empty.
 This command displays the links of the ConceptNetwork, like in
 ConceptNetworkModule.
 
-Though it is useful to debug and understand how Ector works, you should not use
-it, as the output is long.
+NOTE: Though it is useful to debug and understand how Ector works, you
+should not use it, as the output is long.
 
 Example:
 --------------------
@@ -233,8 +233,34 @@ Hi @bot@, how are you? ------(100)------->        how
       User ------(100)-------> Hi @bot@, how are you?
 Hi @bot@, how are you? ------(100)------->       User
        you ------(100)------->          ?
-User>
+Ector >Hi User, how are you?
 --------------------
+
+@showstate
+^^^^^^^^^^
+This command displays the state of the nodes of the ConceptNetwork,
+corresponding to the utterer, like in ConceptNetworkModule.
+
+NOTE: Though it is useful to debug and understand how Ector works, you
+should not use it, as the output is long.
+
+Example:
+--------------------
+User>Hi Ector, how are you?
+User>@showstate
+oldav	av	age	Node
+77	49	2	how(token)
+77	42	2	Hi(token)
+67	36	2	Hi @bot@, how are you?(sentence)
+77	42	2	bot(token)
+77	49	2	,(token)
+47	10	2	User(utterer)
+77	49	2	?(token)
+77	42	2	are(token)
+77	49	2	you(token)
+Ector >Hi User, how are you?
+--------------------
+
 
 @log
 ^^^^
@@ -275,3 +301,11 @@ Hi @bot@, how are you? (sentence): 1 (1)
 States (1)
 	User
 --------------------
+
+@sentence [on|off]
+^^^^^^^^^^^^^^^^^^
+Set sentence mode on or off.
+When the sentence mode is on, Ector thinks a bit about what you said, and then
+pick one sentence among those he has already heard.
+
+Using `@sentence` without any argument gives the current sentence mode.
