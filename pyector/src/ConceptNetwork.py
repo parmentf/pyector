@@ -650,7 +650,7 @@ class Temperature:
             urgency = ur[symbol]
             if choice <= urgency:
                 return item
-        return items[0]
+        return items[0][0]
 
 
 # main
