@@ -1,7 +1,7 @@
 Manual of the Ector program
 ===========================
 author parmentierf@users.sourceforge.net
-0.2, 2008-11-11
+0.3, 2008-11-13
 
 Introduction
 ------------
