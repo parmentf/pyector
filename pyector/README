@@ -1,7 +1,7 @@
 pyECTOR README file
 ===================
 author parmentierf@users.sourceforge.net
-0.2, 2008-11-11
+0.3, 2008-11-11
 
 Description
 -----------
@@ -34,13 +34,11 @@ Installation
 ------------
 Once you've downloaded the file, untar it like that:
 -------------------
-tar -xvzf pyector-0.2.tar.gz .
+tar -xvzf pyector-0.3.tar.gz .
 -------------------
 
-Important note
---------------
-Version 0.2 does not come with a functional Ector!
-Its is not yet answering.
+Version 0.3 allows Ector to answer, in a simple manner, but it is
+now answering.
 
 ----------
 python ConceptNetwork.py
