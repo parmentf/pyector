@@ -392,7 +392,7 @@ def main():
     from optparse import OptionParser
 
     usage="usage: %prog [-p username][-n botname=Ector][-v|-q][-l logfilepath=ector.log][-s|-g][-h]"
-    parser = OptionParser(usage=usage,version="%prog 0.2")
+    parser = OptionParser(usage=usage,version="%prog 0.3")
     parser.add_option("-p", "--person", dest="username", default="User",
                       help="set the name of the utterer")
     parser.add_option("-n", "--name", dest="botname", default="Ector",
@@ -416,7 +416,7 @@ def main():
     username = options.username
     botname  = options.botname.capitalize()
     logfilename = options.logname
-    version  = "0.2"
+    version  = "0.3"
     sentence_mode = options.sentence
     generate_mode = not sentence_mode    # sentence and generate modes are antagonist
     verbose    = options.verbose
@@ -529,7 +529,7 @@ But there are some commands you can use:
                  logEntry(logfilename, username, entry)
              # Propagate activation
              ector.propagate(2)
-             ector.showState(username)
+#             ector.showState(username)
              # Get the reply
              reply    = None
              if sentence_mode:
