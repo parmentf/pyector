@@ -131,19 +131,16 @@ class ConceptNetwork:
 
     def getLinksLabeled(self,nodeLabel):
         "Get links that go through nodeLabel, or from this node"
-        self.__hasType(nodeLabel,"Node")    # Maybe this is not right for derived Nodes
         return [self.link[link] for link in self.link if link[2] == nodeLabel]
 
     def getLinksLabeledOrTo(self,nodeLabel):
         "Get links that go through nodeLabel, or to this node."
-        self.__hasType(nodeLabel,"Node")    # Maybe this is not right for derived Nodes
         return [self.link[link] for link in self.link
                 if link[2] == nodeLabel or link[1] == nodeLabel]
 
     def getLinksTo(self,nodeTo):
         """Get links clone that go to @a nodeTo.
            Don't get the !part_of! links."""
-        self.__hasType(nodeTo,"Node")    # Maybe this is not right for derived Nodes
         return [self.link[link] for link in self.link if link[1] == nodeTo]
 
     def addLink(self,nodeFrom, nodeTo, nodeLabel=None):
