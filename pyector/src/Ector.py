@@ -390,24 +390,15 @@ class Ector:
             if link.getNodeTo().getTypeName() == "token":
                 av    = state.getNodeActivationValue(link.getNodeTo().getSymbol(), "token")
                 nextNodes    += [(link.getNodeTo(), link.getCoOcc() * av)]
+        # Stop condition
         if len(nextNodes) == 0:
             return phrase
         # Choose one node among the tokens following the one at the end
         # of the phrase
         chosenToken    = temperature.chooseWeightedItem(nextNodes)
         phrase        += [chosenToken]
-        # Determine whether or not to end the phrase
 
         return self.generateForward(phrase, temperature)
-
-#        choices  = [(TokenNode("True"),    chosenToken.getEndOccurrence()),
-#                    (TokenNode("False"),   chosenToken.getBeginningOccurrence() +
-#                                           chosenToken.getMiddleOccurrence())]
-#        isEnd    = temperature.chooseWeightedItem(choices)
-#        if isEnd.getSymbol() == "False":
-#            return self.generateForward(phrase, temperature)
-#        else:
-#            return phrase
 
     def generateBackward(self, phrase, temperature):
         """Generate the beginning of a sentence, adding tokens to the list
@@ -420,24 +411,15 @@ class Ector:
         for link in incomingLinks:
             if link.getNodeFrom().getTypeName() == "token":
                 previousNodes    += [(link.getNodeFrom(), link.getCoOcc())]
+        # Stop condition
         if len(previousNodes) == 0:
             return phrase
         # Choose one node among the tokens preceding the one at the beginning
         # of the phrase
         chosenToken   = temperature.chooseWeightedItem(previousNodes)
         phrase        = [chosenToken] + phrase
-        # Determine whether or not to end the phrase
 
         return self.generateBackward(phrase, temperature)
-
-#        choices  = [(TokenNode("True"),    chosenToken.getBeginningOccurrence()),
-#                    (TokenNode("False"),   chosenToken.getEndOccurrence() +
-#                                           chosenToken.getMiddleOccurrence())]
-#        isBeginning   = temperature.chooseWeightedItem(choices)
-#        if isBeginning.getSymbol() == "False":
-#            return self.generateBackward(phrase, temperature)
-#        else:
-#            return phrase
 
     def generateSentence(self):
         """Get one node, generate a sentence from it forwards to the end
