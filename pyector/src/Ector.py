@@ -377,6 +377,90 @@ class Ector:
         state        = self.cn.getState(stateID)
         state.showNodes()
 
+    def generateForward(self, phrase, temperature):
+        """Generate the end of a sentence, adding tokens to the list
+        of token nodes in phrase."""
+        state     = self.cn.getState(self.username)
+        outgoingLinks    = self.cn.getLinksFrom(phrase[-1])
+#        nextNodes        = [(link.getNodeTo(), link.getCoOc())
+#                            for link in outgoingLinks
+#                            if link.getNodeTo().getTypeName() == "token"]
+        nextNodes    = []
+        for link in outgoingLinks:
+            if link.getNodeTo().getTypeName() == "token":
+                av    = state.getNodeActivationValue(link.getNodeTo().getSymbol(), "token")
+                nextNodes    += [(link.getNodeTo(), link.getCoOcc() * av)]
+        if len(nextNodes) == 0:
+            return phrase
+        # Choose one node among the tokens following the one at the end
+        # of the phrase
+        chosenToken    = temperature.chooseWeightedItem(nextNodes)
+        phrase        += [chosenToken]
+        # Determine whether or not to end the phrase
+
+        return self.generateForward(phrase, temperature)
+
+#        choices  = [(TokenNode("True"),    chosenToken.getEndOccurrence()),
+#                    (TokenNode("False"),   chosenToken.getBeginningOccurrence() +
+#                                           chosenToken.getMiddleOccurrence())]
+#        isEnd    = temperature.chooseWeightedItem(choices)
+#        if isEnd.getSymbol() == "False":
+#            return self.generateForward(phrase, temperature)
+#        else:
+#            return phrase
+
+    def generateBackward(self, phrase, temperature):
+        """Generate the beginning of a sentence, adding tokens to the list
+        of token nodes in phrase."""
+        incomingLinks    = self.cn.getLinksTo(phrase[0])
+#        previousNodes    = [(link.getNodeFrom(), link.getCoOc())
+#                            for link in incomingLinks
+#                            if link.getNodeFrom().getTypeName() == "token"]
+        previousNodes    = []
+        for link in incomingLinks:
+            if link.getNodeFrom().getTypeName() == "token":
+                previousNodes    += [(link.getNodeFrom(), link.getCoOcc())]
+        if len(previousNodes) == 0:
+            return phrase
+        # Choose one node among the tokens preceding the one at the beginning
+        # of the phrase
+        chosenToken   = temperature.chooseWeightedItem(previousNodes)
+        phrase        = [chosenToken] + phrase
+        # Determine whether or not to end the phrase
+
+        return self.generateBackward(phrase, temperature)
+
+#        choices  = [(TokenNode("True"),    chosenToken.getBeginningOccurrence()),
+#                    (TokenNode("False"),   chosenToken.getEndOccurrence() +
+#                                           chosenToken.getMiddleOccurrence())]
+#        isBeginning   = temperature.chooseWeightedItem(choices)
+#        if isBeginning.getSymbol() == "False":
+#            return self.generateBackward(phrase, temperature)
+#        else:
+#            return phrase
+
+    def generateSentence(self):
+        """Get one node, generate a sentence from it forwards to the end
+        of the sentence, and then generate backwards to the beginning of
+        the sentence."""
+        # Choose a token node among the most activated
+        state     = self.cn.getState(self.username)
+        maximumAV = state.getMaximumActivationValue(self.cn, "token")
+        tokens    = state.getActivatedTypedNodes(self.cn,"token",
+                                                 maximumAV - 10)
+        # TODO: compute a temperature according the state's activations
+        temperature    = Temperature(60)
+        chosenToken    = temperature.chooseWeightedItem(tokens)
+
+        phrase    = [chosenToken]
+        # Generate forwards
+        phrase    = self.generateForward(phrase, temperature)
+        # Generate backwards
+        phrase    = self.generateBackward(phrase, temperature)
+        phrase    = [token.getSymbol() for token in phrase]
+        return ("_".join(phrase)) + " (%s)" % chosenToken.getSymbol()
+
+
 def logEntry(filename, utterer, entry, encoding=ENCODING):
     """Log the utterer's entry in the file"""
     f    = file(filename,"a")
@@ -495,6 +579,15 @@ under certain conditions; type `@show c' for details.
             print "Sentence reply mode OFF"
         elif entry.lower() == "@sentence":
             print "Sentence reply mode", sentence_mode and "ON" or "OFF"
+        elif entry.lower() == "@generate on":
+            sentence_mode = False
+            generate_mode = True     # sentence and generate modes are not compatible
+            print "Generate reply mode ON"
+        elif entry.lower() == "@generate off":
+            generate_mode = False
+            print "Sentence reply mode OFF"
+        elif entry.lower() == "@generate":
+            print "Generate reply mode", generate_mode and "ON" or "OFF"
         # Help
         elif entry[:5] == "@help":
             print """You can just start typing phrases.
@@ -512,7 +605,8 @@ But there are some commands you can use:
  - @showstate : show the state of the nodes
  - @log [file]: log the entries in the file (no file turns off the logging)
  - @status    : show the status of Ector (Concept Network, states)
- - @sentence [ON|OFF]: set the sentence reply mode"""
+ - @sentence [ON|OFF]: set the sentence reply mode
+ - @generate [ON|OFF]: set the generate reply mode"""
         elif entry.startswith("@"):
             print "There is no command",entry
         else:
@@ -520,7 +614,7 @@ But there are some commands you can use:
              lastSentenceNode = ector.addEntry(entry)
              if previousSentenceNode:
                  ector.cn.addLink(previousSentenceNode,lastSentenceNode)
-             else:
+             elif sentence_mode:
                  # First sentence of a dialogue
                  lastSentenceNode.beg += 1
              previousSentenceNode    = lastSentenceNode
@@ -539,6 +633,12 @@ But there are some commands you can use:
                  reply     = reply.replace("@bot@",  username)
                  reply     = reply.replace("@user@", botname)
                  previousSentenceNode = replyNode
+             elif generate_mode:
+                 reply    = ector.generateSentence()
+                 reply     = reply.replace("@bot@",  username)
+                 reply     = reply.replace("@user@", botname)
+                 # TODO: make a link between nodes to the next entry
+                 previousSentenceNode = None
              if reply:
                  print ector.botname, ">", reply.encode(ENCODING)
                  if logfilename:
