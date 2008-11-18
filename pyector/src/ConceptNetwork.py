@@ -129,7 +129,7 @@ class ConceptNetwork:
         "Get links that go from nodeFrom"
 #        return [self.link[link] for link in self.link if link[0] == nodeFrom]
 #        return [link for ((symbol, typeName),link) in nodeFrom.outgoingLinks]
-        return [link for (nodeId, link) in nodeFrom.outgoingLinks.iteritems()]
+        return [link for link in nodeFrom.outgoingLinks]
 #        result    = []
 #        for (nodeId, link) in nodeFrom.outgoingLinks.iteritems():
 #            result    += [link]
@@ -139,18 +139,19 @@ class ConceptNetwork:
     def getLinksLabeled(self,nodeLabel):
         "Get links that go through nodeLabel, or from this node"
 #        return [self.link[link] for link in self.link if link[2] == nodeLabel]
-        return [link for (nodeId, link) in nodeLabel.labelingLinks.iteritems()]
+        return [link for link in nodeLabel.labelingLinks]
 
     def getLinksLabeledOrTo(self,nodeLabel):
         "Get links that go through nodeLabel, or to this node."
-        return [self.link[link] for link in self.link
-                if link[2] == nodeLabel or link[1] == nodeLabel]
+#        return [self.link[link] for link in self.link
+#                if link[2] == nodeLabel or link[1] == nodeLabel]
+        return self.getLinksLabeled(nodeLabel) + self.getLinksTo(nodeLabel)
 
     def getLinksTo(self,nodeTo):
         """Get links clone that go to @a nodeTo.
            Don't get the !part_of! links."""
 #        return [self.link[link] for link in self.link if link[1] == nodeTo]
-        return [link for (nodeId, link) in nodeFrom.incomingLinks.iteritems()]
+        return [link for link in nodeTo.incomingLinks]
 
     def addLink(self,nodeFrom, nodeTo, nodeLabel=None):
         """Add a directional link to the ConceptNetwork.
@@ -361,9 +362,9 @@ class Node:
     def __init__(self, symbol, occ=1):
         self.symbol = symbol
         self.occ = occ
-        self.outgoingLinks = {}    # (symbol,type)    -> link
-        self.incomingLinks = {}    # (symbol,type)    -> link
-        self.labelingLinks = {}    # (symbol,type)    -> link
+        self.outgoingLinks = []
+        self.incomingLinks = []
+        self.labelingLinks = []
 
     def incrementOcc(self):
         self.occ = self.occ + 1
@@ -391,18 +392,15 @@ class Node:
 
     def addOutgoingLink(self,link):
         """Add an outgoing link"""
-        nodeTo    = link.getNodeTo()
-        self.outgoingLinks[(nodeTo.getSymbol(), nodeTo.getTypeName())] = link
+        self.outgoingLinks    += [link]
 
     def addIncomingLink(self,link):
         """Add an incoming link"""
-        nodeFrom    = link.getNodeFrom()
-        self.outgoingLinks[(nodeFrom.getSymbol(), nodeFrom.getTypeName())] = link
+        self.incomingLinks    += [link]
 
     def addLabelingLink(self,link):
         """Add an labeling link"""
-        nodeLabel    = link.getNodeLabel()
-        self.outgoingLinks[(nodeLabel.getSymbol(), nodeLabel.getTypeName())] = link
+        self.labelingLinks    += [link]
 
     def show(self):
         """Display the node"""
