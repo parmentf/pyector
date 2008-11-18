@@ -159,7 +159,12 @@ class ConceptNetwork:
             self.link[newLink].incrementCoOcc()
         else:
             self.link[newLink] = Link(nodeFrom,nodeTo,nodeLabel)
-        return self.link[newLink]
+        link    = self.link[newLink]
+        nodeFrom.addOutgoingLink(link)
+        nodeTo.addIncomingLink(link)
+        if nodeLabel:
+            nodeLabel.addLabelingLink(link)
+        return link
 
     def addBidirectionalLink(self,node1, node2, nodeLabel=None):
         """Add a directional link to the ConceptNetwork.
@@ -351,6 +356,9 @@ class Node:
     def __init__(self, symbol, occ=1):
         self.symbol = symbol
         self.occ = occ
+        self.outgoingLinks = {}    # (symbol,type)    -> link
+        self.incomingLinks = {}    # (symbol,type)    -> link
+        self.labelingLinks = {}    # (symbol,type)    -> link
 
     def incrementOcc(self):
         self.occ = self.occ + 1
@@ -375,6 +383,21 @@ class Node:
     def getDecay(self):
         "Get the decay rate of this node"
         return self.__decay
+
+    def addOutgoingLink(self,link):
+        """Add an outgoing link"""
+        nodeTo    = link.getNodeTo()
+        self.outgoingLinks[(nodeTo.getSymbol(), nodeTo.getTypeName())] = link
+
+    def addIncomingLink(self,link):
+        """Add an incoming link"""
+        nodeFrom    = link.getNodeFrom()
+        self.outgoingLinks[(nodeFrom.getSymbol(), nodeFrom.getTypeName())] = link
+
+    def addLabelingLink(self,link):
+        """Add an labeling link"""
+        nodeLabel    = link.getNodeLabel()
+        self.outgoingLinks[(nodeLabel.getSymbol(), nodeLabel.getTypeName())] = link
 
     def show(self):
         """Display the node"""
