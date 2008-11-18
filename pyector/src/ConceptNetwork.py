@@ -158,10 +158,6 @@ class ConceptNetwork:
         If there is no label node, None should be passed as labelNode."""
         if not nodeFrom or not nodeTo:
             raise ConceptNetworkIncompleteLink,"There lacks at least one node!"
-#        self.__hasType(nodeFrom,"Node")    # Maybe this is not right for derived Nodes
-#        self.__hasType(nodeTo,  "Node")    # Maybe this is not right for derived Nodes
-#        if nodeLabel:
-#            self.__hasType(nodeLabel,"Node")    # Maybe this is not right for derived Nodes
         newLink = (nodeFrom,nodeTo,nodeLabel)
         if newLink in self.link:
             self.link[newLink].incrementCoOcc()
