@@ -127,7 +127,12 @@ class ConceptNetwork:
 
     def getLinksFrom(self,nodeFrom):
         "Get links that go from nodeFrom"
-        return [self.link[link] for link in self.link if link[0] == nodeFrom]
+#        return [self.link[link] for link in self.link if link[0] == nodeFrom]
+#        return [link for ((symbol, typeName),link) in nodeFrom.outgoingLinks]
+        result    = []
+        for (nodeId, link) in nodeFrom.outgoingLinks.iteritems():
+            result    += [link]
+        return result
 
     def getLinksLabeled(self,nodeLabel):
         "Get links that go through nodeLabel, or from this node"
