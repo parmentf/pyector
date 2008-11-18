@@ -138,7 +138,8 @@ class ConceptNetwork:
 
     def getLinksLabeled(self,nodeLabel):
         "Get links that go through nodeLabel, or from this node"
-        return [self.link[link] for link in self.link if link[2] == nodeLabel]
+#        return [self.link[link] for link in self.link if link[2] == nodeLabel]
+        return [link for (nodeId, link) in nodeLabel.labelingLinks.iteritems()]
 
     def getLinksLabeledOrTo(self,nodeLabel):
         "Get links that go through nodeLabel, or to this node."
