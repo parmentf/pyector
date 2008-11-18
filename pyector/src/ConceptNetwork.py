@@ -129,10 +129,12 @@ class ConceptNetwork:
         "Get links that go from nodeFrom"
 #        return [self.link[link] for link in self.link if link[0] == nodeFrom]
 #        return [link for ((symbol, typeName),link) in nodeFrom.outgoingLinks]
-        result    = []
-        for (nodeId, link) in nodeFrom.outgoingLinks.iteritems():
-            result    += [link]
-        return result
+        return [link for (nodeId, link) in nodeFrom.outgoingLinks.iteritems()]
+#        result    = []
+#        for (nodeId, link) in nodeFrom.outgoingLinks.iteritems():
+#            result    += [link]
+#        return result
+
 
     def getLinksLabeled(self,nodeLabel):
         "Get links that go through nodeLabel, or from this node"
@@ -146,7 +148,8 @@ class ConceptNetwork:
     def getLinksTo(self,nodeTo):
         """Get links clone that go to @a nodeTo.
            Don't get the !part_of! links."""
-        return [self.link[link] for link in self.link if link[1] == nodeTo]
+#        return [self.link[link] for link in self.link if link[1] == nodeTo]
+        return [link for (nodeId, link) in nodeFrom.incomingLinks.iteritems()]
 
     def addLink(self,nodeFrom, nodeTo, nodeLabel=None):
         """Add a directional link to the ConceptNetwork.
