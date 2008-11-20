@@ -221,7 +221,8 @@ class ConceptNetwork:
             oldAV       = nodeState.getOldActivationValue()
             age         = nodeState.getAge()
             occ         = node.getOcc()
-            links       = self.getLinksTo(node)
+            #links       = self.getLinksTo(node)
+            links       = node.incomingLinks
             # Compute the influence coming to the node
             for link in links:
                 fromSymbol  = link.getNodeFrom().getSymbol()
@@ -263,7 +264,8 @@ class ConceptNetwork:
         for (symbol,typeName), node in self.node.iteritems():
             if symbol:
                 ov  = state.getNodeOldActivationValue(symbol,typeName)
-                links = self.getLinksFrom(node)
+                #links = self.getLinksFrom(node)
+                links = node.outgoingLinks
                 for link in links:
                     weight     = link.getWeight(state)
                     nodeTo     = link.getNodeTo()
