@@ -381,7 +381,8 @@ class Ector:
         """Generate the end of a sentence, adding tokens to the list
         of token nodes in phrase."""
         state     = self.cn.getState(self.username)
-        outgoingLinks    = self.cn.getLinksFrom(phrase[-1])
+        #outgoingLinks    = self.cn.getLinksFrom(phrase[-1])
+        outgoingLinks    = phrase[-1].outgoingLinks
 #        nextNodes        = [(link.getNodeTo(), link.getCoOc())
 #                            for link in outgoingLinks
 #                            if link.getNodeTo().getTypeName() == "token"]
@@ -403,7 +404,8 @@ class Ector:
     def generateBackward(self, phrase, temperature):
         """Generate the beginning of a sentence, adding tokens to the list
         of token nodes in phrase."""
-        incomingLinks    = self.cn.getLinksTo(phrase[0])
+        #incomingLinks    = self.cn.getLinksTo(phrase[0])
+        incomingLinks    = phrase[0].incomingLinks
 #        previousNodes    = [(link.getNodeFrom(), link.getCoOc())
 #                            for link in incomingLinks
 #                            if link.getNodeFrom().getTypeName() == "token"]
