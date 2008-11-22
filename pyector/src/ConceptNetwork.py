@@ -61,7 +61,16 @@ class ConceptNetwork:
 
     Each node can be in a NodeState.
     """
-
+    # - self.node is a dictionary which associates a node id
+    #   (symbol, type) to a node
+    # - self.state is a dictionary which associates a state id
+    #   (a string) to a state
+    # - self.link is a dictionary which associates three nodes' id
+    #   (node from symbol, node from type,
+    #    node to symbol, node to type,
+    #    node label symbol, node label type) to a link
+    #   If the link has no label, None is used for label symbol and
+    #   label type.
     def __init__(self):
         self.node  = {}             # (symbol,type)             -> node
         self.link  = {}             # (fromS,T,toS,T,labelS,T)  -> link
@@ -132,31 +141,26 @@ class ConceptNetwork:
                           nodeLabel and nodeLabel.getTypeName() or nodeLabel)]
 
     def getLinksFrom(self,nodeFrom):
-        "Get links that go from nodeFrom"
-#        return [self.link[link] for link in self.link if link[0] == nodeFrom]
-#        return [link for ((symbol, typeName),link) in nodeFrom.outgoingLinks]
+        """Get links that go from nodeFrom
+        nodeFrom is a Node"""
         return [link for link in nodeFrom.outgoingLinks]
-#        result    = []
-#        for (nodeId, link) in nodeFrom.outgoingLinks.iteritems():
-#            result    += [link]
-#        return result
 
 
     def getLinksLabeled(self,nodeLabel):
-        "Get links that go through nodeLabel, or from this node"
-#        return [self.link[link] for link in self.link if link[2] == nodeLabel]
+        """Get links that go through nodeLabel, or from this node
+        nodeLabel is a Node"""
         return [link for link in nodeLabel.labelingLinks]
 
     def getLinksLabeledOrTo(self,nodeLabel):
-        "Get links that go through nodeLabel, or to this node."
-#        return [self.link[link] for link in self.link
-#                if link[2] == nodeLabel or link[1] == nodeLabel]
+        """Get links that go through nodeLabel, or to this node.
+        nodeLabel is a Node"""
         return self.getLinksLabeled(nodeLabel) + self.getLinksTo(nodeLabel)
 
     def getLinksTo(self,nodeTo):
         """Get links clone that go to @a nodeTo.
-           Don't get the !part_of! links."""
-#        return [self.link[link] for link in self.link if link[1] == nodeTo]
+           Don't get the !part_of! links.
+
+           nodeTo is a Node"""
         return [link for link in nodeTo.incomingLinks]
 
     def addLink(self,nodeFrom, nodeTo, nodeLabel=None):
