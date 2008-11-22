@@ -37,7 +37,7 @@ from Ector import *
 import unittest
 
 
-class NodeTest(unittest.TestCase):
+class EctorTest(unittest.TestCase):
     "Test the Node class"
     def testAddSentence(self):
         """Add a sentence in the Concept Network of Ector"""
@@ -54,6 +54,17 @@ class NodeTest(unittest.TestCase):
         expectedNodeSymbols    = ["User", "Hello", ".", "Hello."]
         nodeSymbols    = [symbol for (symbol, typeName) in ector.cn.node]
         self.assertEqual(expectedNodeSymbols,nodeSymbols)
+
+    def testLinksCoOcc(self):
+        """When two nodes are linked several times, the nodes' co-occurrence
+        has to be incremented"""
+        ector    =    Ector()
+        ector.addSentence("how do you do?")
+        ector.addSentence("do you?")
+        doToken  = ector.cn.getNode("do", "token")
+        youToken = ector.cn.getNode("you", "token")
+        link     = ector.cn.getLink(doToken, youToken)
+        self.assertEqual(2, link.getCoOcc())
 
 
 if __name__ == "__main__":
