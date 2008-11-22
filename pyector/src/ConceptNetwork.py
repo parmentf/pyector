@@ -63,9 +63,9 @@ class ConceptNetwork:
     """
 
     def __init__(self):
-        self.node  = {}             # (symbol,type)     -> node
-        self.link  = {}             # (from,to,label)   -> link
-        self.state = {}             # state id          -> state
+        self.node  = {}             # (symbol,type)             -> node
+        self.link  = {}             # (fromS,T,toS,T,labelS,T)  -> link
+        self.state = {}             # state id                  -> state
 
     def __hasType(self,obj,strType):
         "Verify strType of the obj"
@@ -101,29 +101,34 @@ class ConceptNetwork:
 
     def showLinks(self,stateId=None):
         "Show all the links in the Concept Network"
-        for (fro,to,label) in self.link:
+        for (froS,froT, toS,toT, labelS,labelT) in self.link:
             if label:
                 if not stateId:
-                    print "%10s -(%10s %d)-> %10s" % (fro.getSymbol().encode(ENCODING),
-                                                   label.getSymbol().encode(ENCODING),
-                                                   self.link[(fro,to,label)].getWeight() * 100,
-                                                   to.getSymbol().encode(ENCODING))
+                    print "%10s -(%10s %d)-> %10s" % (froS.encode(ENCODING),
+                                                   labelS.encode(ENCODING),
+                                                   self.link[(froS,froT,toS,toT,labelS,labelT)]
+                                                       .getWeight() * 100,
+                                                   toS.encode(ENCODING))
                 else:
                     state = self.getState(stateId)
-                    print "%10s -(%10s %d)-> %10s" % (fro.getSymbol().encode(ENCODING),
-                                                   label.getSymbol().encode(ENCODING),
-                                                   self.link[(fro,to,label)].getWeight(state) * 100,
-                                                   to.getSymbol().encode(ENCODING))
+                    print "%10s -(%10s %d)-> %10s" % (froS.encode(ENCODING),
+                                                   labelS.encode(ENCODING),
+                                                   self.link[(froS,froT,toS,toT,labelS,labelT)]
+                                                       .getWeight(state) * 100,
+                                                   toS.encode(ENCODING))
             else:
-                print "%10s ------(%d)-------> %10s" % (fro.getSymbol().encode(ENCODING),
-                                         self.link[(fro,to,label)].getWeight() * 100,
-                                         to.getSymbol().encode(ENCODING))
+                print "%10s ------(%d)-------> %10s" % (froS.encode(ENCODING),
+                                         self.link[(froS,froT,toS,toT,labelS,labelT)]
+                                             .getWeight() * 100,
+                                         toS.encode(ENCODING))
 
     def getLink(self,nodeFrom,nodeTo,nodeLabel=None):
         "Get the link going from nodeFrom to nodeTo, through nodeLabel (if it exists)"
         if not nodeFrom or not nodeTo:
             raise ConceptNetworkIncompleteLink,"There lacks at least one node!"
-        return self.link[(nodeFrom,nodeTo,nodeLabel)]
+        return self.link[(nodeFrom.getSymbol(),  nodeFrom.getTypeName(),
+                          nodeTo.getSymbol(),    nodeTo.getTypeName(),
+                          nodeLabel.getSymbol(), nodeLabel.getTypeName())]
 
     def getLinksFrom(self,nodeFrom):
         "Get links that go from nodeFrom"
@@ -157,10 +162,16 @@ class ConceptNetwork:
         """Add a directional link to the ConceptNetwork.
 
         If the link already exists, its co-occurrence is incremented.
-        If there is no label node, None should be passed as labelNode."""
+        If there is no label node, None should be passed as labelNode.
+
+        Return the link"""
         if not nodeFrom or not nodeTo:
             raise ConceptNetworkIncompleteLink,"There lacks at least one node!"
-        newLink = (nodeFrom,nodeTo,nodeLabel)
+        newLink = (nodeFrom.getSymbol(),     nodeFrom.getTypeName(),
+                   nodeTo.getSymbol(),       nodeTo.getTypeName(),
+                   nodeLabel and nodeLabel.getSymbol() or nodeLabel,
+                   nodeLabel and nodeLabel.getTypeName() or nodeLabel)
+
         if newLink in self.link:
             self.link[newLink].incrementCoOcc()
         else:
@@ -172,7 +183,7 @@ class ConceptNetwork:
             nodeLabel.addLabelingLink(link)
         return link
 
-    def addBidirectionalLink(self,node1, node2, nodeLabel=None):
+    def addBidirectionalLink(self, node1, node2, nodeLabel=None):
         """Add a directional link to the ConceptNetwork.
 
 
