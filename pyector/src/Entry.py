@@ -48,7 +48,7 @@ reURL      = re.compile(r"(?:http|ftp|file)://(?:[a-z0-9]+\.){1,3}[a-z0-9]+", re
 
 #r"(([a-zA-Z][0-9a-zA-Z+\\-\\.]*:)?/{0,2}[0-9a-zA-Z;/?:@&=+$\\.\\-_!~*'()%]+)?(#[0-9a-zA-Z;/?:@&=+$\\.\\-_!~*'()%]+)?"
 #r"(?:http|ftp|file)://(?:[a-z0-9]+\.){1,3}[a-z0-9]+"
-reSMILEYS  = re.compile(r"[<=]?[X:B8][\-o]?[)(ODPp\]\[]",re.UNICODE)
+reSMILEYS  = re.compile(r"[<=>]?[X:B8][\-o]?[)(ODPp\]\[]",re.UNICODE)
 reWORDS    = re.compile(r'\b\w+\b', re.UNICODE)
 reWORD_SEP = re.compile(r'[\.,;!?+=\-()\[\]"'+r"\':/]+", re.UNICODE)
 
