@@ -223,6 +223,32 @@ class LinkTest(unittest.TestCase):
         "A link has at least 2 nodes"
         self.assertRaises(ConceptNetworkIncompleteLink,Link,None,None)
 
+    def testCoOccLink(self):
+        "Twice the same link -> its co-occurrence is incremented"
+        conceptNetwork = ConceptNetwork()
+        nodeFrom    = Node("from")
+        nodeTo      = Node("to")
+        conceptNetwork.addNode(nodeFrom)
+        conceptNetwork.addNode(nodeTo)
+        conceptNetwork.addLink(nodeFrom, nodeTo)
+        link        = conceptNetwork.addLink(nodeFrom, nodeTo)
+        self.assertEqual(2, link.getCoOcc())
+
+    def testCoOccLink2(self):
+        "Twice the same link -> its co-occurrence is incremented"
+        conceptNetwork = ConceptNetwork()
+        nodeFrom    = Node("from")
+        nodeTo      = Node("to")
+        conceptNetwork.addNode(nodeFrom)
+        conceptNetwork.addNode(nodeTo)
+        conceptNetwork.addLink(nodeFrom, nodeTo)
+        nodeFrom2   = Node("from")
+        nodeTo2     = Node("to")
+        conceptNetwork.addNode(nodeFrom2)
+        conceptNetwork.addNode(nodeTo2)
+        link        = conceptNetwork.addLink(nodeFrom2, nodeTo2)
+        self.assertEqual(2, link.getCoOcc())
+
 
 class StateTest(unittest.TestCase):
     "Test the State class"
