@@ -128,7 +128,8 @@ class ConceptNetwork:
             raise ConceptNetworkIncompleteLink,"There lacks at least one node!"
         return self.link[(nodeFrom.getSymbol(),  nodeFrom.getTypeName(),
                           nodeTo.getSymbol(),    nodeTo.getTypeName(),
-                          nodeLabel.getSymbol(), nodeLabel.getTypeName())]
+                          nodeLabel and nodeLabel.getSymbol() or nodeLabel,
+                          nodeLabel and nodeLabel.getTypeName() or nodeLabel)]
 
     def getLinksFrom(self,nodeFrom):
         "Get links that go from nodeFrom"
