@@ -131,6 +131,8 @@ are you?"""
         self.assertEqual(["This","should","work",":)"], e.getTokens(line))
         line = "This should work too :)."
         self.assertEqual(["This","should","work","too",":)","."], e.getTokens(line))
+        line = ":D"
+        self.assertEqual([":D"], e.getTokens(line))
 
     def testTokensUnicode(self):
         """Get tokens with accented characters"""
