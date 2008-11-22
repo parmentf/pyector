@@ -102,7 +102,7 @@ class ConceptNetwork:
     def showLinks(self,stateId=None):
         "Show all the links in the Concept Network"
         for (froS,froT, toS,toT, labelS,labelT) in self.link:
-            if label:
+            if labelS:
                 if not stateId:
                     print "%10s -(%10s %d)-> %10s" % (froS.encode(ENCODING),
                                                    labelS.encode(ENCODING),
