@@ -451,6 +451,11 @@ class Ector:
         phrase    = [token.getSymbol() for token in phrase]
         return ("_".join(phrase)) + " (%s)" % chosenToken.getSymbol()
 
+    def cleanState(self):
+        """Clean the not activated nodes states in the state"""
+        state     = self.cn.getState(self.username)
+        state.clean()
+
 
 def logEntry(filename, utterer, entry, encoding=ENCODING):
     """Log the utterer's entry in the file"""
@@ -555,6 +560,8 @@ under certain conditions; type `@show c' for details.
             ector.cn.showLinks(1)
         elif entry == "@showstate":
             ector.showState(username)
+        elif entry == "@cleanstate":
+            ector.cleanState()
         elif entry.startswith("@log "):
             logfilename    = entry[5:]
             print "Log file: %s" % (logfilename)
@@ -594,6 +601,7 @@ But there are some commands you can use:
  - @shownodes : show the nodes of the Concept Network
  - @showlinks : show the links of the Concept Network
  - @showstate : show the state of the nodes
+ - @cleanstate: clean the state from the non-activated nodes
  - @log [file]: log the entries in the file (no file turns off the logging)
  - @status    : show the status of Ector (Concept Network, states)
  - @sentence [ON|OFF]: set the sentence reply mode
@@ -613,6 +621,7 @@ But there are some commands you can use:
              if logfilename:
                  logEntry(logfilename, username, entry)
              # Propagate activation
+             ector.cleanState()
              ector.propagate(2)
 #             ector.showState(username)
              # Get the reply
