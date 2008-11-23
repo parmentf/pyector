@@ -50,7 +50,7 @@ class TokenNode(Node):
     end    :    occurrence in the end of a sentence
     """
     __type = "token"
-    __decay = 40
+    __decay = 20    # 40
     def __init__(self, symbol, occ = 1, beg = 0, mid = 0, end = 0):
         self.__beg = beg
         self.__mid = mid
@@ -108,7 +108,7 @@ class SentenceNode(Node):
     - beg: number of occurrences of this sentence in top of the dialogue.
     """
     __type = "sentence"
-    __decay = 50
+    __decay = 25    # 50
     def __init__(self, symbol, occ = 1):
         Node.__init__(self, symbol, occ=occ)
         self.beg    = 0
@@ -140,7 +140,7 @@ class ExpressionNode(Node):
     An expression is a sequence of several tokens.
     """
     __type = "expression"
-    __decay = 40
+    __decay = 20    # 40
     def __init__(self, symbol, occ = 1):
         Node.__init__(self, symbol, occ=occ)
 
@@ -155,7 +155,7 @@ class SentimentNode(Node):
     """A sentiment node.
     """
     __type = "sentiment"
-    __decay = 10
+    __decay = 5    # 10
     def __init__(self, symbol, occ = 1):
         Node.__init__(self, symbol, occ=occ)
 
@@ -173,7 +173,7 @@ class UttererNode(Node):
     The last time he uttered is reminded.
     """
     __type = "utterer"
-    __decay = 70
+    __decay = 35    # 70
     __lastTime = None
     def __init__(self, symbol, occ = 1):
         Node.__init__(self, symbol, occ=occ)
@@ -469,6 +469,12 @@ def logEntry(filename, utterer, entry, encoding=ENCODING):
 
 
 def main():
+    # Each decay divided by 2
+    UttererNode.__decay    = 5
+    SentimentNode.__decay  = 5
+    ExpressionNode.__decay = 20
+    SentenceNode.__decay   = 25
+    TokenNode.__decay      = 20
     from optparse import OptionParser
 
     usage="usage: %prog [-p username][-n botname=Ector][-v|-q][-l logfilepath=ector.log][-s|-g][-h]"
