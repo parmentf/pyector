@@ -260,7 +260,7 @@ class ConceptNetwork:
 
     def fastPropagateActivations(self,state,
                                  normalNumberComingLinks = 2,
-                                 memoryPerf = 80):
+                                 memoryPerf = 100):
         """Propagates activation values within state.
 
         Propagates activation values within state (faster than
@@ -322,8 +322,10 @@ class ConceptNetwork:
 
                 newAV       = oldAV - decay * oldAV / 100 + influence \
                               - minusAge
-            if newAV > 100: newAV = 100
-            if newAV < 0:   newAV = 0
+            if newAV > 100:
+                newAV = 100
+            if newAV < 0:
+                newAV = 0
             nodeState.setActivationValue(newAV)
 
     def dump(self,file,protocol=0):
@@ -505,7 +507,9 @@ class State:
         return self.nodeState[(symbol,type)]
 
     def setNodeActivationValue(self,activationValue,symbol,type="basic"):
-        """Set the activationValue to the node which symbol is given in Concept Network State."""
+        """Set the activationValue to the node which symbol is given in Concept Network State.
+
+        return the node state"""
         nodeState = self.getNodeState(symbol,type)
         self.__hasType(nodeState,"NodeState")
         if activationValue:
@@ -515,6 +519,7 @@ class State:
             age = nodeState.age
             if age > 50:
                 self.nodeState.pop((symbol,type))
+        return nodeState
 
     def getNodeActivationValue(self,symbol,type="basic"):
         """Get the activationValue of the node which symbol is given from Concept Network State."""
@@ -523,6 +528,11 @@ class State:
             raise ConceptNetworkStateBadType, \
                 "The state of \""+symbol+"\" is not a NodeState!"
         return nodeState.getActivationValue()
+
+    def fullyActivate(self, symbol, type="basic"):
+        """Set the activation to full, and reset the node state age"""
+        nodeState    = self.setNodeActivationValue(100, symbol, type)
+        nodeState.resetAge()
 
     def getNodeOldActivationValue(self,symbol,type="basic"):
         """Get the old activationValue of the node which symbol is given from Concept Network State."""
@@ -586,6 +596,18 @@ class State:
                               nodeState.getAge(),
                               symbol.encode(ENCODING), typeName)
 
+    def clean(self):
+        """Clean the state from the non-activated nodes"""
+        toDel    = []
+        for (symbol, type) in self.nodeState:
+            nodeState    = self.nodeState[(symbol, type)]
+            # av are floats, so instead of == 0, let's use < 1
+            if nodeState.getActivationValue() < 1:
+                toDel += [(symbol, type)]
+        for (symbol, type) in toDel:
+            self.nodeState.pop((symbol, type))
+            print "del %s, %s" % (symbol.encode(ENCODING), type.encode(ENCODING))
+
 
 class NodeState:
     """The state of a node (activation value, old activation value, age)
@@ -610,6 +632,9 @@ class NodeState:
                 "An activation value of "+activationValue+" is not allowed! Must be in [0,100]"
         self.oldActivationValue = self.activationValue
         self.activationValue    = activationValue
+        # Reactivate non-activated nodes.
+        if activationValue == 0:
+            self.age = 0
 
     def getActivationValue(self):
         if self.activationValue < 0:
