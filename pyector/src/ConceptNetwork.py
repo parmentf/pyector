@@ -606,7 +606,7 @@ class State:
                 toDel += [(symbol, type)]
         for (symbol, type) in toDel:
             self.nodeState.pop((symbol, type))
-            print "del %s, %s" % (symbol.encode(ENCODING), type.encode(ENCODING))
+#            print "del %s, %s" % (symbol.encode(ENCODING), type.encode(ENCODING))
 
 
 class NodeState:
