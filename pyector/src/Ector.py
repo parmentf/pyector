@@ -283,7 +283,7 @@ class Ector:
         lastSentenceNode    = None
         for sentence in sentences:
             sentenceNode = self.addSentence(sentence)
-            state.setNodeActivationValue(100, sentence, "sentence")
+            state.fullyActivate(sentence, "sentence")
             if lastSentenceNode:
                 self.cn.addLink(lastSentenceNode,sentenceNode)
             lastSentenceNode = sentenceNode
@@ -312,11 +312,12 @@ class Ector:
         # Activate the utterer, and add it to the concept network
         uttererNode    = UttererNode(self.username)
         self.cn.addNode(uttererNode)
-        state.setNodeActivationValue(100, self.username, "utterer")
+        state.fullyActivate(self.username, "utterer")
         # Add the sentence node to the concept network.
         sentenceNode   = SentenceNode(sentence)
         self.cn.addNode(sentenceNode)
-        state.setNodeActivationValue(100, sentence, "sentence")
+        #state.setNodeActivationValue(100, sentence, "sentence")
+        state.fullyActivate(sentence, "sentence")
         # TODO: if the occurrence of the sentence node is only 1,
         #       compute the expressions
         pass
@@ -337,7 +338,7 @@ class Ector:
             # Add the token node to the concept network
             tokenNode = TokenNode(token, 1, beginning, middle, end)
             self.cn.addNode(tokenNode)
-            state.setNodeActivationValue(100, token, "token")
+            state.fullyActivate(token, "token")
             if beginning:
                 beginning = 0
                 middle    = 1
@@ -390,6 +391,8 @@ class Ector:
         for link in outgoingLinks:
             if link.getNodeTo().getTypeName() == "token":
                 av    = state.getNodeActivationValue(link.getNodeTo().getSymbol(), "token")
+                if av == 0:
+                    av = 1
                 nextNodes    += [(link.getNodeTo(), link.getCoOcc() * av)]
         # Stop condition
         if len(nextNodes) == 0:
@@ -404,6 +407,7 @@ class Ector:
     def generateBackward(self, phrase, temperature):
         """Generate the beginning of a sentence, adding tokens to the list
         of token nodes in phrase."""
+        state     = self.cn.getState(self.username)
         #incomingLinks    = self.cn.getLinksTo(phrase[0])
         incomingLinks    = phrase[0].incomingLinks
 #        previousNodes    = [(link.getNodeFrom(), link.getCoOc())
@@ -412,7 +416,10 @@ class Ector:
         previousNodes    = []
         for link in incomingLinks:
             if link.getNodeFrom().getTypeName() == "token":
-                previousNodes    += [(link.getNodeFrom(), link.getCoOcc())]
+                av    = state.getNodeActivationValue(link.getNodeFrom().getSymbol(), "token")
+                if av == 0:
+                    av = 1
+                previousNodes    += [(link.getNodeFrom(), link.getCoOcc() * av)]
         # Stop condition
         if len(previousNodes) == 0:
             return phrase
