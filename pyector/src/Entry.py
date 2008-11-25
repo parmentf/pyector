@@ -52,6 +52,36 @@ reSMILEYS  = re.compile(r"[<=>]?[X:B8][\-o]?[)(ODPp\]\[]",re.UNICODE)
 reWORDS    = re.compile(r'\b\w+\b', re.UNICODE)
 reWORD_SEP = re.compile(r'[\.,;!?+=\-()\[\]"'+r"\':/]+", re.UNICODE)
 
+class Dodger:
+    """A class to dodge some sub-strings from a string, and to undodge them later"""
+    def __init__(self, re, name="dodge"):
+        """re is a compiled regular expression, which find the sub-strings to dodge
+        in a string"""
+        self.re      = re
+        self.sub     = {}    # numbered keys => substrings
+        self.name    = name
+
+    def dodge(self, toDodge):
+        """Dodge the substrings.
+        Return the string with substrings replaced by @nameN@"""
+        result    = toDodge
+        iterator  = self.re.finditer(toDodge)
+        i         = 0
+        for match in iterator:
+            i  += 1
+            key = "azaza"+self.name+str(i)+"azaza"
+            self.sub[key]    = match.group()
+            result           = result.replace(self.sub[key], key, 1)
+        return result
+
+    def undodge(self, toUndodge):
+        """Undodge the substrings, according to self.sub"""
+        result    = toUndodge
+        for key in self.sub:
+            result = result.replace(key, self.sub[key])
+        return result
+
+
 class Entry:
     """An entry is a line of input.
 
@@ -187,6 +217,8 @@ class Entry:
         - a word
         - a punctuation mark (or several concateneted)
         - a smiley"""
+        smileys     = Dodger(reSMILEYS, "smiley")
+        sentence    = smileys.dodge(sentence)
         # Get the words' positions
         posWords  = self.getPositions(sentence, reWORDS)
         # Get the separators's positions
@@ -198,7 +230,9 @@ class Entry:
         tokens = []
         for span in pos:
             tokens += [sentence[span[0]:span[1]].strip()]
-        return self.getSmileys(tokens)
+        tokens    = self.getSmileys(tokens)
+        tokens    = [smileys.undodge(token) for token in tokens]
+        return tokens
 
 if __name__ == "__main__":
     e = Entry("Un. Deux? Trois!! Quatre.")
