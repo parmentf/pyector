@@ -111,11 +111,15 @@ are you?"""
         """Replace botname by '@bot@'"""
         e    = Entry("Ector is the director!")
         self.assertEqual("@bot@ is the director!",e.entry)
+        self.assertEqual(["@bot@","is","the","director","!"],
+                         e.getTokens("@bot@ is the director!"))
 
     def testUsername(self):
         """Replace user name by '@user@'"""
         e    = Entry("François is the bot master!",username="François")
         self.assertEqual("@user@ is the bot master!",e.entry)
+        self.assertEqual(["@user@","is","the","bot","master","!"],
+                         e.getTokens("@user@ is the bot master!"))
 
     def testTokens(self):
         """Get the tokens of one sentence"""
