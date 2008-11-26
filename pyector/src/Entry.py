@@ -194,9 +194,15 @@ class Entry:
         A token can be:
         - a word
         - a punctuation mark (or several concateneted)
-        - a smiley"""
+        - a smiley
+        - a @bot@
+        - a @user@"""
         smileys     = Masker(reSMILEYS, "smiley")
         sentence    = smileys.mask(sentence)
+        bots        = Masker(reBOT, "bot")
+        sentence    = bots.mask(sentence)
+        users       = Masker(reUSER, "user")
+        sentence    = users.mask(sentence)
         # Get the words' positions
         posWords  = self.getPositions(sentence, reWORDS)
         # Get the separators's positions
@@ -210,6 +216,8 @@ class Entry:
             tokens += [sentence[span[0]:span[1]].strip()]
         tokens    = self.getSmileys(tokens)
         tokens    = [smileys.unmask(token) for token in tokens]
+        tokens    = [bots.unmask(token) for token in tokens]
+        tokens    = [users.unmask(token) for token in tokens]
         return tokens
 
 if __name__ == "__main__":
