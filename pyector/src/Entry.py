@@ -52,8 +52,8 @@ reSMILEYS  = re.compile(r"[<=>]?[X:B8][\-o]?[)(ODPp\]\[]",re.UNICODE)
 reWORDS    = re.compile(r'\b\w+\b', re.UNICODE)
 reWORD_SEP = re.compile(r'[\.,;!?+=\-()\[\]"'+r"\':/]+", re.UNICODE)
 
-class Dodger:
-    """A class to dodge some sub-strings from a string, and to undodge them later"""
+class Masker:
+    """A class to mask some sub-strings from a string, and to unmask them later"""
     def __init__(self, re, name="dodge"):
         """re is a compiled regular expression, which find the sub-strings to dodge
         in a string"""
@@ -61,9 +61,9 @@ class Dodger:
         self.sub     = {}    # numbered keys => substrings
         self.name    = name
 
-    def dodge(self, toDodge):
-        """Dodge the substrings.
-        Return the string with substrings replaced by @nameN@"""
+    def mask(self, toDodge):
+        """Mask the substrings.
+        Return the string with substrings replaced by azazanameNazaza"""
         result    = toDodge
         iterator  = self.re.finditer(toDodge)
         i         = 0
@@ -74,8 +74,8 @@ class Dodger:
             result           = result.replace(self.sub[key], key, 1)
         return result
 
-    def undodge(self, toUndodge):
-        """Undodge the substrings, according to self.sub"""
+    def unmask(self, toUndodge):
+        """Unmask the substrings, according to self.sub"""
         result    = toUndodge
         for key in self.sub:
             result = result.replace(key, self.sub[key])
@@ -217,8 +217,8 @@ class Entry:
         - a word
         - a punctuation mark (or several concateneted)
         - a smiley"""
-        smileys     = Dodger(reSMILEYS, "smiley")
-        sentence    = smileys.dodge(sentence)
+        smileys     = Masker(reSMILEYS, "smiley")
+        sentence    = smileys.mask(sentence)
         # Get the words' positions
         posWords  = self.getPositions(sentence, reWORDS)
         # Get the separators's positions
@@ -231,7 +231,7 @@ class Entry:
         for span in pos:
             tokens += [sentence[span[0]:span[1]].strip()]
         tokens    = self.getSmileys(tokens)
-        tokens    = [smileys.undodge(token) for token in tokens]
+        tokens    = [smileys.unmask(token) for token in tokens]
         return tokens
 
 if __name__ == "__main__":
