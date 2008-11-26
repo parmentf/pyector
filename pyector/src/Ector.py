@@ -452,7 +452,22 @@ class Ector:
         if debug:
             return ("_".join(phrase)) + " (%s)" % chosenToken.getSymbol()
         else:
-            return " ".join(phrase)
+            return self.beautifySentence(" ".join(phrase))
+
+    def beautifySentence(self, sentence):
+        """Beautify a string, which is a generated sentence, where
+        tokens (words and punctuation) are separated by spaces.
+
+        No need to get a space between a word and a comma."""
+        sentence    = sentence.replace(" , ",    ", ")
+        sentence    = sentence.replace(" .",     ".")
+        sentence    = sentence.replace(" : ",    ": ")
+        sentence    = sentence.replace(" !",     "!")
+        sentence    = sentence.replace(" ?",     "?")
+        sentence    = sentence.replace(" ' ",    "'")
+        sentence    = sentence.replace(" ( ",    " (")
+        sentence    = sentence.replace(" )",    ")")
+        return sentence
 
     def cleanState(self):
         """Clean the not activated nodes states in the state"""
