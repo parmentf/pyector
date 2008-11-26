@@ -38,7 +38,6 @@ import sys, locale
 
 ENCODING    = locale.getdefaultlocale()[1]
 DEFAULT_ENCODING    = sys.getdefaultencoding()
-debug        = None
 
 class TokenNode(Node):
     """A token in a sentence.
@@ -431,7 +430,7 @@ class Ector:
 
         return self.generateBackward(phrase, temperature)
 
-    def generateSentence(self):
+    def generateSentence(self, debug=False):
         """Get one node, generate a sentence from it forwards to the end
         of the sentence, and then generate backwards to the beginning of
         the sentence."""
@@ -656,7 +655,7 @@ But there are some commands you can use:
                  reply     = reply.replace("@user@", botname)
                  previousSentenceNode = replyNode
              elif generate_mode:
-                 reply    = ector.generateSentence()
+                 reply    = ector.generateSentence(debug)
                  reply     = reply.replace("@bot@",  username)
                  reply     = reply.replace("@user@", botname)
                  # TODO: make a link between nodes to the next entry
