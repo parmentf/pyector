@@ -125,9 +125,12 @@ But there are some commands you can use:
  - @shownodes : show the nodes of the Concept Network
  - @showlinks : show the links of the Concept Network
  - @showstate : show the state of the nodes
+ - @cleanstate: clean the state from the non-activated nodes
  - @log [file]: log the entries in the file (no file turns off the logging)
  - @status    : show the status of Ector (Concept Network, states)
- - @sentence [ON|OFF]: set the sentence reply modeUser>
+ - @sentence [ON|OFF]: set the sentence reply mode
+ - @generate [ON|OFF]: set the generate reply mode
+User>
 --------------------
 
 @usage
@@ -247,19 +250,120 @@ should not use it, as the output is long.
 Example:
 --------------------
 User>Hi Ector, how are you?
+Ector >Hi User, how are you?
 User>@showstate
 oldav	av	age	Node
-77	49	2	how(token)
-77	42	2	Hi(token)
-67	36	2	Hi @bot@, how are you?(sentence)
-77	42	2	bot(token)
-77	49	2	,(token)
-47	10	2	User(utterer)
-77	49	2	?(token)
-77	42	2	are(token)
-77	49	2	you(token)
-Ector >Hi User, how are you?
+97	93	2	how(token)
+97	90	2	Hi(token)
+92	84	2	Hi @bot@, how are you?(sentence)
+97	93	2	,(token)
+97	90	2	@bot@(token)
+82	65	2	User(utterer)
+97	93	2	?(token)
+97	90	2	are(token)
+97	93	2	you(token)
 --------------------
+
+@cleanstate
+^^^^^^^^^^^
+This command, mainly aimed at debugging, can be used to clean the state
+from non-activated nodes. It is much more readable when @showstate
+display fewer nodes.
+
+Example:
+-------------------
+User>But you don't have a mouth!
+Ector > Don_'_t_have_a_mouth_! (a)
+User>@showstate
+oldav	av	age	Node
+76	65	4	Yes, you speak loudly ;)(sentence)
+52	24	6	me(token)
+0	0	0	already(token)
+39	11	6	In fact, I did.(sentence)
+0	0	0	I(token)
+97	93	2	mouth(token)
+19	0	0	User(utterer)
+39	11	6	Did you hear me?(sentence)
+0	0	0	?(token)
+0	0	0	What can we talk about, now?(sentence)
+0	0	0	chatterbots(token)
+0	0	0	fine(token)
+0	0	0	You're welcome.(sentence)
+52	24	6	fact(token)
+0	0	0	What(token)
+43	14	6	Did(token)
+0	0	0	can(token)
+97	90	2	But(token)
+0	0	0	that(token)
+0	0	0	could(token)
+0	0	0	Hi @bot@, how are you?(sentence)
+0	0	0	Yes, I could.(sentence)
+58	7	4	,(token)
+52	24	6	.(token)
+79	65	4	loudly(token)
+0	0	0	You already said that.(sentence)
+0	0	0	thanks(token)
+85	72	4	;)(token)
+6	0	0	how(token)
+34	0	0	'(token)
+0	0	0	any(token)
+0	0	0	speak(token)
+0	0	0	about(token)
+92	84	2	But you don't have a mouth!(sentence)
+97	90	2	don(token)
+0	0	0	now(token)
+0	0	0	Well, we could speak about chatterbots, couldn't we?(sentence)
+34	0	0	!(token)
+0	0	0	I'm fine, thanks you.(sentence)
+97	90	2	a(token)
+0	0	0	m(token)
+34	0	0	have(token)
+0	0	0	it(token)
+0	0	0	@bot@(token)
+43	14	6	hear(token)
+0	0	0	welcome(token)
+0	0	0	talk(token)
+34	0	0	t(token)
+34	0	0	you(token)
+0	0	0	re(token)
+0	0	0	Hi(token)
+0	0	0	we(token)
+0	0	0	are(token)
+0	0	0	Don't you have any idea?(sentence)
+0	0	0	couldn(token)
+0	0	0	I know that, you already said it!(sentence)
+0	0	0	Well(token)
+0	0	0	said(token)
+43	14	6	did(token)
+0	0	0	Don(token)
+9	0	0	Yes(token)
+0	0	0	idea(token)
+0	0	0	know(token)
+43	14	6	In(token)
+0	0	0	You(token)
+User>@cleanstate
+User>@showstate
+oldav	av	age	Node
+76	65	4	Yes, you speak loudly ;)(sentence)
+52	24	6	me(token)
+39	11	6	In fact, I did.(sentence)
+97	93	2	mouth(token)
+39	11	6	Did you hear me?(sentence)
+52	24	6	fact(token)
+43	14	6	Did(token)
+97	90	2	But(token)
+58	7	4	,(token)
+52	24	6	.(token)
+79	65	4	loudly(token)
+85	72	4	;)(token)
+92	84	2	But you don't have a mouth!(sentence)
+97	90	2	don(token)
+97	90	2	a(token)
+43	14	6	hear(token)
+43	14	6	did(token)
+43	14	6	In(token)
+User>
+-------------------
 
 
 @log
@@ -306,6 +410,18 @@ States (1)
 ^^^^^^^^^^^^^^^^^^
 Set sentence mode on or off.
 When the sentence mode is on, Ector thinks a bit about what you said, and then
-pick one sentence among those he has already heard.
+picks one sentence among those he has already heard.
 
 Using `@sentence` without any argument gives the current sentence mode.
+
+@generate [on|off]
+^^^^^^^^^^^^^^^^^^
+Set generate mode on or off.
+When the generate mode is on, Ector thinks a bit about what you said, and then
+generates a sentence from one of its activated tokens (usually, a word you used
+in the previous sentence).
+This generation is a contextually statistical one: likelihood of a word after
+one another is taken into account, but activation of the word too.
+
+Activation means concepts that are in the thinking process of Ector (concepts being
+sets of tokens).
