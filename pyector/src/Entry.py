@@ -33,9 +33,6 @@ __date__      = "$Date$"
 __copyright__ = "Copyright (c) 2008 François Parmentier"
 __license__   = "GPL"
 
-SENTENCE_SEPARATORS = "!?."
-WORD_SEPARATORS     = "[/,'()[];:\"-+«»!\?\.<>=]+"
-
 import re
 
 reSENTENCES_SEPARATORS = re.compile(r'[?!\.]+\s*', re.LOCALE|re.UNICODE)
