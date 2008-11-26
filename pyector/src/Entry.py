@@ -37,7 +37,7 @@ import re
 
 reSENTENCES_SEPARATORS = re.compile(r'[?!\.]+\s*', re.LOCALE|re.UNICODE)
 # From http://www.regular-expressions.info/email.html
-MAIL_REGEX = re.compile(r"([a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[A-Z]{2}|com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|museum))",
+reMAIL     = re.compile(r"([a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[A-Z]{2}|com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|museum))",
                           re.IGNORECASE|re.MULTILINE|re.UNICODE)
 reACRONYMS = re.compile(r'(?:[A-Z]\.)+', re.LOCALE|re.UNICODE)
 reURL      = re.compile(r"(?:http|ftp|file)://(?:[a-z0-9]+\.){1,3}[a-z0-9]+", re.IGNORECASE|re.UNICODE)
@@ -45,9 +45,11 @@ reURL      = re.compile(r"(?:http|ftp|file)://(?:[a-z0-9]+\.){1,3}[a-z0-9]+", re
 
 #r"(([a-zA-Z][0-9a-zA-Z+\\-\\.]*:)?/{0,2}[0-9a-zA-Z;/?:@&=+$\\.\\-_!~*'()%]+)?(#[0-9a-zA-Z;/?:@&=+$\\.\\-_!~*'()%]+)?"
 #r"(?:http|ftp|file)://(?:[a-z0-9]+\.){1,3}[a-z0-9]+"
-reSMILEYS  = re.compile(r"[<=>]?[X:B8][\-o]?[)(ODPp\]\[]",re.UNICODE)
-reWORDS    = re.compile(r'\b\w+\b', re.UNICODE)
-reWORD_SEP = re.compile(r'[\.,;!?+=\-()\[\]"'+r"\':/]+", re.UNICODE)
+reSMILEYS  = re.compile(r"[<=>]?[X:B8][\-o]?[)(ODPp\]\[]",  re.UNICODE)
+reWORDS    = re.compile(r'\b\w+\b',  re.UNICODE)
+reWORD_SEP = re.compile(r'[\.,;!?+=\-()\[\]"'+r"\':/]+",    re.UNICODE)
+reBOT      = re.compile(r'@bot@',    re.UNICODE)
+reUSER     = re.compile(r'@user@',   re.UNICODE)
 
 class Masker:
     """A class to mask some sub-strings from a string, and to unmask them later"""
@@ -123,32 +125,14 @@ class Entry:
         if not self.sentences:
             # Get the URL and the mails, and replace them
             # Get the acronyms ############################
-            iterator   = reACRONYMS.finditer(self.entry)
-            acronyms   = {}
-            i          = 0
-            for match in iterator:
-                i  += 1
-                key = "@acro"+str(i)+"@"
-                acronyms[key] = match.group()
-                self.entry = self.entry.replace(acronyms[key], key, 1)
+            acronyms   = Masker(reACRONYMS, "acronym")
+            self.entry = acronyms.mask(self.entry)
             # Get the mails ###############################
-            iterator    = MAIL_REGEX.finditer(self.entry)
-            mails       = {}
-            i           = 0
-            for match in iterator:
-                i += 1
-                key = "@mail"+str(i)+"@"
-                mails[key] = match.group()
-                self.entry = self.entry.replace(mails[key], key, 1)
+            mails        = Masker(reMAIL, "mail")
+            self.entry   = mails.mask(self.entry)
             # Get the URL #################################
-            iterator    = reURL.finditer(self.entry)
-            urls        = {}
-            i           = 0
-            for match in iterator:
-                i+=1
-                key        = "@url"+str(i)+"@"
-                urls[key]  = match.group()
-                self.entry = self.entry.replace(urls[key], key, 1)
+            urls        = Masker(reURL, "url")
+            self.entry  = urls.mask(self.entry)
 
             # Get the indices of the sentence separators. ###########
             idx = self.getIndices(self.entry)
@@ -164,14 +148,11 @@ class Entry:
             # Replace the locations of the URL and mails with the values
             for i in range(len(self.sentences)):
                 # Put the acronyms back
-                for key in acronyms:
-                    self.sentences[i] = self.sentences[i].replace(key, acronyms[key])
+                self.sentences[i] = acronyms.unmask(self.sentences[i])
                 # Put the mails back
-                for key in mails:
-                    self.sentences[i] = self.sentences[i].replace(key, mails[key])
+                self.sentences[i] = mails.unmask(self.sentences[i])
                 # Put the URLs back
-                for key in urls:
-                    self.sentences[i] = self.sentences[i].replace(key, urls[key])
+                self.sentences[i] = urls.unmask(self.sentences[i])
         return self.sentences
 
     def getPositions(self,sentence,regex):
