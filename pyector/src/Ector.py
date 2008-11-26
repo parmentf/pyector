@@ -38,6 +38,7 @@ import sys, locale
 
 ENCODING    = locale.getdefaultlocale()[1]
 DEFAULT_ENCODING    = sys.getdefaultencoding()
+debug        = None
 
 class TokenNode(Node):
     """A token in a sentence.
@@ -449,7 +450,10 @@ class Ector:
         # Generate backwards
         phrase    = self.generateBackward(phrase, temperature)
         phrase    = [token.getSymbol() for token in phrase]
-        return ("_".join(phrase)) + " (%s)" % chosenToken.getSymbol()
+        if debug:
+            return ("_".join(phrase)) + " (%s)" % chosenToken.getSymbol()
+        else:
+            return " ".join(phrase)
 
     def cleanState(self):
         """Clean the not activated nodes states in the state"""
@@ -493,6 +497,8 @@ def main():
                       help="set sentence reply mode on")
     parser.add_option("-g", "--generate", action="store_false", dest="sentence",
                       help="set generate reply mode on")
+    parser.add_option("-d", "--debug", action="store_true", dest="debug", default=False,
+                      help="set debug mode on")
 
     (options, args) = parser.parse_args()
 
@@ -505,7 +511,8 @@ def main():
     version  = "0.3"
     sentence_mode = options.sentence
     generate_mode = not sentence_mode    # sentence and generate modes are antagonist
-    verbose    = options.verbose
+    verbose  = options.verbose
+    debug    = options.debug
 
     # Quiet mode is above sentence or generate modes
     if not verbose:
@@ -592,6 +599,14 @@ under certain conditions; type `@show c' for details.
             print "Sentence reply mode OFF"
         elif entry.lower() == "@generate":
             print "Generate reply mode", generate_mode and "ON" or "OFF"
+        elif entry.lower() == "@debug on":
+            debug    = True
+            print "Debug mode ON"
+        elif entry.lower() == "@debug off":
+            debug    = False
+            print "Debug mode OFF"
+        elif entry.lower() == "@debug":
+            print "Debug mode", debug and "ON" or "OFF"
         # Help
         elif entry[:5] == "@help":
             print """You can just start typing phrases.
@@ -611,7 +626,8 @@ But there are some commands you can use:
  - @log [file]: log the entries in the file (no file turns off the logging)
  - @status    : show the status of Ector (Concept Network, states)
  - @sentence [ON|OFF]: set the sentence reply mode
- - @generate [ON|OFF]: set the generate reply mode"""
+ - @generate [ON|OFF]: set the generate reply mode
+ - @debug [ON|OFF]: set the debug mode on or off"""
         elif entry.startswith("@"):
             print "There is no command",entry
         else:
