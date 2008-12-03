@@ -111,25 +111,13 @@ class ConceptNetwork:
     def showLinks(self,stateId=None):
         "Show all the links in the Concept Network"
         for (froS,froT, toS,toT, labelS,labelT) in self.link:
-            if labelS:
-                if not stateId:
-                    print "%10s -(%10s %d)-> %10s" % (froS.encode(ENCODING),
-                                                   labelS.encode(ENCODING),
-                                                   self.link[(froS,froT,toS,toT,labelS,labelT)]
-                                                       .getWeight() * 100,
-                                                   toS.encode(ENCODING))
-                else:
-                    state = self.getState(stateId)
-                    print "%10s -(%10s %d)-> %10s" % (froS.encode(ENCODING),
-                                                   labelS.encode(ENCODING),
-                                                   self.link[(froS,froT,toS,toT,labelS,labelT)]
-                                                       .getWeight(state) * 100,
-                                                   toS.encode(ENCODING))
-            else:
-                print "%10s ------(%d)-------> %10s" % (froS.encode(ENCODING),
-                                         self.link[(froS,froT,toS,toT,labelS,labelT)]
-                                             .getWeight() * 100,
-                                         toS.encode(ENCODING))
+            fro    = self.getNode(froS, froT)
+            to     = self.getNode(toS, toT)
+            label  = labelS and self.getNode(labelS, labelT) \
+                            or None
+            link   = self.getLink(fro, to, label)
+            state  = stateId and self.getState(stateId) or None
+            link.show(state)
 
     def getLink(self,nodeFrom,nodeTo,nodeLabel=None):
         "Get the link going from nodeFrom to nodeTo, through nodeLabel (if it exists)"
@@ -411,15 +399,21 @@ class Node:
         return self.__decay
 
     def addOutgoingLink(self,link):
-        """Add an outgoing link"""
+        """Add an outgoing link.
+
+        Should not be called by another class than ConceptNetwork."""
         self.outgoingLinks    += [link]
 
     def addIncomingLink(self,link):
-        """Add an incoming link"""
+        """Add an incoming link
+
+        Should not be called by another class than ConceptNetwork."""
         self.incomingLinks    += [link]
 
     def addLabelingLink(self,link):
-        """Add an labeling link"""
+        """Add an labeling link
+
+        Should not be called by another class than ConceptNetwork."""
         self.labelingLinks    += [link]
 
     def show(self):
@@ -477,6 +471,24 @@ class Link:
 
     def getNodeLabel(self):
         return self.label
+
+    def show(self, state):
+        """Display the link, using state to compute labeled link weight."""
+        if self.label:
+            if not state:
+                print "%10s -(%10s %d)-> %10s" % (self.fro.getSymbol().encode(ENCODING),
+                                               self.label.getSymbol().encode(ENCODING),
+                                               self.getWeight() * 100,
+                                               self.to.getSymbol().encode(ENCODING))
+            else:
+                print "%10s -(%10s %d)-> %10s" % (self.fro.getSymbol().encode(ENCODING),
+                                               self.label.getSymbol().encode(ENCODING),
+                                               self.getWeight(state) * 100,
+                                               self.to.getSymbol().encode(ENCODING))
+        else:
+            print "%10s ------(%d)-------> %10s" % (self.fro.getSymbol().encode(ENCODING),
+                                                 self.getWeight() * 100,
+                                                 self.to.getSymbol().encode(ENCODING))
 
 
 class State:
