@@ -60,11 +60,11 @@ class Masker:
         self.sub     = {}    # numbered keys => substrings
         self.name    = name
 
-    def mask(self, toDodge):
+    def mask(self, toMask):
         """Mask the substrings.
         Return the string with substrings replaced by azazanameNazaza"""
-        result    = toDodge
-        iterator  = self.re.finditer(toDodge)
+        result    = toMask
+        iterator  = self.re.finditer(toMask)
         i         = 0
         for match in iterator:
             i  += 1
@@ -73,9 +73,9 @@ class Masker:
             result           = result.replace(self.sub[key], key, 1)
         return result
 
-    def unmask(self, toUndodge):
+    def unmask(self, toUnmask):
         """Unmask the substrings, according to self.sub"""
-        result    = toUndodge
+        result    = toUnmask
         for key in self.sub:
             result = result.replace(key, self.sub[key])
         return result
