@@ -486,8 +486,9 @@ class Link:
                                                self.getWeight(state) * 100,
                                                self.to.getSymbol().encode(ENCODING))
         else:
-            print "%10s ------(%d)-------> %10s" % (self.fro.getSymbol().encode(ENCODING),
+            print "%10s ------(%d, %d)-------> %10s" % (self.fro.getSymbol().encode(ENCODING),
                                                  self.getWeight() * 100,
+                                                 self.getCoOcc(),
                                                  self.to.getSymbol().encode(ENCODING))
 
 
