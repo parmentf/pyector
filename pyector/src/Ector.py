@@ -433,7 +433,9 @@ class Ector:
     def generateSentence(self, debug=False):
         """Get one node, generate a sentence from it forwards to the end
         of the sentence, and then generate backwards to the beginning of
-        the sentence."""
+        the sentence.
+
+        Return the generated sentence as a string."""
         # Choose a token node among the most activated
         state     = self.cn.getState(self.username)
         maximumAV = state.getMaximumActivationValue(self.cn, "token")
@@ -448,11 +450,11 @@ class Ector:
         phrase    = self.generateForward(phrase, temperature)
         # Generate backwards
         phrase    = self.generateBackward(phrase, temperature)
-        phrase    = [token.getSymbol() for token in phrase]
+        strPhrase = [token.getSymbol() for token in phrase]
         if debug:
-            return ("_".join(phrase)) + " (%s)" % chosenToken.getSymbol()
+            return ("_".join(strPhrase)) + " (%s)" % chosenToken.getSymbol()
         else:
-            return self.beautifySentence(" ".join(phrase))
+            return self.beautifySentence(" ".join(strPhrase))
 
     def beautifySentence(self, sentence):
         """Beautify a string, which is a generated sentence, where
