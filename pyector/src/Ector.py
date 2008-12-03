@@ -373,16 +373,22 @@ class Ector:
         else:
             return ''
 
-    def showState(self,stateID):
+    def showState(self, stateID):
         """Show the state matching stateID"""
         state        = self.cn.getState(stateID)
         state.showNodes()
+
+    def showLinks(self, stateId=None):
+        """Show the links of the concept network, using stateID"""
+        if stateId == None:
+            stateId = self.username
+        state    = self.cn.getState(stateId)
+        self.cn.showLinks(stateId)
 
     def generateForward(self, phrase, temperature):
         """Generate the end of a sentence, adding tokens to the list
         of token nodes in phrase."""
         state     = self.cn.getState(self.username)
-        #outgoingLinks    = self.cn.getLinksFrom(phrase[-1])
         outgoingLinks    = phrase[-1].outgoingLinks
 #        nextNodes        = [(link.getNodeTo(), link.getCoOc())
 #                            for link in outgoingLinks
@@ -408,7 +414,6 @@ class Ector:
         """Generate the beginning of a sentence, adding tokens to the list
         of token nodes in phrase."""
         state     = self.cn.getState(self.username)
-        #incomingLinks    = self.cn.getLinksTo(phrase[0])
         incomingLinks    = phrase[0].incomingLinks
 #        previousNodes    = [(link.getNodeFrom(), link.getCoOc())
 #                            for link in incomingLinks
@@ -435,7 +440,8 @@ class Ector:
         of the sentence, and then generate backwards to the beginning of
         the sentence.
 
-        Return the generated sentence as a string."""
+        Return a tuple containing the generated sentence as a string and
+        the nodes of the sentence."""
         # Choose a token node among the most activated
         state     = self.cn.getState(self.username)
         maximumAV = state.getMaximumActivationValue(self.cn, "token")
@@ -452,9 +458,11 @@ class Ector:
         phrase    = self.generateBackward(phrase, temperature)
         strPhrase = [token.getSymbol() for token in phrase]
         if debug:
-            return ("_".join(strPhrase)) + " (%s)" % chosenToken.getSymbol()
+            return (("_".join(strPhrase)) + " (%s)" % chosenToken.getSymbol(),
+                    phrase)
         else:
-            return self.beautifySentence(" ".join(strPhrase))
+            return (self.beautifySentence(" ".join(strPhrase)),
+                    phrase)
 
     def beautifySentence(self, sentence):
         """Beautify a string, which is a generated sentence, where
@@ -538,6 +546,7 @@ def main():
     ector    = Ector(botname, username)
 
     previousSentenceNode    = None
+    nodes                   = None
 
     print """pyECTOR version %s, Copyright (C) 2008 Francois PARMENTIER
 pyECTOR comes with ABSOLUTELY NO WARRANTY; for details type `@show w'.
@@ -586,7 +595,7 @@ under certain conditions; type `@show c' for details.
         elif entry[:10] == "@shownodes":
             ector.cn.showNodes()
         elif entry[:10] == "@showlinks":
-            ector.cn.showLinks(1)
+            ector.showLinks()
         elif entry == "@showstate":
             ector.showState(username)
         elif entry == "@cleanstate":
@@ -646,7 +655,7 @@ But there are some commands you can use:
  - @debug [ON|OFF]: set the debug mode on or off"""
         elif entry.startswith("@"):
             print "There is no command",entry
-        else:
+        elif entry:
              entry    = unicode(entry, ENCODING)
              lastSentenceNode = ector.addEntry(entry)
              if previousSentenceNode:
@@ -654,6 +663,15 @@ But there are some commands you can use:
              elif sentence_mode:
                  # First sentence of a dialogue
                  lastSentenceNode.beg += 1
+
+             if nodes and lastSentenceNode:
+                 # Make a link from the nodes of the generated
+                 # sentence to the next entry.
+                 # BEWARE: may make a link co-occurrence greater than the
+                 # sentence node occurrence.
+                 for node in nodes:
+                     ector.cn.addLink(node, lastSentenceNode)
+
              previousSentenceNode    = lastSentenceNode
              # if log is activated, log the entry.
              if logfilename:
@@ -672,15 +690,17 @@ But there are some commands you can use:
                  reply     = reply.replace("@user@", botname)
                  previousSentenceNode = replyNode
              elif generate_mode:
-                 reply    = ector.generateSentence(debug)
+                 (reply, nodes)    = ector.generateSentence(debug)
                  reply     = reply.replace("@bot@",  username)
                  reply     = reply.replace("@user@", botname)
-                 # TODO: make a link between nodes to the next entry
                  previousSentenceNode = None
              if reply:
                  print ector.botname, ">", reply.encode(ENCODING)
                  if logfilename:
                      logEntry(logfilename, botname, reply)
+        else:
+             if debug:
+                 print "No entry given."
 
 
 if __name__ == "__main__":
