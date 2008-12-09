@@ -554,6 +554,9 @@ This is free software, and you are welcome to redistribute it
 under certain conditions; type `@show c' for details.
 @help gives a basic help on pyECTOR commands.""" % (version)
 
+    ector_path    = os.path.dirname(sys.argv[0])
+    license_path  = os.path.abspath(ector_path + "/../LICENSE")
+
     while True:
         if stdin.closed:
             break
@@ -563,7 +566,7 @@ under certain conditions; type `@show c' for details.
         # No Warranty
         if entry[:7] == "@show w":
             if not license:
-                f = open("../LICENSE")
+                f = open(license_path)
                 license = f.readlines()
                 f.close()
             for i in range(257,278):
@@ -571,7 +574,7 @@ under certain conditions; type `@show c' for details.
         # Conditions
         elif entry[:7] == "@show c":
             if not license:
-                f = open("../LICENSE")
+                f = open(license_path)
                 license = f.readlines()
                 f.close()
             for i in range(57,256):
