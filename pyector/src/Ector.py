@@ -390,16 +390,19 @@ class Ector:
         of token nodes in phrase."""
         state     = self.cn.getState(self.username)
         outgoingLinks    = phrase[-1].outgoingLinks
-#        nextNodes        = [(link.getNodeTo(), link.getCoOc())
-#                            for link in outgoingLinks
-#                            if link.getNodeTo().getTypeName() == "token"]
         nextNodes    = []
         for link in outgoingLinks:
-            if link.getNodeTo().getTypeName() == "token":
-                av    = state.getNodeActivationValue(link.getNodeTo().getSymbol(), "token")
+            toNode    = link.getNodeTo()
+            if toNode.getTypeName() == "token":
+                av    = state.getNodeActivationValue(toNode.getSymbol(), "token")
                 if av == 0:
                     av = 1
-                nextNodes    += [(link.getNodeTo(), link.getCoOcc() * av)]
+                nbRepet    = phrase.count(toNode)
+                length     = len(toNode.getSymbol())
+                # If the node is not present more than 3 times
+                if nbRepet * length <= 5 * 3:
+                    repetition    = 1 + nbRepet * nbRepet * length
+                    nextNodes    += [(toNode, link.getCoOcc() * av / repetition)]
         # Stop condition
         if len(nextNodes) == 0:
             return phrase
@@ -420,11 +423,17 @@ class Ector:
 #                            if link.getNodeFrom().getTypeName() == "token"]
         previousNodes    = []
         for link in incomingLinks:
-            if link.getNodeFrom().getTypeName() == "token":
-                av    = state.getNodeActivationValue(link.getNodeFrom().getSymbol(), "token")
+            fromNode    = link.getNodeFrom()
+            if fromNode.getTypeName() == "token":
+                av    = state.getNodeActivationValue(fromNode.getSymbol(), "token")
                 if av == 0:
                     av = 1
-                previousNodes    += [(link.getNodeFrom(), link.getCoOcc() * av)]
+                nbRepet    = phrase.count(fromNode)
+                length     = len(fromNode.getSymbol())
+                # If the node is not present more than 3 times
+                if nbRepet * length <= 5 * 3:
+                    repetition    = 1 + nbRepet * nbRepet * length
+                    previousNodes    += [(link.getNodeFrom(), link.getCoOcc() * av)]
         # Stop condition
         if len(previousNodes) == 0:
             return phrase
@@ -476,7 +485,8 @@ class Ector:
         sentence    = sentence.replace(" ?",     "?")
         sentence    = sentence.replace(" ' ",    "'")
         sentence    = sentence.replace(" ( ",    " (")
-        sentence    = sentence.replace(" )",    ")")
+        sentence    = sentence.replace(" )",     ")")
+        sentence    = sentence.replace(" - ",    "-")
         return sentence
 
     def cleanState(self):
