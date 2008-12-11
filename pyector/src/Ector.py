@@ -527,7 +527,7 @@ def main():
                       help="shut up!")
     parser.add_option("-l", "--log", dest="logname", default="ector.log",
                       help="log the dialogue in log file")
-    parser.add_option("-s", "--sentence", action="store_true", dest="sentence", default=True,
+    parser.add_option("-s", "--sentence", action="store_true", dest="sentence", default=False,
                       help="set sentence reply mode on")
     parser.add_option("-g", "--generate", action="store_false", dest="sentence",
                       help="set generate reply mode on")
@@ -542,7 +542,7 @@ def main():
     username = options.username
     botname  = options.botname.capitalize()
     logfilename = options.logname
-    version  = "0.3"
+    version  = "0.4"
     sentence_mode = options.sentence
     generate_mode = not sentence_mode    # sentence and generate modes are antagonist
     verbose  = options.verbose
@@ -708,7 +708,7 @@ But there are some commands you can use:
                  reply     = reply.replace("@user@", botname)
                  previousSentenceNode = None
              if reply:
-                 print ector.botname, ">", reply.encode(ENCODING)
+                 print "%s>" % (ector.botname), reply.encode(ENCODING)
                  if logfilename:
                      logEntry(logfilename, botname, reply)
         else:

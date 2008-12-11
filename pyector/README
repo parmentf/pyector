@@ -1,7 +1,7 @@
 pyECTOR README file
 ===================
 author parmentierf@users.sourceforge.net
-0.3, 2008-11-11
+0.4, 2008-12-11
 
 Description
 -----------
@@ -22,8 +22,8 @@ Prerequisites
 -------------
 pyECTOR is written in Python so you need a Python interpreter
 (version 2.5 or later) to execute pyECTOR. Python is installed by
-default in most Linux distributions.  You can download Python from the
-official Python website http://www.python.org.
+default in most Linux distributions.  You can download Python from
+the official Python website http://www.python.org.
 
 Obtaining pyECTOR
 -----------------
@@ -34,11 +34,13 @@ Installation
 ------------
 Once you've downloaded the file, untar it like that:
 -------------------
-tar -xvzf pyector-0.3.tar.gz .
+tar -xvzf pyector-0.4.tar.gz .
 -------------------
 
-Version 0.3 allows Ector to answer, in a simple manner, but it is
-now answering.
+Version 0.4 allows Ector to answer, building original sentences
+from what users said to it. Generated sentences may seem wrong
+grammatically. Be indulgent with it, consider it like a child,
+learning to speak.
 
 ----------
 python ConceptNetwork.py
@@ -74,7 +76,7 @@ User>@help
 From the prompt, you just have to speak to Ector.
 -------------------
 User>Hello!
-Ector>Hello!
+Ector> Hello!
 User>...
 -------------------
 The first sentences you will say will be echoed, but after some utterance,

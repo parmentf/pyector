@@ -1,7 +1,7 @@
 Manual of the Ector program
 ===========================
 author parmentierf@users.sourceforge.net
-0.3, 2008-11-13
+0.4, 2008-12-11
 
 Introduction
 ------------
@@ -27,9 +27,9 @@ Options
 ~~~~~~~
 There are several options you can use.
 
-Here is the synopsis of the command (version 0.2):
+Here is the synopsis of the command (version 0.4):
 --------------------
-python Ector.py [-p username=User][-n botname=Ector][-l logfilepath=ector.log][-h]
+python Ector.py [-p username=User][-n botname=Ector][-l logfilepath=ector.log][-s|-g][-h]
 --------------------
 
 -p --person
@@ -71,7 +71,7 @@ This is the same as the `@log` command.
 ^^^^^^^^^
 The help option reminds the usage of the program:
 --------------------
-$python src/Ector.py -h
+$ python src/Ector.py -h
 Usage: Ector.py [-p username][-n botname=Ector][-v|-q][-l logfilepath=ector.log]
 [-s|-g][-h]
 
@@ -88,6 +88,7 @@ Options:
                         log the dialogue in log file
   -s, --sentence        set sentence reply mode on
   -g, --generate        set generate reply mode on
+  -d, --debug           set debug mode on
 --------------------
 
 Use it
@@ -95,7 +96,7 @@ Use it
 Once you have launch the program, you get some license and copyright information:
 --------------------
 $ python src/Ector.py
-pyECTOR version 0.2, Copyright (C) 2008 Francois PARMENTIER
+pyECTOR version 0.4, Copyright (C) 2008 Francois PARMENTIER
 pyECTOR comes with ABSOLUTELY NO WARRANTY; for details type `@show w'.
 This is free software, and you are welcome to redistribute it
 under certain conditions; type `@show c' for details.
@@ -130,6 +131,7 @@ But there are some commands you can use:
  - @status    : show the status of Ector (Concept Network, states)
  - @sentence [ON|OFF]: set the sentence reply mode
  - @generate [ON|OFF]: set the generate reply mode
+ - @debug [ON|OFF]: set the debug mode on or off
 User>
 --------------------
 
@@ -183,13 +185,14 @@ A simple manner to add nodes, is to talk to Ector, naturally.
 Example:
 --------------------
 User>Hi Ector, how are you?
+Ector> Hi User, how are you?
 User>@shownodes
        how (   token): 1 (0,1,0)
         Hi (   token): 1 (1,0,0)
-Hi @bot@, how are you? (sentence): 1 (1)
-       bot (   token): 1 (0,1,0)
+Hi @bot@, how are you? (sentence): 1 (0)
          , (   token): 1 (0,1,0)
-      User ( utterer): 1 (2008/11/11)
+     @bot@ (   token): 1 (0,1,0)
+      User ( utterer): 1 (2008/12/11)
          ? (   token): 1 (0,0,1)
        are (   token): 1 (0,1,0)
        you (   token): 1 (0,1,0)
@@ -213,30 +216,31 @@ should not use it, as the output is long.
 Example:
 --------------------
 User>Hi Ector, how are you?
+Ector> Hi User, how are you?
 User>@showlinks
-       bot ------(100)-------> Hi @bot@, how are you?
-         , ------(100)------->        how
-       how ------(100)------->        are
-Hi @bot@, how are you? ------(100)------->          ,
-       how ------(100)-------> Hi @bot@, how are you?
-Hi @bot@, how are you? ------(100)------->         Hi
-        Hi ------(100)------->        bot
-Hi @bot@, how are you? ------(100)------->        you
-       are ------(100)-------> Hi @bot@, how are you?
-         ? ------(100)-------> Hi @bot@, how are you?
-Hi @bot@, how are you? ------(100)------->          ?
-Hi @bot@, how are you? ------(100)------->        bot
-        Hi ------(100)-------> Hi @bot@, how are you?
-Hi @bot@, how are you? ------(100)------->        are
-       bot ------(100)------->          ,
-       are ------(100)------->        you
-         , ------(100)-------> Hi @bot@, how are you?
-       you ------(100)-------> Hi @bot@, how are you?
-Hi @bot@, how are you? ------(100)------->        how
-      User ------(100)-------> Hi @bot@, how are you?
-Hi @bot@, how are you? ------(100)------->       User
-       you ------(100)------->          ?
-Ector >Hi User, how are you?
+Hi @bot@, how are you? ------(100, 1)------->          ,
+     @bot@ ------(100, 1)-------> Hi @bot@, how are you?
+         , ------(100, 1)-------> Hi @bot@, how are you?
+Hi @bot@, how are you? ------(100, 1)------->        how
+       how ------(100, 1)-------> Hi @bot@, how are you?
+       how ------(100, 1)------->        are
+        Hi ------(100, 1)------->      @bot@
+Hi @bot@, how are you? ------(100, 1)------->        you
+         , ------(100, 1)------->        how
+Hi @bot@, how are you? ------(100, 1)------->      @bot@
+       you ------(100, 1)-------> Hi @bot@, how are you?
+        Hi ------(100, 1)-------> Hi @bot@, how are you?
+      User ------(100, 1)-------> Hi @bot@, how are you?
+     @bot@ ------(100, 1)------->          ,
+Hi @bot@, how are you? ------(100, 1)------->       User
+         ? ------(100, 1)-------> Hi @bot@, how are you?
+       you ------(100, 1)------->          ?
+       are ------(100, 1)------->        you
+       are ------(100, 1)-------> Hi @bot@, how are you?
+Hi @bot@, how are you? ------(100, 1)------->          ?
+Hi @bot@, how are you? ------(100, 1)------->        are
+Hi @bot@, how are you? ------(100, 1)------->         Hi
+User>
 --------------------
 
 @showstate
@@ -273,7 +277,7 @@ display fewer nodes.
 Example:
 -------------------
 User>But you don't have a mouth!
-Ector > Don_'_t_have_a_mouth_! (a)
+Ector> Don't have a mouth!
 User>@showstate
 oldav	av	age	Node
 76	65	4	Yes, you speak loudly ;)(sentence)
@@ -425,3 +429,6 @@ one another is taken into account, but activation of the word too.
 
 Activation means concepts that are in the thinking process of Ector (concepts being
 sets of tokens).
+
+Using `@generate` without any argument gives the current generate mode.
+
