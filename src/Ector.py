@@ -24,20 +24,22 @@
 # See http://pyector.googlecode.com/
 # $Id$
 
-__author__    = "François Parmentier (parmentierf@users.sourceforge.net)"
-__version__   = "$Revision$"
-__date__      = "$Date$"
+__author__ = "François Parmentier (parmentierf@users.sourceforge.net)"
+__version__ = "$Revision$"
+__date__ = "$Date$"
 __copyright__ = "Copyright (c) 2008 François Parmentier"
-__license__   = "GPL"
+__license__ = "GPL"
 
 from ConceptNetwork import *
-from Entry          import Entry
-from time           import localtime
+from Entry import Entry
+from time import localtime
 import os
-import sys, locale
+import sys
+import locale
 
-ENCODING    = locale.getdefaultlocale()[1]
-DEFAULT_ENCODING    = sys.getdefaultencoding()
+ENCODING = locale.getdefaultlocale()[1]
+DEFAULT_ENCODING = sys.getdefaultencoding()
+
 
 class TokenNode(Node):
     """A token in a sentence.
@@ -51,13 +53,14 @@ class TokenNode(Node):
     """
     __type = "token"
     __decay = 20    # 40
-    def __init__(self, symbol, occ = 1, beg = 0, mid = 0, end = 0):
+
+    def __init__(self, symbol, occ=1, beg=0, mid=0, end=0):
         self.__beg = beg
         self.__mid = mid
         self.__end = end
         Node.__init__(self, symbol, occ=occ)
 
-    def addNode(self,node):
+    def addNode(self, node):
         """Add beg, mid, and end of the node to self."""
         Node.addNode(self, node)
         self.__beg += node.getBeginningOccurrence()
@@ -101,7 +104,6 @@ class TokenNode(Node):
                                self.getEndOccurrence())
 
 
-
 class SentenceNode(Node):
     """A sentence node.
 
@@ -109,11 +111,12 @@ class SentenceNode(Node):
     """
     __type = "sentence"
     __decay = 25    # 50
-    def __init__(self, symbol, occ = 1):
-        Node.__init__(self, symbol, occ=occ)
-        self.beg    = 0
 
-    def addNode(self,node):
+    def __init__(self, symbol, occ=1):
+        Node.__init__(self, symbol, occ=occ)
+        self.beg = 0
+
+    def addNode(self, node):
         """Add beg, mid, and end of the node to self."""
         Node.addNode(self, node)
         self.beg += node.beg
@@ -141,7 +144,8 @@ class ExpressionNode(Node):
     """
     __type = "expression"
     __decay = 20    # 40
-    def __init__(self, symbol, occ = 1):
+
+    def __init__(self, symbol, occ=1):
         Node.__init__(self, symbol, occ=occ)
 
     def getTypeName(self):
@@ -156,7 +160,8 @@ class SentimentNode(Node):
     """
     __type = "sentiment"
     __decay = 5    # 10
-    def __init__(self, symbol, occ = 1):
+
+    def __init__(self, symbol, occ=1):
         Node.__init__(self, symbol, occ=occ)
 
     def getTypeName(self):
@@ -175,9 +180,10 @@ class UttererNode(Node):
     __type = "utterer"
     __decay = 35    # 70
     __lastTime = None
-    def __init__(self, symbol, occ = 1):
+
+    def __init__(self, symbol, occ=1):
         Node.__init__(self, symbol, occ=occ)
-        self.__lastTime    = time.localtime()
+        self.__lastTime = time.localtime()
 
     def getTypeName(self):
         return self.__type
@@ -189,7 +195,7 @@ class UttererNode(Node):
         """Get the last time the utterer talked"""
         return self.__lastTime
 
-    def addNode(self,node):
+    def addNode(self, node):
         """Update the last time the utterer talked."""
         Node.addNode(self, node)
         self.__lastTime = time.localtime()
@@ -205,17 +211,19 @@ class UttererNode(Node):
                                self.__lastTime[2]
                                )
 
+
 class Ector:
     "The ECTOR class"
-    def __init__(self,botname="Ector",username="User"):
-        self.botname  = botname
+
+    def __init__(self, botname="Ector", username="User"):
+        self.botname = botname
         self.username = username
         if os.path.exists("cn.pkl"):
-            f    = open("cn.pkl","r")
-            self.cn    = pickle.load(f)
+            f = open("cn.pkl", "r")
+            self.cn = pickle.load(f)
             f.close()
         else:
-            self.cn    = ConceptNetwork()
+            self.cn = ConceptNetwork()
         self.loadUserState()
 
     def dump(self):
@@ -223,15 +231,15 @@ class Ector:
 
         Save the ConceptNetwork in cn.pkl, and the state in usernameState.pkl"""
         # Save the ConceptNetwork
-        f = open("cn.pkl","w")
+        f = open("cn.pkl", "w")
         self.cn.dump(f)
         f.close()
         # Save username's state
         if self.username:
             filename = self.__getStateId()
-            f        = open(filename,"w")
-            state    = self.cn.getState(self.username)
-            pickle.dump(state,f)
+            f = open(filename, "w")
+            state = self.cn.getState(self.username)
+            pickle.dump(state, f)
             f.close()
 
     def showStatus(self):
@@ -243,12 +251,12 @@ class Ector:
         """Create a state id from the username"""
         return self.username + "_state.pkl"
 
-    def setUser(self,username):
+    def setUser(self, username):
         """Change user's name.
 
         Create a new state, if it does not exist.
         """
-        self.username    = username
+        self.username = username
         try:
             self.cn.getState(username)
         except:
@@ -257,16 +265,16 @@ class Ector:
     def loadUserState(self):
         """Load the state matching username"""
         if self.username:
-            filename    = self.__getStateId()
+            filename = self.__getStateId()
             if os.path.exists(filename):
-                f           = open(filename,"r")
-                state       = pickle.load(f)
+                f = open(filename, "r")
+                state = pickle.load(f)
                 f.close()
             else:
-                state    = State(self.username)
+                state = State(self.username)
             self.cn.addState(state)
 
-    def addEntry(self,entry):
+    def addEntry(self, entry):
         """Add an entry into the Concept Network of Ector.
 
         Add an entry into the Concept Network of Ector.
@@ -277,19 +285,19 @@ class Ector:
 
         Return the last sentenceNode of the entry.
         """
-        state               = self.cn.getState(self.username)
+        state = self.cn.getState(self.username)
         e = Entry(entry, self.username, self.botname)
-        sentences           = e.getSentences()
-        lastSentenceNode    = None
+        sentences = e.getSentences()
+        lastSentenceNode = None
         for sentence in sentences:
             sentenceNode = self.addSentence(sentence)
             state.fullyActivate(sentence, "sentence")
             if lastSentenceNode:
-                self.cn.addLink(lastSentenceNode,sentenceNode)
+                self.cn.addLink(lastSentenceNode, sentenceNode)
             lastSentenceNode = sentenceNode
         return lastSentenceNode
 
-    def addSentence(self,sentence):
+    def addSentence(self, sentence):
         """Add a sentence into the Concept Network of Ector.
 
         Add a sentence into the Concept Network of Ector.
@@ -308,13 +316,13 @@ class Ector:
         -  sentence   sentence to add
 
         Return   the node of the sentence added."""
-        state          = self.cn.getState(self.username)
+        state = self.cn.getState(self.username)
         # Activate the utterer, and add it to the concept network
-        uttererNode    = UttererNode(self.username)
+        uttererNode = UttererNode(self.username)
         self.cn.addNode(uttererNode)
         state.fullyActivate(self.username, "utterer")
         # Add the sentence node to the concept network.
-        sentenceNode   = SentenceNode(sentence)
+        sentenceNode = SentenceNode(sentence)
         self.cn.addNode(sentenceNode)
         #state.setNodeActivationValue(100, sentence, "sentence")
         state.fullyActivate(sentence, "sentence")
@@ -324,36 +332,36 @@ class Ector:
         # Link it to the utterer node.
         self.cn.addBidirectionalLink(uttererNode, sentenceNode)
         # Add the tokens to the concept network, link them to the sentence
-        e                 = Entry("None")
-        tokens            = e.getTokens(sentence)
-        beginning         = 1
-        middle            = 0
-        end               = 0
+        e = Entry("None")
+        tokens = e.getTokens(sentence)
+        beginning = 1
+        middle = 0
+        end = 0
         previousTokenNode = None
-        i                 = 0
+        i = 0
         for token in tokens:
             i += 1
             if i == len(tokens):
-                end    = 1
+                end = 1
             # Add the token node to the concept network
             tokenNode = TokenNode(token, 1, beginning, middle, end)
             self.cn.addNode(tokenNode)
             state.fullyActivate(token, "token")
             if beginning:
                 beginning = 0
-                middle    = 1
+                middle = 1
             if middle and i == len(tokens) - 1:
-                middle    = 0
-                end       = 1
+                middle = 0
+                end = 1
             # Link it to the previous node
             if previousTokenNode:
-                self.cn.addLink(previousTokenNode,tokenNode)
+                self.cn.addLink(previousTokenNode, tokenNode)
             previousTokenNode = tokenNode
             # Link it to the sentence node
             self.cn.addBidirectionalLink(tokenNode, sentenceNode)
         return sentenceNode
 
-    def propagate(self,times=1):
+    def propagate(self, times=1):
         """Propagate the activation in the state of the utterer"""
         state = self.cn.getState(self.username)
         for i in range(times):
@@ -361,12 +369,12 @@ class Ector:
 
     def getActivatedSentenceNode(self):
         """Get one of the most activated sentences"""
-        state        = self.cn.getState(self.username)
-        maximumAV    = state.getMaximumActivationValue(self.cn, "sentence")
-        sentences    = state.getActivatedTypedNodes(self.cn, "sentence",
-                                                    maximumAV - 10)
+        state = self.cn.getState(self.username)
+        maximumAV = state.getMaximumActivationValue(self.cn, "sentence")
+        sentences = state.getActivatedTypedNodes(self.cn, "sentence",
+                                                 maximumAV - 10)
         # TODO: compute a temperature according the state's activations
-        temperature  = Temperature(60)
+        temperature = Temperature(60)
         if sentences:
             sentenceNode = temperature.chooseWeightedItem(sentences)
             return sentenceNode
@@ -375,72 +383,72 @@ class Ector:
 
     def showState(self, stateID):
         """Show the state matching stateID"""
-        state        = self.cn.getState(stateID)
+        state = self.cn.getState(stateID)
         state.showNodes()
 
     def showLinks(self, stateId=None):
         """Show the links of the concept network, using stateID"""
         if stateId == None:
             stateId = self.username
-        state    = self.cn.getState(stateId)
+        state = self.cn.getState(stateId)
         self.cn.showLinks(stateId)
 
     def generateForward(self, phrase, temperature):
         """Generate the end of a sentence, adding tokens to the list
         of token nodes in phrase."""
-        state     = self.cn.getState(self.username)
-        outgoingLinks    = phrase[-1].outgoingLinks
-        nextNodes    = []
+        state = self.cn.getState(self.username)
+        outgoingLinks = phrase[-1].outgoingLinks
+        nextNodes = []
         for link in outgoingLinks:
-            toNode    = link.getNodeTo()
+            toNode = link.getNodeTo()
             if toNode.getTypeName() == "token":
-                av    = state.getNodeActivationValue(toNode.getSymbol(), "token")
+                av = state.getNodeActivationValue(toNode.getSymbol(), "token")
                 if av == 0:
                     av = 1
-                nbRepet    = phrase.count(toNode)
-                length     = len(toNode.getSymbol())
+                nbRepet = phrase.count(toNode)
+                length = len(toNode.getSymbol())
                 # If the node is not present more than 3 times
                 if nbRepet * length <= 5 * 3:
-                    repetition    = 1 + nbRepet * nbRepet * length
-                    nextNodes    += [(toNode, link.getCoOcc() * av / repetition)]
+                    repetition = 1 + nbRepet * nbRepet * length
+                    nextNodes += [(toNode, link.getCoOcc() * av / repetition)]
         # Stop condition
         if len(nextNodes) == 0:
             return phrase
         # Choose one node among the tokens following the one at the end
         # of the phrase
-        chosenToken    = temperature.chooseWeightedItem(nextNodes)
-        phrase        += [chosenToken]
+        chosenToken = temperature.chooseWeightedItem(nextNodes)
+        phrase += [chosenToken]
 
         return self.generateForward(phrase, temperature)
 
     def generateBackward(self, phrase, temperature):
         """Generate the beginning of a sentence, adding tokens to the list
         of token nodes in phrase."""
-        state     = self.cn.getState(self.username)
-        incomingLinks    = phrase[0].incomingLinks
+        state = self.cn.getState(self.username)
+        incomingLinks = phrase[0].incomingLinks
 #        previousNodes    = [(link.getNodeFrom(), link.getCoOc())
 #                            for link in incomingLinks
 #                            if link.getNodeFrom().getTypeName() == "token"]
-        previousNodes    = []
+        previousNodes = []
         for link in incomingLinks:
-            fromNode    = link.getNodeFrom()
+            fromNode = link.getNodeFrom()
             if fromNode.getTypeName() == "token":
-                av    = state.getNodeActivationValue(fromNode.getSymbol(), "token")
+                av = state.getNodeActivationValue(fromNode.getSymbol(), "token")
                 if av == 0:
                     av = 1
-                nbRepet    = phrase.count(fromNode)
-                length     = len(fromNode.getSymbol())
+                nbRepet = phrase.count(fromNode)
+                length = len(fromNode.getSymbol())
                 # If the node is not present more than 3 times
                 if nbRepet * length <= 5 * 3:
-                    repetition    = 1 + nbRepet * nbRepet * length
-                    previousNodes    += [(link.getNodeFrom(), link.getCoOcc() * av)]
+                    repetition = 1 + nbRepet * nbRepet * length
+                    previousNodes += [(link.getNodeFrom(), link.getCoOcc() * av)]
         # Stop condition
         if len(previousNodes) == 0:
             return phrase
         # Choose one node among the tokens preceding the one at the beginning
         # of the phrase
-        chosenToken   = temperature.chooseWeightedItem(previousNodes)
-        phrase        = [chosenToken] + phrase
+        chosenToken = temperature.chooseWeightedItem(previousNodes)
+        phrase = [chosenToken] + phrase
 
         return self.generateBackward(phrase, temperature)
 
@@ -452,19 +460,19 @@ class Ector:
         Return a tuple containing the generated sentence as a string and
         the nodes of the sentence."""
         # Choose a token node among the most activated
-        state     = self.cn.getState(self.username)
+        state = self.cn.getState(self.username)
         maximumAV = state.getMaximumActivationValue(self.cn, "token")
-        tokens    = state.getActivatedTypedNodes(self.cn,"token",
-                                                 maximumAV - 10)
+        tokens = state.getActivatedTypedNodes(self.cn, "token",
+                                              maximumAV - 10)
         # TODO: compute a temperature according the state's activations
-        temperature    = Temperature(60)
-        chosenToken    = temperature.chooseWeightedItem(tokens)
+        temperature = Temperature(60)
+        chosenToken = temperature.chooseWeightedItem(tokens)
 
-        phrase    = [chosenToken]
+        phrase = [chosenToken]
         # Generate forwards
-        phrase    = self.generateForward(phrase, temperature)
+        phrase = self.generateForward(phrase, temperature)
         # Generate backwards
-        phrase    = self.generateBackward(phrase, temperature)
+        phrase = self.generateBackward(phrase, temperature)
         strPhrase = [token.getSymbol() for token in phrase]
         if debug:
             return (("_".join(strPhrase)) + " (%s)" % chosenToken.getSymbol(),
@@ -478,27 +486,27 @@ class Ector:
         tokens (words and punctuation) are separated by spaces.
 
         No need to get a space between a word and a comma."""
-        sentence    = sentence.replace(" , ",    ", ")
-        sentence    = sentence.replace(" .",     ".")
-        sentence    = sentence.replace(" : ",    ": ")
-        sentence    = sentence.replace(" !",     "!")
-        sentence    = sentence.replace(" ?",     "?")
-        sentence    = sentence.replace(" ' ",    "'")
-        sentence    = sentence.replace(" ( ",    " (")
-        sentence    = sentence.replace(" )",     ")")
-        sentence    = sentence.replace(" - ",    "-")
+        sentence = sentence.replace(" , ",    ", ")
+        sentence = sentence.replace(" .",     ".")
+        sentence = sentence.replace(" : ",    ": ")
+        sentence = sentence.replace(" !",     "!")
+        sentence = sentence.replace(" ?",     "?")
+        sentence = sentence.replace(" ' ",    "'")
+        sentence = sentence.replace(" ( ",    " (")
+        sentence = sentence.replace(" )",     ")")
+        sentence = sentence.replace(" - ",    "-")
         return sentence
 
     def cleanState(self):
         """Clean the not activated nodes states in the state"""
-        state     = self.cn.getState(self.username)
+        state = self.cn.getState(self.username)
         state.clean()
 
 
 def logEntry(filename, utterer, entry, encoding=ENCODING):
     """Log the utterer's entry in the file"""
-    f    = file(filename,"a")
-    t    = time.localtime()
+    f = file(filename, "a")
+    t = time.localtime()
     print >> f, "%4d/%2d/%2d - %2d:%2d:%2d\t%s\t%s" % (t[0], t[1], t[2],
                                                    t[3], t[4], t[5],
                                                    utterer,
@@ -508,15 +516,15 @@ def logEntry(filename, utterer, entry, encoding=ENCODING):
 
 def main():
     # Each decay divided by 2
-    UttererNode.__decay    = 5
-    SentimentNode.__decay  = 5
+    UttererNode.__decay = 5
+    SentimentNode.__decay = 5
     ExpressionNode.__decay = 20
-    SentenceNode.__decay   = 25
-    TokenNode.__decay      = 20
+    SentenceNode.__decay = 25
+    TokenNode.__decay = 20
     from optparse import OptionParser
 
-    usage="usage: %prog [-p username][-n botname=Ector][-v|-q][-l logfilepath=ector.log][-s|-g][-h]"
-    parser = OptionParser(usage=usage,version="%prog 0.3")
+    usage = "usage: %prog [-p username][-n botname=Ector][-v|-q][-l logfilepath=ector.log][-s|-g][-h]"
+    parser = OptionParser(usage=usage, version="%prog 0.3")
     parser.add_option("-p", "--person", dest="username", default="User",
                       help="set the name of the utterer")
     parser.add_option("-n", "--name", dest="botname", default="Ector",
@@ -536,27 +544,27 @@ def main():
 
     (options, args) = parser.parse_args()
 
-    license  = None
-    stdin    = sys.stdin
-    stdout   = sys.stdout
+    license = None
+    stdin = sys.stdin
+    stdout = sys.stdout
     username = options.username
-    botname  = options.botname.capitalize()
+    botname = options.botname.capitalize()
     logfilename = options.logname
-    version  = "0.4"
+    version = "0.4"
     sentence_mode = options.sentence
     generate_mode = not sentence_mode    # sentence and generate modes are antagonist
-    verbose  = options.verbose
-    debug    = options.debug
+    verbose = options.verbose
+    debug = options.debug
 
     # Quiet mode is above sentence or generate modes
     if not verbose:
-        sentence_mode    = False
-        generate_mode    = False
+        sentence_mode = False
+        generate_mode = False
 
-    ector    = Ector(botname, username)
+    ector = Ector(botname, username)
 
-    previousSentenceNode    = None
-    nodes                   = None
+    previousSentenceNode = None
+    nodes = None
 
     print """pyECTOR version %s, Copyright (C) 2008 Francois PARMENTIER
 pyECTOR comes with ABSOLUTELY NO WARRANTY; for details type `@show w'.
@@ -564,13 +572,13 @@ This is free software, and you are welcome to redistribute it
 under certain conditions; type `@show c' for details.
 @help gives a basic help on pyECTOR commands.""" % (version)
 
-    ector_path    = os.path.dirname(sys.argv[0])
-    license_path  = os.path.abspath(ector_path + "/../LICENSE")
+    ector_path = os.path.dirname(sys.argv[0])
+    license_path = os.path.abspath(ector_path + "/../LICENSE")
 
     while True:
         if stdin.closed:
             break
-        stdout.write(username+">")
+        stdout.write(username + ">")
         entry = stdin.readline().strip()
 
         # No Warranty
@@ -579,7 +587,7 @@ under certain conditions; type `@show c' for details.
                 f = open(license_path)
                 license = f.readlines()
                 f.close()
-            for i in range(257,278):
+            for i in range(257, 278):
                 stdout.write(license[i])
         # Conditions
         elif entry[:7] == "@show c":
@@ -587,7 +595,7 @@ under certain conditions; type `@show c' for details.
                 f = open(license_path)
                 license = f.readlines()
                 f.close()
-            for i in range(57,256):
+            for i in range(57, 256):
                 stdout.write(license[i])
         elif entry[:6] == "@usage":
             print usage.replace("%prog", "Ectory.py")
@@ -614,7 +622,7 @@ under certain conditions; type `@show c' for details.
         elif entry == "@cleanstate":
             ector.cleanState()
         elif entry.startswith("@log "):
-            logfilename    = entry[5:]
+            logfilename = entry[5:]
             print "Log file: %s" % (logfilename)
         elif entry == "@log" or entry == "@logoff":
             print "Log off (%s)" % logfilename
@@ -638,10 +646,10 @@ under certain conditions; type `@show c' for details.
         elif entry.lower() == "@generate":
             print "Generate reply mode", generate_mode and "ON" or "OFF"
         elif entry.lower() == "@debug on":
-            debug    = True
+            debug = True
             print "Debug mode ON"
         elif entry.lower() == "@debug off":
-            debug    = False
+            debug = False
             print "Debug mode OFF"
         elif entry.lower() == "@debug":
             print "Debug mode", debug and "ON" or "OFF"
@@ -667,53 +675,53 @@ But there are some commands you can use:
  - @generate [ON|OFF]: set the generate reply mode
  - @debug [ON|OFF]: set the debug mode on or off"""
         elif entry.startswith("@"):
-            print "There is no command",entry
+            print "There is no command", entry
         elif entry:
-             entry    = unicode(entry, ENCODING)
-             lastSentenceNode = ector.addEntry(entry)
-             if previousSentenceNode:
-                 ector.cn.addLink(previousSentenceNode,lastSentenceNode)
-             elif sentence_mode:
-                 # First sentence of a dialogue
-                 lastSentenceNode.beg += 1
+            entry = unicode(entry, ENCODING)
+            lastSentenceNode = ector.addEntry(entry)
+            if previousSentenceNode:
+                ector.cn.addLink(previousSentenceNode, lastSentenceNode)
+            elif sentence_mode:
+                # First sentence of a dialogue
+                lastSentenceNode.beg += 1
 
-             if nodes and lastSentenceNode:
-                 # Make a link from the nodes of the generated
-                 # sentence to the next entry.
-                 # BEWARE: may make a link co-occurrence greater than the
-                 # sentence node occurrence.
-                 for node in nodes:
-                     ector.cn.addLink(node, lastSentenceNode)
+            if nodes and lastSentenceNode:
+                # Make a link from the nodes of the generated
+                # sentence to the next entry.
+                # BEWARE: may make a link co-occurrence greater than the
+                # sentence node occurrence.
+                for node in nodes:
+                    ector.cn.addLink(node, lastSentenceNode)
 
-             previousSentenceNode    = lastSentenceNode
-             # if log is activated, log the entry.
-             if logfilename:
-                 logEntry(logfilename, username, entry)
-             # Propagate activation
-             ector.cleanState()
-             ector.propagate(2)
-#             ector.showState(username)
+            previousSentenceNode = lastSentenceNode
+            # if log is activated, log the entry.
+            if logfilename:
+                logEntry(logfilename, username, entry)
+            # Propagate activation
+            ector.cleanState()
+            ector.propagate(2)
+#            ector.showState(username)
              # Get the reply
-             reply    = None
-             if sentence_mode:
-                 # Get one of the most activated sentences
-                 replyNode = ector.getActivatedSentenceNode()
-                 reply     = replyNode.getSymbol()
-                 reply     = reply.replace("@bot@",  username)
-                 reply     = reply.replace("@user@", botname)
-                 previousSentenceNode = replyNode
-             elif generate_mode:
-                 (reply, nodes)    = ector.generateSentence(debug)
-                 reply     = reply.replace("@bot@",  username)
-                 reply     = reply.replace("@user@", botname)
-                 previousSentenceNode = None
-             if reply:
-                 print "%s>" % (ector.botname), reply.encode(ENCODING)
-                 if logfilename:
-                     logEntry(logfilename, botname, reply)
+            reply = None
+            if sentence_mode:
+                # Get one of the most activated sentences
+                replyNode = ector.getActivatedSentenceNode()
+                reply = replyNode.getSymbol()
+                reply = reply.replace("@bot@",  username)
+                reply = reply.replace("@user@", botname)
+                previousSentenceNode = replyNode
+            elif generate_mode:
+                (reply, nodes) = ector.generateSentence(debug)
+                reply = reply.replace("@bot@",  username)
+                reply = reply.replace("@user@", botname)
+                previousSentenceNode = None
+            if reply:
+                print "%s>" % (ector.botname), reply.encode(ENCODING)
+                if logfilename:
+                    logEntry(logfilename, botname, reply)
         else:
-             if debug:
-                 print "No entry given."
+            if debug:
+                print "No entry given."
 
 
 if __name__ == "__main__":
