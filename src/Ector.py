@@ -368,7 +368,7 @@ class Ector:
     def propagate(self, times=1):
         """Propagate the activation in the state of the utterer"""
         state = self.cn.getState(self.username)
-        for i in range(times):
+        for _ in range(times):
             self.cn.fastPropagateActivations(state)
 
     def getActivatedSentenceNode(self):
