@@ -261,6 +261,10 @@ class Ector:
             self.cn.getState(username)
         except:
             self.loadUserState()
+    
+    def setName(self, botname):
+        """Change bot's name"""
+        self.botname = botname
 
     def loadUserState(self):
         """Load the state matching username"""
@@ -390,7 +394,7 @@ class Ector:
         """Show the links of the concept network, using stateID"""
         if stateId == None:
             stateId = self.username
-        state = self.cn.getState(stateId)
+        self.cn.getState(stateId)
         self.cn.showLinks(stateId)
 
     def generateForward(self, phrase, temperature):
@@ -440,7 +444,7 @@ class Ector:
                 length = len(fromNode.getSymbol())
                 # If the node is not present more than 3 times
                 if nbRepet * length <= 5 * 3:
-                    repetition = 1 + nbRepet * nbRepet * length
+                    # repetition = 1 + nbRepet * nbRepet * length
                     previousNodes += [(link.getNodeFrom(), link.getCoOcc() * av)]
         # Stop condition
         if len(previousNodes) == 0:
