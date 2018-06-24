@@ -43,7 +43,7 @@ class EctorTest(unittest.TestCase):
         """Add a sentence in the Concept Network of Ector"""
         ector    =    Ector()
         ector.addSentence("Hello.")
-        expectedNodeSymbols    = ["User", "Hello", ".", "Hello."]
+        expectedNodeSymbols    = ["User", "Hello.", "Hello", "."]
         nodeSymbols    = [symbol for (symbol, typeName) in ector.cn.node]
         self.assertEqual(expectedNodeSymbols,nodeSymbols)
 
@@ -51,7 +51,7 @@ class EctorTest(unittest.TestCase):
         """Add an entry in Ector"""
         ector    =    Ector()
         ector.addEntry("Hello.")
-        expectedNodeSymbols    = ["User", "Hello", ".", "Hello."]
+        expectedNodeSymbols    = ["User", "Hello.", "Hello", "."]
         nodeSymbols    = [symbol for (symbol, typeName) in ector.cn.node]
         self.assertEqual(expectedNodeSymbols,nodeSymbols)
 

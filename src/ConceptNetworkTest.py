@@ -183,15 +183,15 @@ class ConceptNetworkTest(unittest.TestCase):
         conceptNetwork.addState(state)
         state.setNodeActivationValue(100,"From")
         conceptNetwork.fastPropagateActivations(state,2)
-        av = state.getNodeActivationValue("To1")
+        state.getNodeActivationValue("To1")
 
-        f = open("cntest.data","w")
+        f = open("cntest.data","wb")
         try:
             conceptNetwork.dump(f,0)
         finally:
             f.close()
 
-        f = open("cntest.data")
+        f = open("cntest.data", "rb")
         try:
             cnLoaded = pickle.load(f)
         finally:
@@ -302,7 +302,7 @@ class StateTest(unittest.TestCase):
         state = State(1)
         conceptNetwork.addState(state)
         state.setNodeActivationValue(100,"From","basic")
-        for i in range(0,51):
+        for _ in range(0,51):
             conceptNetwork.fastPropagateActivations(state,2)
         state.setNodeActivationValue(0, "From", "basic")
         self.assertRaises(KeyError,state.nodeState.__getitem__,("From","basic"))
