@@ -595,9 +595,9 @@ class State:
         activationValues = [nodeState.getActivationValue()
                             for nodeId, nodeState in self.nodeState.iteritems()]
         nb = len(activationValues)
-        sum = sum(activationValues)
+        total = sum(activationValues)
         if nb:
-            return sum / nb
+            return total / nb
         else:
             return 0
 
