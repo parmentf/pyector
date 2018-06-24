@@ -583,6 +583,7 @@ under certain conditions; type `@show c' for details.
         if stdin.closed:
             break
         stdout.write(username + ">")
+        stdout.flush()
         entry = stdin.readline().strip()
 
         # No Warranty
