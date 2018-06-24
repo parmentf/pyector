@@ -720,7 +720,7 @@ But there are some commands you can use:
                 reply = reply.replace("@user@", botname)
                 previousSentenceNode = None
             if reply:
-                print("%s>" % (ector.botname), reply.encode(ENCODING))
+                print("%s>" % (ector.botname), reply)
                 if logfilename:
                     logEntry(logfilename, botname, reply)
         else:
