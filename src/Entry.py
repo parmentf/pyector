@@ -35,11 +35,11 @@ __license__   = "GPL"
 
 import re
 
-reSENTENCES_SEPARATORS = re.compile(r'[?!\.]+\s*', re.LOCALE|re.UNICODE)
+reSENTENCES_SEPARATORS = re.compile(r'[?!\.]+\s*', re.UNICODE)
 # From http://www.regular-expressions.info/email.html
 reMAIL     = re.compile(r"([a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[A-Z]{2}|com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|museum))",
                           re.IGNORECASE|re.MULTILINE|re.UNICODE)
-reACRONYMS = re.compile(r'(?:[A-Z]\.)+', re.LOCALE|re.UNICODE)
+reACRONYMS = re.compile(r'(?:[A-Z]\.)+', re.UNICODE)
 reURL      = re.compile(r"(?:http|ftp|file)://(?:[a-z0-9]+\.){1,3}[a-z0-9]+", re.IGNORECASE|re.UNICODE)
 #reURL      = re.compile(r"([^:/?#]+:)?(?://[^/?#]*)?[^?#]*(?:\?[^#]*)?(?:#.*)?", re.IGNORECASE)
 
@@ -95,8 +95,8 @@ class Entry:
         # Use a re, with \b around names to avoid replacing part of words,
         # like director -> dir@bot@.
         # See http://docs.python.org/dev/howto/regex.html
-        reBotname  = re.compile(r'\b'+botname+r'\b',  re.IGNORECASE|re.LOCALE)
-        reUsername = re.compile(r'\b'+username+r'\b', re.IGNORECASE|re.LOCALE)
+        reBotname  = re.compile(r'\b'+botname+r'\b',  re.IGNORECASE)
+        reUsername = re.compile(r'\b'+username+r'\b', re.IGNORECASE)
         self.entry = reBotname.sub('@bot@', entry)
         self.entry = reUsername.sub('@user@', self.entry)
         self.sentences = None
@@ -222,4 +222,4 @@ class Entry:
 
 if __name__ == "__main__":
     e = Entry("Un. Deux? Trois!! Quatre.")
-    print e.getSentences()
+    print(e.getSentences())

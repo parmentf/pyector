@@ -225,7 +225,7 @@ class ConceptNetwork:
         """Add a state to the Concept Network"""
         self.__hasType(state, "State")
         stateId = state.id
-        if stateId in self.state.keys():
+        if stateId in list(self.state.keys()):
             raise ConceptNetworkDuplicateState("The state (" + stateId + ") already exists!")
         self.state[stateId] = state
 
@@ -248,11 +248,11 @@ class ConceptNetwork:
             raise ConceptNetworkBadParameter("normalNumberComingLinks must be > 1")
         # Set the old activation values as the current ones
         # Increment age of the nodes
-        for symbol, nodeState in state.nodeState.iteritems():
+        for symbol, nodeState in state.nodeState.items():
             self.__hasType(nodeState, "NodeState")
             nodeState.ageActivationValues()
 
-        for (symbol, typeName), node in self.node.iteritems():
+        for (symbol, typeName), node in self.node.items():
             influence = 0
             nbIncomings = 0
             nodeState = state.getNodeState(symbol, typeName)
@@ -295,12 +295,12 @@ class ConceptNetwork:
         memoryPerf: memory performance (the higher, the better)"""
         influenceValues = {}    # (symbol, type)    => influence value
         influenceNb = {}    # (symbol, type)    => influence nb
-        for _, nodeState in state.nodeState.iteritems():
+        for _, nodeState in state.nodeState.items():
             nodeState.ageActivationValues()
 
         ## Fill influence table ##
         # Get the nodes influenced by others
-        for (symbol, typeName), node in self.node.iteritems():
+        for (symbol, typeName), node in self.node.items():
             if symbol:
                 ov = state.getNodeOldActivationValue(symbol, typeName)
                 #links = self.getLinksFrom(node)
@@ -324,7 +324,7 @@ class ConceptNetwork:
                                  + 1
 
         ## For all nodes in the state ##
-        influenceValueKeys = influenceValues.keys()
+        influenceValueKeys = list(influenceValues.keys())
         for (symbol, typeName) in state.nodeState:
             nodeState = state.getNodeState(symbol, typeName)
             oldAV = nodeState.getOldActivationValue()
@@ -377,9 +377,9 @@ class ConceptNetwork:
 
     def showStates(self):
         """Show all states id"""
-        print "States (%d)" % (len(self.state))
+        print("States (%d)" % (len(self.state)))
         for id in self.state:
-            print "\t%s" % (id)
+            print("\t%s" % (id))
 
 
 class Node:
@@ -453,9 +453,9 @@ class Node:
 
     def show(self):
         """Display the node"""
-        print "%s (%s): %d" % (self.getSymbol().encode(ENCODING),
+        print("%s (%s): %d" % (self.getSymbol().encode(ENCODING),
                                self.getTypeName(),
-                               self.getOcc())
+                               self.getOcc()))
 
 
 class Link:
@@ -511,20 +511,20 @@ class Link:
         """Display the link, using state to compute labeled link weight."""
         if self.label:
             if not state:
-                print "%10s -(%10s %d)-> %10s" % (self.fro.getSymbol().encode(ENCODING),
+                print("%10s -(%10s %d)-> %10s" % (self.fro.getSymbol().encode(ENCODING),
                                                self.label.getSymbol().encode(ENCODING),
                                                self.getWeight() * 100,
-                                               self.to.getSymbol().encode(ENCODING))
+                                               self.to.getSymbol().encode(ENCODING)))
             else:
-                print "%10s -(%10s %d)-> %10s" % (self.fro.getSymbol().encode(ENCODING),
+                print("%10s -(%10s %d)-> %10s" % (self.fro.getSymbol().encode(ENCODING),
                                                self.label.getSymbol().encode(ENCODING),
                                                self.getWeight(state) * 100,
-                                               self.to.getSymbol().encode(ENCODING))
+                                               self.to.getSymbol().encode(ENCODING)))
         else:
-            print "%10s ------(%d, %d)-------> %10s" % (self.fro.getSymbol().encode(ENCODING),
+            print("%10s ------(%d, %d)-------> %10s" % (self.fro.getSymbol().encode(ENCODING),
                                                  self.getWeight() * 100,
                                                  self.getCoOcc(),
-                                                 self.to.getSymbol().encode(ENCODING))
+                                                 self.to.getSymbol().encode(ENCODING)))
 
 
 class State:
@@ -591,7 +591,7 @@ class State:
     def getAverageActivationValue(self):
         "Get the average activation value"
         activationValues = [nodeState.getActivationValue()
-                            for _, nodeState in self.nodeState.iteritems()]
+                            for _, nodeState in self.nodeState.items()]
         nb = len(activationValues)
         total = sum(activationValues)
         if nb:
@@ -605,7 +605,7 @@ class State:
         typeNames: names of the types to take into account
         cn:        Concept Network containing the nodes"""
         activationValues = [nodeState.getActivationValue()
-                            for (_, typeName), nodeState in self.nodeState.iteritems()
+                            for (_, typeName), nodeState in self.nodeState.items()
                             if typeName in typeNames]
         return max(activationValues)
 
@@ -617,7 +617,7 @@ class State:
 
         Return a list of tuples (node,activation value)"""
         nodes = []
-        for nodeId, node in cn.node.iteritems():
+        for nodeId, node in cn.node.items():
             (symbol, typeName) = nodeId
             av = self.getNodeActivationValue(symbol, typeName)
             if av > threshold:
@@ -634,18 +634,18 @@ class State:
 
     def checkNodes(self):
         "Check that the nodes are NodeState s"
-        for _, nodeState in self.nodeState.iteritems():
+        for _, nodeState in self.nodeState.items():
             self.__hasType(nodeState, "NodeState")
 
     def showNodes(self):
         "Print the node states"
-        print "oldav\tav\tage\tNode"
+        print("oldav\tav\tage\tNode")
         for (symbol, typeName) in self.nodeState:
             nodeState = self.nodeState[(symbol, typeName)]
-            print "%d\t%d\t%d\t%s(%s)" % (nodeState.getOldActivationValue(),
+            print("%d\t%d\t%d\t%s(%s)" % (nodeState.getOldActivationValue(),
                               nodeState.getActivationValue(),
                               nodeState.getAge(),
-                              symbol.encode(ENCODING), typeName)
+                              symbol.encode(ENCODING), typeName))
 
     def clean(self):
         """Clean the state from the non-activated nodes"""
@@ -808,26 +808,26 @@ def main():
         if line[:9] == "@addnode ":
             node = Node(line[9:])
             cn.addNode(node)
-            print "Node \"%s\" added" % (line[9:])
+            print("Node \"%s\" added" % (line[9:]))
         elif line[:9] == "@addlink ":
             params = line[9:].split()
             if len(params) == 2:
                 try:
                     node1 = cn.getNode(params[0])
                 except ConceptNetworkUnknownNode:
-                    print "The node \"%s\" does not exist!" % (params[0])
+                    print("The node \"%s\" does not exist!" % (params[0]))
                     continue
                 try:
                     node2 = cn.getNode(params[1])
                 except ConceptNetworkUnknownNode:
-                    print "The node \"%s\" does not exist!" % (params[1])
+                    print("The node \"%s\" does not exist!" % (params[1]))
                     continue
-                print cn.addLink(node1, node2)
+                print(cn.addLink(node1, node2))
             elif len(params) == 3:
                 node1 = cn.getNode(params[0])
                 node2 = cn.getNode(params[1])
                 node3 = cn.getNode(params[2])
-                print cn.addLink(node1, node2, node3)
+                print(cn.addLink(node1, node2, node3))
         elif line[:10] == "@shownodes":
             cn.showNodes()
         elif line[:10] == "@showlinks":
@@ -857,11 +857,11 @@ def main():
             file = open("state_1.pkl", "w")
             pickle.dump(state, file, 0)
             file.close()
-            print "Concept Network saved in \"%s\"" % (filename)
+            print("Concept Network saved in \"%s\"" % (filename))
         elif line.startswith("@quit"):
             return 0
         elif line[:5] == "@help":
-            print """@help give this help
+            print("""@help give this help
 @addnode name: add the node given
 @addlink node1 node2 [label]: add a link from node1 to node2
 @activate name [activation value]: activate a node from its name
@@ -870,7 +870,7 @@ def main():
 @showlinks: show the links in the ConceptNetwork
 @showstate: show the state of the nodes
 @save: save the Concept Network and its state
-@quit: quit without saving"""
+@quit: quit without saving""")
 
 if __name__ == "__main__":
     import sys

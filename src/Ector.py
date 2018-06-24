@@ -96,12 +96,12 @@ class TokenNode(Node):
 
     def show(self):
         """Display the node"""
-        print "%10s (%8s): %d (%d,%d,%d)" % (self.getSymbol().encode(ENCODING),
+        print("%10s (%8s): %d (%d,%d,%d)" % (self.getSymbol().encode(ENCODING),
                                self.getTypeName(),
                                self.getOcc(),
                                self.getBeginningOccurrence(),
                                self.getMiddleOccurrence(),
-                               self.getEndOccurrence())
+                               self.getEndOccurrence()))
 
 
 class SentenceNode(Node):
@@ -130,11 +130,11 @@ class SentenceNode(Node):
     def show(self):
         """Display the node
         Display the number of times it was on top of a dialogue."""
-        print "%10s (%8s): %d (%d)" % (self.getSymbol().encode(ENCODING),
+        print("%10s (%8s): %d (%d)" % (self.getSymbol().encode(ENCODING),
                                self.getTypeName(),
                                self.getOcc(),
                                self.beg
-                               )
+                               ))
 
 
 class ExpressionNode(Node):
@@ -203,13 +203,13 @@ class UttererNode(Node):
     def show(self):
         """Display the node
         Display the last time the utterer talked"""
-        print "%10s (%8s): %d (%d/%d/%d)" % (self.getSymbol(),
+        print("%10s (%8s): %d (%d/%d/%d)" % (self.getSymbol(),
                                self.getTypeName(),
                                self.getOcc(),
                                self.__lastTime[0],
                                self.__lastTime[1],
                                self.__lastTime[2]
-                               )
+                               ))
 
 
 class Ector:
@@ -509,12 +509,12 @@ class Ector:
 
 def logEntry(filename, utterer, entry, encoding=ENCODING):
     """Log the utterer's entry in the file"""
-    f = file(filename, "a")
+    f = open(filename, "a")
     t = time.localtime()
-    print >> f, "%4d/%2d/%2d - %2d:%2d:%2d\t%s\t%s" % (t[0], t[1], t[2],
+    print("%4d/%2d/%2d - %2d:%2d:%2d\t%s\t%s" % (t[0], t[1], t[2],
                                                    t[3], t[4], t[5],
                                                    utterer,
-                                                   entry.encode(encoding))
+                                                   entry.encode(encoding)), file=f)
     f.close()
 
 
@@ -570,11 +570,11 @@ def main():
     previousSentenceNode = None
     nodes = None
 
-    print """pyECTOR version %s, Copyright (C) 2008 Francois PARMENTIER
+    print("""pyECTOR version %s, Copyright (C) 2008 Francois PARMENTIER
 pyECTOR comes with ABSOLUTELY NO WARRANTY; for details type `@show w'.
 This is free software, and you are welcome to redistribute it
 under certain conditions; type `@show c' for details.
-@help gives a basic help on pyECTOR commands.""" % (version)
+@help gives a basic help on pyECTOR commands.""" % (version))
 
     ector_path = os.path.dirname(sys.argv[0])
     license_path = os.path.abspath(ector_path + "/../LICENSE")
@@ -602,7 +602,7 @@ under certain conditions; type `@show c' for details.
             for i in range(57, 256):
                 stdout.write(license[i])
         elif entry[:6] == "@usage":
-            print usage.replace("%prog", "Ectory.py")
+            print(usage.replace("%prog", "Ector.py"))
         elif entry[:7] == "@status":
             ector.showStatus()
         elif entry[:8] == "@person ":
@@ -612,7 +612,7 @@ under certain conditions; type `@show c' for details.
             botname = entry[6:].strip()
             ector.setName(botname)
         elif entry[:8] == "@version":
-            print "pyECTOR version %s" % (version)
+            print("pyECTOR version %s" % (version))
         elif entry[:6] == "@write":
             ector.dump()
         elif entry[:5] == "@quit" or entry[:5] == "@exit" or entry[:4] == "@bye":
@@ -627,39 +627,39 @@ under certain conditions; type `@show c' for details.
             ector.cleanState()
         elif entry.startswith("@log "):
             logfilename = entry[5:]
-            print "Log file: %s" % (logfilename)
+            print("Log file: %s" % (logfilename))
         elif entry == "@log" or entry == "@logoff":
-            print "Log off (%s)" % logfilename
+            print("Log off (%s)" % logfilename)
             logfilename = ''
         elif entry.lower() == "@sentence on":
             sentence_mode = True
             generate_mode = False     # sentence and generate modes are not compatible
-            print "Sentence reply mode ON"
+            print("Sentence reply mode ON")
         elif entry.lower() == "@sentence off":
             sentence_mode = False
-            print "Sentence reply mode OFF"
+            print("Sentence reply mode OFF")
         elif entry.lower() == "@sentence":
-            print "Sentence reply mode", sentence_mode and "ON" or "OFF"
+            print("Sentence reply mode", sentence_mode and "ON" or "OFF")
         elif entry.lower() == "@generate on":
             sentence_mode = False
             generate_mode = True     # sentence and generate modes are not compatible
-            print "Generate reply mode ON"
+            print("Generate reply mode ON")
         elif entry.lower() == "@generate off":
             generate_mode = False
-            print "Sentence reply mode OFF"
+            print("Sentence reply mode OFF")
         elif entry.lower() == "@generate":
-            print "Generate reply mode", generate_mode and "ON" or "OFF"
+            print("Generate reply mode", generate_mode and "ON" or "OFF")
         elif entry.lower() == "@debug on":
             debug = True
-            print "Debug mode ON"
+            print("Debug mode ON")
         elif entry.lower() == "@debug off":
             debug = False
-            print "Debug mode OFF"
+            print("Debug mode OFF")
         elif entry.lower() == "@debug":
-            print "Debug mode", debug and "ON" or "OFF"
+            print("Debug mode", debug and "ON" or "OFF")
         # Help
         elif entry[:5] == "@help":
-            print """You can just start typing phrases.
+            print("""You can just start typing phrases.
 But there are some commands you can use:
  - @usage     : print the options of the Ector.py command
  - @quit      : quit
@@ -677,11 +677,11 @@ But there are some commands you can use:
  - @status    : show the status of Ector (Concept Network, states)
  - @sentence [ON|OFF]: set the sentence reply mode
  - @generate [ON|OFF]: set the generate reply mode
- - @debug [ON|OFF]: set the debug mode on or off"""
+ - @debug [ON|OFF]: set the debug mode on or off""")
         elif entry.startswith("@"):
-            print "There is no command", entry
+            print("There is no command", entry)
         elif entry:
-            entry = unicode(entry, ENCODING)
+            # entry = str(entry, ENCODING)
             lastSentenceNode = ector.addEntry(entry)
             if previousSentenceNode:
                 ector.cn.addLink(previousSentenceNode, lastSentenceNode)
@@ -720,12 +720,12 @@ But there are some commands you can use:
                 reply = reply.replace("@user@", botname)
                 previousSentenceNode = None
             if reply:
-                print "%s>" % (ector.botname), reply.encode(ENCODING)
+                print("%s>" % (ector.botname), reply.encode(ENCODING))
                 if logfilename:
                     logEntry(logfilename, botname, reply)
         else:
             if debug:
-                print "No entry given."
+                print("No entry given.")
 
 
 if __name__ == "__main__":

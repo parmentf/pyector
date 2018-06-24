@@ -140,9 +140,9 @@ are you?"""
 
     def testTokensUnicode(self):
         """Get tokens with accented characters"""
-        line = u"Comment ça va?"
+        line = "Comment ça va?"
         e    = Entry(line)
-        self.assertEqual([u"Comment",u"ça",u"va",u"?"], e.getTokens(line))
+        self.assertEqual(["Comment",u"ça",u"va",u"?"], e.getTokens(line))
 
 
 if __name__ == "__main__":
