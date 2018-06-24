@@ -219,7 +219,7 @@ class Ector:
         self.botname = botname
         self.username = username
         if os.path.exists("cn.pkl"):
-            f = open("cn.pkl", "r")
+            f = open("cn.pkl", "rb")
             self.cn = pickle.load(f)
             f.close()
         else:
@@ -231,13 +231,13 @@ class Ector:
 
         Save the ConceptNetwork in cn.pkl, and the state in usernameState.pkl"""
         # Save the ConceptNetwork
-        f = open("cn.pkl", "w")
+        f = open("cn.pkl", "wb")
         self.cn.dump(f)
         f.close()
         # Save username's state
         if self.username:
             filename = self.__getStateId()
-            f = open(filename, "w")
+            f = open(filename, "wb")
             state = self.cn.getState(self.username)
             pickle.dump(state, f)
             f.close()
@@ -271,7 +271,7 @@ class Ector:
         if self.username:
             filename = self.__getStateId()
             if os.path.exists(filename):
-                f = open(filename, "r")
+                f = open(filename, "rb")
                 state = pickle.load(f)
                 f.close()
             else:
