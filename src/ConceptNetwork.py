@@ -255,11 +255,9 @@ class ConceptNetwork:
         for (symbol, typeName), node in self.node.iteritems():
             influence = 0
             nbIncomings = 0
-            newAv = 0
             nodeState = state.getNodeState(symbol, typeName)
             oldAV = nodeState.getOldActivationValue()
             age = nodeState.getAge()
-            occ = node.getOcc()
             #links = self.getLinksTo(node)
             links = node.incomingLinks
             # Compute the influence coming to the node
@@ -297,7 +295,7 @@ class ConceptNetwork:
         memoryPerf: memory performance (the higher, the better)"""
         influenceValues = {}    # (symbol, type)    => influence value
         influenceNb = {}    # (symbol, type)    => influence nb
-        for nodeId, nodeState in state.nodeState.iteritems():
+        for _, nodeState in state.nodeState.iteritems():
             nodeState.ageActivationValues()
 
         ## Fill influence table ##
@@ -312,9 +310,9 @@ class ConceptNetwork:
                     nodeTo = link.getNodeTo()
                     linkSymbol = nodeTo.getSymbol()
                     linkTypeName = nodeTo.getTypeName()
-                    inflNb = linkSymbol in influenceNb and \
-                             influenceNb[(linkSymbol, linkTypeName)] \
-                             or 0
+                    # inflNb = linkSymbol in influenceNb and \
+                    #          influenceNb[(linkSymbol, linkTypeName)] \
+                    #          or 0
                     infl = linkSymbol in influenceValues and \
                            influenceValues[(linkSymbol, linkTypeName)] \
                            or 0
@@ -593,7 +591,7 @@ class State:
     def getAverageActivationValue(self):
         "Get the average activation value"
         activationValues = [nodeState.getActivationValue()
-                            for nodeId, nodeState in self.nodeState.iteritems()]
+                            for _, nodeState in self.nodeState.iteritems()]
         nb = len(activationValues)
         total = sum(activationValues)
         if nb:
@@ -607,7 +605,7 @@ class State:
         typeNames: names of the types to take into account
         cn:        Concept Network containing the nodes"""
         activationValues = [nodeState.getActivationValue()
-                            for (symbol, typeName), nodeState in self.nodeState.iteritems()
+                            for (_, typeName), nodeState in self.nodeState.iteritems()
                             if typeName in typeNames]
         return max(activationValues)
 
@@ -636,7 +634,7 @@ class State:
 
     def checkNodes(self):
         "Check that the nodes are NodeState s"
-        for nodeId, nodeState in self.nodeState.iteritems():
+        for _, nodeState in self.nodeState.iteritems():
             self.__hasType(nodeState, "NodeState")
 
     def showNodes(self):
@@ -788,7 +786,7 @@ def main():
     parser = OptionParser(usage=usage, version="%prog 0.1")
     parser.add_option("-f", "--file", dest="filename", default="conceptnetwork.pkl",
                       help="open the file as a Concept Network")
-    (options, args) = parser.parse_args()
+    (options, _) = parser.parse_args()
 
     filename = options.filename
 
@@ -847,7 +845,7 @@ def main():
         elif line[:10] == "@propagate":
             if len(line) > 10:
                 nb = int(line[11:].strip())
-                for i in range(0, nb):
+                for _ in range(0, nb):
                     cn.fastPropagateActivations(state)
             else:
                 cn.fastPropagateActivations(state)
