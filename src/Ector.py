@@ -514,7 +514,7 @@ def logEntry(filename, utterer, entry, encoding=ENCODING):
     print("%4d/%2d/%2d - %2d:%2d:%2d\t%s\t%s" % (t[0], t[1], t[2],
                                                    t[3], t[4], t[5],
                                                    utterer,
-                                                   entry.encode(encoding)), file=f)
+                                                   entry), file=f)
     f.close()
 
 
